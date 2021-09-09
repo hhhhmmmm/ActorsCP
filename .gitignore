@@ -1,1 +1,14 @@
 .vs
+/ActorsCP/*.obj
+*.cache
+*.props
+*.targets
+*.pdb
+*.assets.json
+*.editorconfig
+*.deps.json
+*.dgspec.json
+*.FileListAbsolute.txt
+*.user
+*.dll
+
