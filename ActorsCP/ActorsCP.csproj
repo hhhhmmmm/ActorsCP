@@ -6,7 +6,7 @@
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>ActorsCP.snk</AssemblyOriginatorKeyFile>
         <AssemblyName>ActorsCP</AssemblyName>
-        <RootNamespace></RootNamespace>
+        <RootNamespace>ActorsCP</RootNamespace>
         <IncludeSymbols>true</IncludeSymbols>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
