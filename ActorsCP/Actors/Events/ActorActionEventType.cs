@@ -9,22 +9,22 @@ namespace ActorsCP.Actors.Events
     public enum ActorActionEventType
         {
         /// <summary>
-        /// Просто текст - внутренний
+        /// Просто текст - для отладчика и лога
         /// </summary>
-        SystemNeutral,
+        Debug,
 
         /// <summary>
-        /// Просто текст - пришедший извне
+        /// Просто текст
         /// </summary>
         Neutral,
 
         /// <summary>
-        /// Предупреждение - пришедшее извне
+        /// Предупреждение
         /// </summary>
         Warning,
 
         /// <summary>
-        /// Ошибка - пришедшая извне
+        /// Ошибка
         /// </summary>
         Error,
 
