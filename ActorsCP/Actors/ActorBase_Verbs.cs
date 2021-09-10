@@ -226,6 +226,12 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
+                if (RunOnlyOnce && HasBeenRun)
+                    {
+                    RaiseError("Повторный запуск запрещен");
+                    return false;
+                    }
+
                 #region Выполнение
 
                 using (var gt = new ActorDisposableTime($"выполнения '{Name}'", RaiseMessage))
@@ -241,25 +247,39 @@ namespace ActorsCP.Actors
 
                     m_ExecutionTime.SetStartDate();
                     SetActorState(ActorState.Running);
+
+                    HasBeenRun = true;
+
                     var runtask = InternalRunAsync();
                     await (runtask);
                     m_ExecutionTime.SetEndDate();
 
                     if (IsStarted || IsRunning)
                         {
-                        bres = await StopAsync();
+                        if (RunOnlyOnce)
+                            {
+                            bres = await StopAsync();
+                            if (!bres)
+                                {
+                                await TerminateAsync();
+                                return false;
+                                }
+                            }
+                        else // можно запускать несколько раз
+                            {
+                            SetActorState(ActorState.Started);
+                            }
+                        }
+
+                    if (RunOnlyOnce)
+                        {
+                        bres = await TerminateAsync();
                         if (!bres)
                             {
-                            await TerminateAsync();
                             return false;
                             }
                         }
 
-                    bres = await TerminateAsync();
-                    if (!bres)
-                        {
-                        return false;
-                        }
                     return runtask.Result;
                     }
 
@@ -275,7 +295,7 @@ namespace ActorsCP.Actors
                     }
                 await TerminateAsync();
                 return false;
-                }
+                } // end catch
             catch (Exception e)
                 {
                 m_ExecutionTime.SetEndDate();

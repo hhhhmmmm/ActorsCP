@@ -86,47 +86,47 @@ namespace ActorsCP.Unit.Test
             Assert.IsFalse(bres);
             Assert.AreEqual(exCleanup.State, ActorState.Terminated);
             }
+
+        [Test]
+        [TestCase(TestName = "30. Тесты однократного запуска")]
+        public async Task RunOnceTests()
+            {
+            bool bres;
+            var a = new SimpleActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsNotNull(a.Name);
+            Assert.IsTrue(a.RunOnlyOnce);
+
+            // выполнение
+            bres = await a.RunAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+
+            bres = await a.RunAsync();
+            Assert.IsFalse(bres);
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
+
+        [Test]
+        [TestCase(TestName = "40. Тесты многократного запуска")]
+        public async Task RunManyTests()
+            {
+            bool bres;
+            var a = new SimpleActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsNotNull(a.Name);
+            Assert.IsTrue(a.RunOnlyOnce);
+            a.SetRunOnlyOnce(false);
+            Assert.IsFalse(a.RunOnlyOnce);
+
+            // выполнение
+            bres = await a.RunAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Started, a.State); // после завершения
+
+            bres = await a.RunAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Started, a.State); // после завершения
+            }
         }
     }
-
-//[Test]
-///// <param name="useProxy">Использовать прокси</param>
-///// <param name="scheme"></param>
-///// <param name="serverIPAddress">IP адрес прокси-сервера</param>
-///// <param name="serverPort">Порт прокси-сервера</param>
-///// <param name="useCustomNetworkCredential">Использовать имя пользователя и пароль </param>
-///// <param name="networkCredentialUserName">Имя пользователя прокси</param>
-///// <param name="networkCredentialPassword">Пароль пользователя прокси</param>
-///// <param name="networkCredentialDomain">Домен пользователя прокси</param>
-///// <param name="bypassProxyOnLocal">Не использовать прокси для локальных адресов</param>
-///// <param name="bypassList">Список адресов для которых прокси не используется</param>
-///// <param name="wantedStatusCode">Ожидаемый код ответа</param>
-//[TestCase(true, "192.168.200.1", 3128, true, "tecmint", "12345", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - Вызов GET 192.168.200.1")]
-//[TestCase(true, "192.168.200.1", 3128, true, "tecmint", "123456", "", false, null, HttpStatusCode.ProxyAuthenticationRequired, TestName = "ProxyTest standalone - Вызов GET 192.168.200.1 неверный пароль")]
-//[TestCase(true, "192.0.2.13", 3128, true, "tecmint", "12345", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - Вызов GET 192.0.2.13")]
-//[TestCase(false, "192.0.2.13", 3128, true, "tecmint", "12345", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - Вызов GET 192.0.2.13 без прокси")]
-//[TestCase(true, "173.249.35.163", 10010, false, "", "", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 173.249.35.163 10010")]
-//[TestCase(true, "51.158.98.121", 8811, false, "", "", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 51.158.98.121")]
-//[TestCase(true, "173.249.35.163", 1448, false, "", "", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 173.249.35.163 1448")]
-//[TestCase(true, "182.52.31.58", 8080, false, "", "", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 182.52.31.58")]
-//[TestCase(true, "157.230.45.141", 8080, false, "", "", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 157.230.45.141")]
-//[TestCase(true, "45.248.94.60", 40886, false, "elite", "proxy", "", false, null, HttpStatusCode.OK, TestName = "ProxyTest standalone - 45.248.94.60")]
-//[Category("ProxyTest standalone")]
-//public async Task GetUsingProxyGoogleStandalone
-//    (
-//    bool useProxy,
-//    string serverIPAddress,
-//    int serverPort,
-//    bool useCustomNetworkCredential,
-//    string networkCredentialUserName,
-//    string networkCredentialPassword,
-//    string networkCredentialDomain,
-//    bool bypassProxyOnLocal,
-//    string[] bypassList,
-//    int wantedStatusCode
-//    )
-//    {
-//        //Assert.AreEqual(wantedStatusCode, (int)consumer.StatusCode);
-//        //Debug.WriteLine(consumer.StringResult);
-
-//    }

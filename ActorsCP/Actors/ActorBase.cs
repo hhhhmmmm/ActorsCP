@@ -67,15 +67,14 @@ namespace ActorsCP.Actors
             SetName($"Безымянный объект ActorUID = {ActorUID}");
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
+            SetRunOnlyOnce(true);
             }
 
         /// <summary>Конструктор</summary>
         /// <param name="name">Название объекта</param>
-        protected ActorBase(string name)
+        protected ActorBase(string name) : this()
             {
             SetName(name);
-            SetPreDisposeHandler(PreDisposeHandler);
-            InitLogger();
             }
 
         #endregion Конструкторы
@@ -129,6 +128,24 @@ namespace ActorsCP.Actors
                 {
                 return m_ExecutionTime;
                 }
+            }
+
+        /// <summary>
+        /// Разрешен запуск RunAsync() только один раз
+        /// </summary>
+        public bool RunOnlyOnce
+            {
+            get;
+            private set;
+            }
+
+        /// <summary>
+        /// RunAsync() уже выполнялась
+        /// </summary>
+        public bool HasBeenRun
+            {
+            get;
+            private set;
             }
 
         #endregion Свойства
@@ -279,6 +296,15 @@ namespace ActorsCP.Actors
         #endregion Защищенные методы
 
         #region Методы
+
+        /// <summary>
+        /// Установить флаг разрешения запуска только один раз
+        /// </summary>
+        /// <param name="runOnlyOnce"></param>
+        public void SetRunOnlyOnce(bool runOnlyOnce)
+            {
+            RunOnlyOnce = runOnlyOnce;
+            }
 
         /// <summary>
         /// Установить родительский объект
