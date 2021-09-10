@@ -55,11 +55,6 @@ namespace ActorsCP.Actors
         /// </summary>
         private ActorTime m_ExecutionTime = default(ActorTime);
 
-        /// <summary>
-        /// Канал сообщений
-        /// </summary>
-        private IMessageChannel m_IMessageChannel;
-
         #endregion Внутренние объекты
 
         #region Конструкторы
@@ -136,72 +131,6 @@ namespace ActorsCP.Actors
                 }
             }
 
-        /// <summary>
-        /// Запущено
-        /// </summary>
-        public bool IsStarted
-            {
-            get
-                {
-                switch (State)
-                    {
-                    case ActorState.Started:
-                    case ActorState.Running:
-                        {
-                        return true;
-                        }
-                    default:
-                        {
-                        return false;
-                        }
-                    }
-                }
-            }
-
-        /// <summary>
-        /// Остановлено
-        /// </summary>
-        public bool IsStopped
-            {
-            get
-                {
-                return !IsStarted;
-                }
-            }
-
-        /// <summary>
-        /// Выполняется
-        /// </summary>
-        public bool IsRunning
-            {
-            get
-                {
-                return State == ActorState.Running;
-                }
-            }
-
-        /// <summary>
-        /// В ожидании
-        /// </summary>
-        public bool IsPending
-            {
-            get
-                {
-                return State == ActorState.Pending;
-                }
-            }
-
-        /// <summary>
-        /// Завершен
-        /// </summary>
-        public bool IsTerminated
-            {
-            get
-                {
-                return State == ActorState.Terminated;
-                }
-            }
-
         #endregion Свойства
 
         #region Блок завершения
@@ -217,9 +146,9 @@ namespace ActorsCP.Actors
         private bool m_RunCleanupBeforeTerminationAsyncResult;
 
         /// <summary>
-        /// Вызывает RunCleanupBeforeTermination() один раз
+        /// Вызывает InternalRunCleanupBeforeTermination() один раз
         /// </summary>
-        private async Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        private async Task<bool> RunCleanupBeforeTerminationAsync()
             {
             if (m_InternalRunCleanupBeforeTermination)
                 {
@@ -227,19 +156,10 @@ namespace ActorsCP.Actors
                 }
             else
                 {
-                m_RunCleanupBeforeTerminationAsyncResult = await RunCleanupBeforeTerminationAsync();
+                m_RunCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync();
                 m_InternalRunCleanupBeforeTermination = true;
                 return m_RunCleanupBeforeTerminationAsyncResult;
                 }
-            }
-
-        /// <summary>
-        /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
-        /// от хранимых в нем временных данных. Также вызывается из Dispose()
-        /// </summary>
-        protected virtual Task<bool> RunCleanupBeforeTerminationAsync()
-            {
-            return CompletedTaskBoolTrue;
             }
 
         #endregion Блок завершения
@@ -261,6 +181,15 @@ namespace ActorsCP.Actors
         #endregion Реализация интерфейса IDisposable
 
         #region Защищенные методы
+
+        /// <summary>
+        /// Внутренняя очистка
+        /// </summary>
+        private void CleanUp()
+            {
+            m_ParentActor = null;
+            m_IMessageChannel = null;
+            }
 
         /// <summary>
         /// Установить новое состояние объекта
@@ -305,6 +234,7 @@ namespace ActorsCP.Actors
                 case ActorState.Terminated:
                     {
                     RaiseActorEvent(ActorStates.Terminated);
+                    CleanUp();
                     break;
                     }
                 default:
@@ -338,43 +268,6 @@ namespace ActorsCP.Actors
                 }
             }
 
-        #endregion Защищенные методы
-
-        #region События объекта
-
-        /// <summary>
-        /// Выкинуть событие
-        /// </summary>
-        /// <param name="actorEventArgs">Событие</param>
-        protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
-            {
-            m_Events?.Invoke(this, actorEventArgs);
-            }
-
-        /// <summary>
-        /// События объекта
-        /// </summary>
-        private event EventHandler<ActorEventArgs> m_Events;
-
-        /// <summary>
-        /// События объекта
-        /// </summary>
-        public event EventHandler<ActorEventArgs> Events
-            {
-            add
-                {
-                m_Events += value;
-                }
-            remove
-                {
-                m_Events -= value;
-                }
-            }
-
-        #endregion События объекта
-
-        #region Методы
-
         /// <summary>
         /// Частичная реализация - инициализация логгера
         /// </summary>
@@ -382,6 +275,10 @@ namespace ActorsCP.Actors
             {
             InternalInitLogger();
             }
+
+        #endregion Защищенные методы
+
+        #region Методы
 
         /// <summary>
         /// Установить родительский объект
@@ -405,289 +302,7 @@ namespace ActorsCP.Actors
             //SubscribeToCancelationEvents(parentActor);
             }
 
-        /// <summary>
-        /// Установить указатель на канал сообщений
-        /// </summary>
-        /// <param name="iMessageChannel">Канал сообщений</param>
-        public void SetIMessageChannel(IMessageChannel iMessageChannel)
-            {
-            if (m_IMessageChannel == iMessageChannel)
-                {
-                return;
-                }
-            if (m_IMessageChannel == this)
-                {
-                return;
-                }
-            m_IMessageChannel = iMessageChannel;
-            }
-
         #endregion Методы
-
-        #region IMessageChannel
-
-        /// <summary>
-        /// Вывести сообщение
-        /// </summary>
-        /// <param name="debugText">Текст отладочного сообщения</param>
-        public void RaiseDebug(string debugText)
-            {
-            var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
-            RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseDebug(debugText);
-            }
-
-        /// <summary>
-        /// Вывести сообщение
-        /// </summary>
-        /// <param name="messageText">Текст сообщения</param>
-        public void RaiseMessage(string messageText)
-            {
-            var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
-            RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseMessage(messageText);
-            }
-
-        /// <summary>
-        /// Вывести предупреждение
-        /// </summary>
-        /// <param name="warningText">Текст сообщения c предупреждением</param>
-        public void RaiseWarning(string warningText)
-            {
-            var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
-            RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseWarning(warningText);
-            }
-
-        /// <summary>
-        /// Вывести сообщение об ошибке
-        /// </summary>
-        /// <param name="errorText">Текст сообщения об ошибке</param>
-        public void RaiseError(string errorText)
-            {
-            var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
-            RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseError(errorText);
-            }
-
-        /// <summary>
-        /// Вывести сообщение об исключении
-        /// </summary>
-        /// <param name="exception">Исключение</param>
-        public void RaiseException(Exception exception)
-            {
-            var a = new ActorExceptionEventArgs(exception);
-            RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseException(exception);
-            }
-
-        #endregion IMessageChannel
-
-        #region Набор методов для переопределения
-
-        /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        protected virtual void InternalInitLogger()
-            {
-            }
-
-        /// <summary>
-        /// Запуск
-        /// </summary>
-        /// <returns>true если все хорошо</returns>
-        protected virtual Task<bool> InternalStartAsync()
-            {
-            return CompletedTaskBoolTrue;
-            }
-
-        /// <summary>
-        /// Остановка
-        /// </summary>
-        /// <returns>true если все хорошо</returns>
-        protected virtual Task<bool> InternalStopAsync()
-            {
-            return CompletedTaskBoolTrue;
-            }
-
-        /// <summary>
-        /// Перегружаемая функция для выполнения некоторых действий
-        /// </summary>
-        /// <returns>true если объект все выполнил успешно</returns>
-        protected virtual Task<bool> InternalRunAsync()
-            {
-            return CompletedTaskBoolTrue;
-            }
-
-        #endregion Набор методов для переопределения
-
-        /// <summary>
-        /// Полная остановка
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> TerminateAsync()
-            {
-            if (State == ActorState.Terminated)
-                {
-                return true;
-                }
-            try
-                {
-                var bres = await InternalRunCleanupBeforeTerminationAsync();
-                return bres;
-                }
-            catch (Exception ex)
-                {
-                RaiseException(ex);
-                return false;
-                }
-            finally
-                {
-                SetActorState(ActorState.Terminated);
-                }
-            }
-
-        /// <summary>
-        /// Запуск
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> StartAsync()
-            {
-            try
-                {
-                if (IsStarted)
-                    {
-                    return true;
-                    }
-                RaiseMessage($"Запуск {Name}...");
-                var bres = await InternalStartAsync();
-                if (bres)
-                    {
-                    SetActorState(ActorState.Started);
-                    RaiseMessage($"{Name} успешно запущен");
-                    return true;
-                    }
-                RaiseMessage($"Ошибка запуска {Name}");
-                return false;
-                }
-            catch (Exception e)
-                {
-                RaiseException(e);
-                await TerminateAsync();
-                return false;
-                }
-            }
-
-        /// <summary>
-        /// Остановка
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> StopAsync()
-            {
-            try
-                {
-                if (!IsStarted && !IsRunning)
-                    {
-                    return true;
-                    }
-                RaiseMessage($"Остановка {Name}...");
-                var bres = await InternalStopAsync();
-                if (bres)
-                    {
-                    RaiseMessage($"{Name} остановлен");
-                    SetActorState(ActorState.Stopped);
-                    return true;
-                    }
-                return false;
-                }
-            catch (Exception e)
-                {
-                RaiseException(e);
-                await TerminateAsync();
-                return false;
-                }
-            }
-
-        /// <summary>
-        /// Выполнить некоторую работу. Внутри себя метод Run() вызывает перегружаемый метод InternalRunAsync()
-        /// </summary>
-        /// <returns>true если работа успешно завершена</returns>
-        public async Task<bool> RunAsync()
-            {
-            bool bres = false;
-            try
-                {
-                if (IsTerminated)
-                    {
-                    RaiseError("Попытка запуска завершенного объекта");
-                    return false;
-                    }
-
-                if (IsRunning)
-                    {
-                    RaiseError("Попытка запуска выполняющегося объекта");
-                    return false;
-                    }
-
-                #region Выполнение
-
-                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", RaiseMessage))
-                    {
-                    if (!IsStarted)
-                        {
-                        bres = await StartAsync();
-                        if (!bres)
-                            {
-                            return false;
-                            }
-                        }
-
-                    m_ExecutionTime.SetStartDate();
-                    SetActorState(ActorState.Running);
-                    var runtask = InternalRunAsync();
-                    await (runtask);
-                    m_ExecutionTime.SetEndDate();
-
-                    if (IsStarted || IsRunning)
-                        {
-                        bres = await StopAsync();
-                        if (!bres)
-                            {
-                            await TerminateAsync();
-                            return false;
-                            }
-                        }
-
-                    bres = await TerminateAsync();
-                    if (!bres)
-                        {
-                        return false;
-                        }
-                    return runtask.Result;
-                    }
-
-                #endregion Выполнение
-                } // end try
-            catch (AggregateException ae)
-                {
-                m_ExecutionTime.SetEndDate();
-
-                foreach (Exception e in ae.InnerExceptions)
-                    {
-                    RaiseException(e);
-                    }
-                await TerminateAsync();
-                return false;
-                }
-            catch (Exception e)
-                {
-                m_ExecutionTime.SetEndDate();
-
-                RaiseException(e);
-                await TerminateAsync();
-                return false;
-                } // end catch
-            }
 
         /// <summary>
         ///
