@@ -11,4 +11,5 @@
 *.FileListAbsolute.txt
 *.user
 *.dll
+*.tmp
 

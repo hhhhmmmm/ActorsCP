@@ -146,6 +146,12 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
+                if (IsCanceled)
+                    {
+                    OnActorActionError("Выполнение объекта отменено");
+                    return false;
+                    }
+
                 if (IsStarted)
                     {
                     return true;
@@ -177,9 +183,14 @@ namespace ActorsCP.Actors
             {
             try
                 {
+                if (IsTerminated && (IsStarted || IsRunning))
+                    {
+                    OnActorActionError("Попытка остановки завершенного объекта");
+                    return false;
+                    }
+
                 if (IsTerminated)
                     {
-                    OnActorActionError("Попытка запуска завершенного объекта");
                     return false;
                     }
 
@@ -187,6 +198,7 @@ namespace ActorsCP.Actors
                     {
                     return true;
                     }
+
                 OnActorAction($"Остановка {Name}...");
                 var bres = await InternalStopAsync();
                 if (bres)
@@ -217,6 +229,12 @@ namespace ActorsCP.Actors
                 if (IsTerminated)
                     {
                     OnActorActionError("Попытка запуска завершенного объекта");
+                    return false;
+                    }
+
+                if (IsCanceled)
+                    {
+                    OnActorActionError("Выполнение объекта отменено");
                     return false;
                     }
 
@@ -285,6 +303,11 @@ namespace ActorsCP.Actors
 
                 #endregion Выполнение
                 } // end try
+            catch (OperationCanceledException) // Выполнение отменено
+                {
+                OnOperationCanceledException();
+                return false;
+                } // end catch
             catch (AggregateException ae)
                 {
                 m_ExecutionTime.SetEndDate();

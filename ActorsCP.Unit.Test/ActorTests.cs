@@ -128,5 +128,79 @@ namespace ActorsCP.Unit.Test
             Assert.IsTrue(bres);
             Assert.AreEqual(ActorState.Started, a.State); // после завершения
             }
+
+        [Test]
+        [TestCase(TestName = "50. Тесты отмены без запуска")]
+        public async Task CancellationTests_50()
+            {
+            bool bres;
+            var a = new ExceptionActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsFalse(a.IsCanceled);
+            await a.CancelAsync();
+            Assert.IsTrue(a.IsCanceled);
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
+
+        [Test]
+        [TestCase(TestName = "51. Тесты отмены с запуском")]
+        public async Task CancellationTests_51()
+            {
+            bool bres;
+            var a = new ExceptionActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsFalse(a.IsCanceled);
+
+            bres = await a.StartAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Started, a.State);
+
+            await a.CancelAsync();
+            Assert.IsTrue(a.IsCanceled);
+
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
+
+        [Test]
+        [TestCase(TestName = "52. Тесты отмены с запуском")]
+        public async Task CancellationTests_52()
+            {
+            bool bres;
+            var a = new ExceptionActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsFalse(a.IsCanceled);
+
+            bres = await a.StartAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Started, a.State);
+
+            bres = await a.StopAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Stopped, a.State);
+
+            await a.CancelAsync();
+            Assert.IsTrue(a.IsCanceled);
+
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
+
+        [Test]
+        [TestCase(TestName = "55. Тесты отмены с запуском")]
+        public async Task CancellationTests_55()
+            {
+            bool bres;
+            var a = new ExceptionActor();
+            Assert.AreEqual(ActorState.Pending, a.State);
+            Assert.IsFalse(a.IsCanceled);
+
+            bres = await a.RunAsync();
+            Assert.IsTrue(bres);
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+
+            await a.CancelAsync();
+            Assert.IsTrue(a.IsCanceled);
+
+            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
         }
     }

@@ -192,6 +192,7 @@ namespace ActorsCP.Actors
         /// <summary>Освободить управляемые ресурсы</summary>
         protected override void DisposeManagedResources()
             {
+            m_CancellationTokenSource?.Dispose();
             base.DisposeManagedResources();
             }
 

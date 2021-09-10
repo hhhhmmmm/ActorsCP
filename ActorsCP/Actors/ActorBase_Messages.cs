@@ -274,5 +274,70 @@ namespace ActorsCP.Actors
             }
 
         #endregion Генераторы сообщений
+
+        #region Методы для вызовы ивентов от имени объекта
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить
+        /// </summary>
+        /// <param name="action">Текст сообщения</param>
+        /// <param name="eventType">Тип сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorAction(string action, ActorActionEventType eventType)
+            {
+            OnActorAction(action, eventType);
+            }
+
+        /// <summary>
+        /// Сообщить что-то отладочное от имени объекта
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorActionDebug(string action)
+            {
+            OnActorActionDebug(action);
+            }
+
+        /// <summary>
+        /// Сообщить что-то от имени объекта
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorAction(string action)
+            {
+            OnActorAction(action);
+            }
+
+        /// <summary>
+        /// Предупредить о чем то от имени объекта
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorActionWarning(string action)
+            {
+            OnActorActionWarning(action);
+            }
+
+        /// <summary>
+        /// Cообщить об ошибке от имени объекта
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorActionError(string action)
+            {
+            OnActorActionError(action);
+            }
+
+        /// <summary>
+        /// Cообщить об возникновении исключения от имени объекта
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        public void RaiseOnActorThrownAnException(Exception exception)
+            {
+            OnActorThrownAnException(exception);
+            }
+
+        #endregion Методы для вызовы ивентов от имени объекта
         } // end class ActorBase
     } // end namespace ActorsCP.Actors
