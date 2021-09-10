@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 using ActorsCP.Actors.Events;
@@ -125,5 +125,154 @@ namespace ActorsCP.Actors
             }
 
         #endregion IMessageChannel
+
+        #region Генераторы сообщений
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        protected void OnActorAction(string Action)
+            {
+            OnActorAction(Action, ActorActionEventType.Neutral);
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить
+        /// </summary>
+        /// <param name="Actions">Набор текстов сообщений</param>
+        protected void OnActorAction(params string[] Actions)
+            {
+            foreach (var action in Actions)
+                {
+                OnActorAction(action, ActorActionEventType.Neutral);
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить что-то отладочное
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        protected void OnActorActionDebug(string Action)
+            {
+            OnActorAction(Action, ActorActionEventType.Debug);
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить что-то системное
+        /// </summary>
+        /// <param name="Actions">Набор текстов сообщений</param>
+        protected void OnActorActionDebug(params string[] Actions)
+            {
+            foreach (var action in Actions)
+                {
+                OnActorAction(action, ActorActionEventType.Debug);
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект хочет о чем-то предупредить
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        protected void OnActorActionWarning(string Action)
+            {
+            OnActorAction(Action, ActorActionEventType.Warning);
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект хочет о чем-то предупредить
+        /// </summary>
+        /// <param name="Actions">Набор текстов сообщений</param>
+        protected void OnActorActionWarning(params string[] Actions)
+            {
+            foreach (var action in Actions)
+                {
+                OnActorAction(action, ActorActionEventType.Warning);
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект хочет сообщить об ошибке
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        protected void OnActorActionError(string Action)
+            {
+            OnActorAction(Action, ActorActionEventType.Error);
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект хочет сообщить об ошибке
+        /// </summary>
+        /// <param name="Actions">Набор текстов сообщений</param>
+        protected void OnActorActionError(params string[] Actions)
+            {
+            foreach (var action in Actions)
+                {
+                OnActorAction(action, ActorActionEventType.Error);
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется когда объект что-то хочет сообщить
+        /// </summary>
+        /// <param name="Action">Текст сообщения</param>
+        /// <param name="EventType">Тип сообщения</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
+        protected void OnActorAction(string Action, ActorActionEventType EventType)
+            {
+            switch (EventType)
+                {
+                case ActorActionEventType.Debug:
+                    {
+                    RaiseDebug(Action);
+                    break;
+                    }
+                case ActorActionEventType.Neutral:
+                    {
+                    RaiseMessage(Action);
+                    break;
+                    }
+                case ActorActionEventType.Warning:
+                    {
+                    RaiseWarning(Action);
+                    break;
+                    }
+                case ActorActionEventType.Error:
+                    {
+                    RaiseError(Action);
+                    break;
+                    }
+
+                default:
+                    {
+                    OnActorActionError("Необработанный тип сообщения");
+                    throw new ArgumentException("Необработанный тип сообщения");
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется при возникновении исключения при вызове какого-либо метода
+        /// </summary>
+        /// <param name="earray">Массив исключений</param>
+        protected virtual void OnActorThrownAnException(params Exception[] earray)
+            {
+            foreach (Exception e in earray)
+                {
+                OnActorThrownAnException(e);
+                }
+            }
+
+        /// <summary>
+        /// Событие генерируется при возникновении исключения при вызове какого-либо метода
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
+        protected void OnActorThrownAnException(Exception exception)
+            {
+            RaiseException(exception);
+            }
+
+        #endregion Генераторы сообщений
         } // end class ActorBase
     } // end namespace ActorsCP.Actors

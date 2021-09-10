@@ -142,7 +142,7 @@ namespace ActorsCP.Actors
                 {
                 if (IsTerminated)
                     {
-                    RaiseError("Попытка запуска завершенного объекта");
+                    OnActorActionError("Попытка запуска завершенного объекта");
                     return false;
                     }
 
@@ -150,20 +150,20 @@ namespace ActorsCP.Actors
                     {
                     return true;
                     }
-                RaiseMessage($"Запуск {Name}...");
+                OnActorAction($"Запуск {Name}...");
                 var bres = await InternalStartAsync();
                 if (bres)
                     {
                     SetActorState(ActorState.Started);
-                    RaiseMessage($"{Name} успешно запущен");
+                    OnActorAction($"{Name} успешно запущен");
                     return true;
                     }
-                RaiseMessage($"Ошибка запуска {Name}");
+                OnActorActionError($"Ошибка запуска {Name}");
                 return false;
                 }
             catch (Exception e)
                 {
-                RaiseException(e);
+                OnActorThrownAnException(e);
                 await TerminateAsync();
                 return false;
                 }
@@ -179,7 +179,7 @@ namespace ActorsCP.Actors
                 {
                 if (IsTerminated)
                     {
-                    RaiseError("Попытка запуска завершенного объекта");
+                    OnActorActionError("Попытка запуска завершенного объекта");
                     return false;
                     }
 
@@ -187,11 +187,11 @@ namespace ActorsCP.Actors
                     {
                     return true;
                     }
-                RaiseMessage($"Остановка {Name}...");
+                OnActorAction($"Остановка {Name}...");
                 var bres = await InternalStopAsync();
                 if (bres)
                     {
-                    RaiseMessage($"{Name} остановлен");
+                    OnActorAction($"{Name} остановлен");
                     SetActorState(ActorState.Stopped);
                     return true;
                     }
@@ -199,7 +199,7 @@ namespace ActorsCP.Actors
                 }
             catch (Exception e)
                 {
-                RaiseException(e);
+                OnActorThrownAnException(e);
                 await TerminateAsync();
                 return false;
                 }
@@ -216,25 +216,25 @@ namespace ActorsCP.Actors
                 {
                 if (IsTerminated)
                     {
-                    RaiseError("Попытка запуска завершенного объекта");
+                    OnActorActionError("Попытка запуска завершенного объекта");
                     return false;
                     }
 
                 if (IsRunning)
                     {
-                    RaiseError("Попытка запуска выполняющегося объекта");
+                    OnActorActionError("Попытка запуска выполняющегося объекта");
                     return false;
                     }
 
                 if (RunOnlyOnce && HasBeenRun)
                     {
-                    RaiseError("Повторный запуск запрещен");
+                    OnActorActionError("Повторный запуск запрещен");
                     return false;
                     }
 
                 #region Выполнение
 
-                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", RaiseMessage))
+                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction))
                     {
                     if (!IsStarted)
                         {
@@ -291,7 +291,7 @@ namespace ActorsCP.Actors
 
                 foreach (Exception e in ae.InnerExceptions)
                     {
-                    RaiseException(e);
+                    OnActorThrownAnException(e);
                     }
                 await TerminateAsync();
                 return false;
@@ -300,7 +300,7 @@ namespace ActorsCP.Actors
                 {
                 m_ExecutionTime.SetEndDate();
 
-                RaiseException(e);
+                OnActorThrownAnException(e);
                 await TerminateAsync();
                 return false;
                 } // end catch
@@ -323,7 +323,7 @@ namespace ActorsCP.Actors
                 }
             catch (Exception ex)
                 {
-                RaiseException(ex);
+                OnActorThrownAnException(ex);
                 return false;
                 }
             finally
