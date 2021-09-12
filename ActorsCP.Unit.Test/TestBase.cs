@@ -8,13 +8,13 @@ using NUnit.Framework;
 
 namespace ActorsCP.Unit.Test
     {
-    [TestFixture]
     /// <summary>
     /// Основа тестов
     /// </summary>
+    [TestFixture]
     public class TestBase : IMessageChannel
         {
-        private bool IsInitialized;
+        private bool _isInitialized;
 
         /// <summary>
         /// Инициализация
@@ -22,12 +22,12 @@ namespace ActorsCP.Unit.Test
         [SetUp]
         public void BaseInit()
             {
-            if (IsInitialized)
+            if (_isInitialized)
                 {
                 return;
                 }
 
-            IsInitialized = true;
+            _isInitialized = true;
             }
 
         #region IMessageChannel
@@ -72,10 +72,16 @@ namespace ActorsCP.Unit.Test
 
         #region Свойства
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="actor"></param>
         private void ConfigureActor(ActorBase actor)
             {
             actor.SetIMessageChannel(this);
             }
+
+        #region Генераторы акторов
 
         /// <summary>
         /// Новый пустой актор
@@ -91,13 +97,19 @@ namespace ActorsCP.Unit.Test
             }
 
         /// <summary>
-        ///
+        /// Новый актор ExceptionActor
         /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
+        public ActorBase NewExceptionActor
+            {
+            get
+                {
+                var actor = new ExceptionActor();
+                ConfigureActor(actor);
+                return actor;
+                }
+            }
+
+        #endregion Генераторы акторов
 
         #endregion Свойства
         } // end class TestBase

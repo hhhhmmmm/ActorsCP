@@ -10,14 +10,13 @@ namespace ActorsCP.TestActors
     /// <summary>
     /// Выбрасывает исключения при разных условиях
     /// </summary>
-    public class ExceptionActor : ActorBase
+    public class ExceptionActor : TestActorBase
         {
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="parameter"></param>
         public ExceptionActor()
             {
             }

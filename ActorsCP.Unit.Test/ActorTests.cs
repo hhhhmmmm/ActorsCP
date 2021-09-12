@@ -1,8 +1,7 @@
-﻿using ActorsCP.TestActors;
+﻿using System.Threading.Tasks;
 using ActorsCP.Actors;
-
+using ActorsCP.TestActors;
 using NUnit.Framework;
-using System.Threading.Tasks;
 
 namespace ActorsCP.Unit.Test
     {
@@ -59,6 +58,7 @@ namespace ActorsCP.Unit.Test
             bres = await exStart.StartAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exStart.State, ActorState.Terminated);
+            Assert.IsTrue(exStart.AnErrorOccurred);
 
             // стоп
             var exStop = new ExceptionActor();
@@ -66,10 +66,12 @@ namespace ActorsCP.Unit.Test
             bres = await exStop.StartAsync();
             Assert.IsTrue(bres);
             Assert.AreEqual(exStop.State, ActorState.Started);
+            Assert.IsFalse(exStop.AnErrorOccurred);
 
             bres = await exStop.StopAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exStop.State, ActorState.Terminated);
+            Assert.IsTrue(exStop.AnErrorOccurred);
 
             // run
             var exRun = new ExceptionActor();
@@ -77,6 +79,7 @@ namespace ActorsCP.Unit.Test
             bres = await exRun.RunAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exRun.State, ActorState.Terminated);
+            Assert.IsTrue(exRun.AnErrorOccurred);
 
             // Cleanup
             var exCleanup = new ExceptionActor();
@@ -84,6 +87,7 @@ namespace ActorsCP.Unit.Test
             bres = await exCleanup.RunAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exCleanup.State, ActorState.Terminated);
+            Assert.IsTrue(exCleanup.AnErrorOccurred);
             }
 
         [Test]
@@ -199,6 +203,25 @@ namespace ActorsCP.Unit.Test
             Assert.IsTrue(a.IsCanceled);
 
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            }
+
+        [Test]
+        [TestCase(TestName = "60. Перегрузки InternalXXX")]
+        public async Task InternalXxx()
+            {
+            SimpleActor actor;
+            using (var a = new SimpleActor())
+                {
+                actor = a;
+                await a.RunAsync();
+                Assert.IsTrue(a.InternalInitLogger_Called);
+                Assert.IsTrue(a.InternalStartAsync_Called);
+                Assert.IsTrue(a.InternalStopAsync_Called);
+                Assert.IsTrue(a.InternalRunAsync_Called);
+                Assert.IsTrue(a.InternalRunCleanupBeforeTerminationAsync_Called);
+                }
+            Assert.IsTrue(actor.DisposeManagedResources_Called);
+            Assert.IsTrue(actor.DisposeUnmanagedResources_Called);
             }
         }
     }

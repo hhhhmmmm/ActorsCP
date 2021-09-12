@@ -9,7 +9,7 @@ namespace ActorsCP.TestActors
     /// <summary>
     ///
     /// </summary>
-    public class SimpleActor : ActorBase
+    public class SimpleActor : TestActorBase
         {
         #region Конструкторы
 
