@@ -7,7 +7,6 @@ namespace ActorsCP.Actors
     /// Структура хранит минимальное время начала выполнения задач и максимальное время окончания
     /// выполнения задач из списка выполнения
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [ComVisible(false)]
     public struct ActorTime
         {

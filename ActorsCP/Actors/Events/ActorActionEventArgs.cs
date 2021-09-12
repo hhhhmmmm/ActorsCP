@@ -95,7 +95,7 @@ namespace ActorsCP.Actors.Events
         /// <returns></returns>
         public override string ToString()
             {
-            return $"{ActionEventType.ToString()} '{Action.ToString()}' ";
+            return $"{ActionEventType} '{Action}' ";
             }
 
         #endregion Перегружаемые методы

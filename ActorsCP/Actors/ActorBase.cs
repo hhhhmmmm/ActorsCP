@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -17,7 +16,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Успешно завершенная задача
         /// </summary>
-        protected Task<bool> CompletedTaskBoolTrue
+        protected static Task<bool> CompletedTaskBoolTrue
             {
             get
                 {
@@ -28,7 +27,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Неуспешно завершенная задача
         /// </summary>
-        protected Task<bool> CompletedTaskBoolFalse
+        protected static Task<bool> CompletedTaskBoolFalse
             {
             get
                 {
@@ -64,7 +63,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorBase()
             {
-            SetName($"Безымянный объект ActorUID = {ActorUID}");
+            SetName($"Безымянный объект ActorUid = {ActorUid}");
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
@@ -95,7 +94,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный идентификатор объекта
         /// </summary>
-        public Guid ActorUID
+        public Guid ActorUid
             {
             get;
             protected set;
@@ -143,6 +142,15 @@ namespace ActorsCP.Actors
         /// RunAsync() уже выполнялась
         /// </summary>
         public bool HasBeenRun
+            {
+            get;
+            private set;
+            }
+
+        /// <summary>
+        /// В процессе работы возникли ошибки
+        /// </summary>
+        public bool AnErrorOccurred
             {
             get;
             private set;
@@ -201,6 +209,14 @@ namespace ActorsCP.Actors
         #region Защищенные методы
 
         /// <summary>
+        /// Установит флаг AnErrorOccurred
+        /// </summary>
+        protected void SetAnErrorOccurred()
+            {
+            AnErrorOccurred = true;
+            }
+
+        /// <summary>
         /// Внутренняя очистка
         /// </summary>
         private void CleanUp()
@@ -232,26 +248,31 @@ namespace ActorsCP.Actors
                 case ActorState.Pending:
                     {
                     RaiseActorEvent(ActorStates.Pending);
+                    RaiseActorStateChanged(ActorStates.Pending);
                     break;
                     }
                 case ActorState.Started:
                     {
                     RaiseActorEvent(ActorStates.Started);
+                    RaiseActorStateChanged(ActorStates.Started);
                     break;
                     }
                 case ActorState.Stopped:
                     {
                     RaiseActorEvent(ActorStates.Stopped);
+                    RaiseActorStateChanged(ActorStates.Stopped);
                     break;
                     }
                 case ActorState.Running:
                     {
                     RaiseActorEvent(ActorStates.Running);
+                    RaiseActorStateChanged(ActorStates.Running);
                     break;
                     }
                 case ActorState.Terminated:
                     {
                     RaiseActorEvent(ActorStates.Terminated);
+                    RaiseActorStateChanged(ActorStates.Terminated);
                     CleanUp();
                     break;
                     }

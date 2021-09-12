@@ -91,8 +91,6 @@ namespace ActorsCP.Actors
         /// </summary>
         protected async void OnOperationCanceledException()
             {
-            bool bres;
-
             if (this.ExecutionTime.HasStartDate)
                 {
                 ExecutionTime.SetEndDate();
@@ -102,12 +100,12 @@ namespace ActorsCP.Actors
 
             if (IsStarted || IsRunning)
                 {
-                bres = await StopAsync();
+                await StopAsync();
                 }
 
             if (!IsTerminated)
                 {
-                bres = await TerminateAsync();
+                await TerminateAsync();
                 }
             }
         } // end class ActorBase

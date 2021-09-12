@@ -36,6 +36,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActorsSetTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="ActorTests.cs" />
   </ItemGroup>

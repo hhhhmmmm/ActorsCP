@@ -25,13 +25,22 @@ namespace ActorsCP.Actors
         /// <param name="actorEventArgs">Событие</param>
         protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
             {
-            m_Events?.Invoke(this, actorEventArgs);
+            _events?.Invoke(this, actorEventArgs);
+            }
+
+        /// <summary>
+        /// Выкинуть событие - изменилось состояние объекта
+        /// </summary>
+        /// <param name="actorStateChangedEventArgs">Событие</param>
+        protected void RaiseActorStateChanged(ActorStateChangedEventArgs actorStateChangedEventArgs)
+            {
+            _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
             }
 
         /// <summary>
         /// События объекта
         /// </summary>
-        private event EventHandler<ActorEventArgs> m_Events;
+        private event EventHandler<ActorEventArgs> _events;
 
         /// <summary>
         /// События объекта
@@ -40,11 +49,31 @@ namespace ActorsCP.Actors
             {
             add
                 {
-                m_Events += value;
+                _events += value;
                 }
             remove
                 {
-                m_Events -= value;
+                _events -= value;
+                }
+            }
+
+        /// <summary>
+        /// События объекта
+        /// </summary>
+        private event EventHandler<ActorStateChangedEventArgs> _stateChangedEvents;
+
+        /// <summary>
+        /// События - изменилось состояние объекта
+        /// </summary>
+        public event EventHandler<ActorStateChangedEventArgs> StateChangedEvents
+            {
+            add
+                {
+                _stateChangedEvents += value;
+                }
+            remove
+                {
+                _stateChangedEvents -= value;
                 }
             }
 
@@ -131,19 +160,19 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Событие генерируется когда объект что-то хочет сообщить
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        protected void OnActorAction(string Action)
+        /// <param name="action">Текст сообщения</param>
+        protected void OnActorAction(string action)
             {
-            OnActorAction(Action, ActorActionEventType.Neutral);
+            OnActorAction(action, ActorActionEventType.Neutral);
             }
 
         /// <summary>
         /// Событие генерируется когда объект что-то хочет сообщить
         /// </summary>
-        /// <param name="Actions">Набор текстов сообщений</param>
-        protected void OnActorAction(params string[] Actions)
+        /// <param name="actions">Набор текстов сообщений</param>
+        protected void OnActorAction(params string[] actions)
             {
-            foreach (var action in Actions)
+            foreach (var action in actions)
                 {
                 OnActorAction(action, ActorActionEventType.Neutral);
                 }
@@ -152,19 +181,19 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Событие генерируется когда объект что-то хочет сообщить что-то отладочное
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        protected void OnActorActionDebug(string Action)
+        /// <param name="action">Текст сообщения</param>
+        protected void OnActorActionDebug(string action)
             {
-            OnActorAction(Action, ActorActionEventType.Debug);
+            OnActorAction(action, ActorActionEventType.Debug);
             }
 
         /// <summary>
         /// Событие генерируется когда объект что-то хочет сообщить что-то системное
         /// </summary>
-        /// <param name="Actions">Набор текстов сообщений</param>
-        protected void OnActorActionDebug(params string[] Actions)
+        /// <param name="actions">Набор текстов сообщений</param>
+        protected void OnActorActionDebug(params string[] actions)
             {
-            foreach (var action in Actions)
+            foreach (var action in actions)
                 {
                 OnActorAction(action, ActorActionEventType.Debug);
                 }
@@ -173,19 +202,19 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Событие генерируется когда объект хочет о чем-то предупредить
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        protected void OnActorActionWarning(string Action)
+        /// <param name="action">Текст сообщения</param>
+        protected void OnActorActionWarning(string action)
             {
-            OnActorAction(Action, ActorActionEventType.Warning);
+            OnActorAction(action, ActorActionEventType.Warning);
             }
 
         /// <summary>
         /// Событие генерируется когда объект хочет о чем-то предупредить
         /// </summary>
-        /// <param name="Actions">Набор текстов сообщений</param>
-        protected void OnActorActionWarning(params string[] Actions)
+        /// <param name="actions">Набор текстов сообщений</param>
+        protected void OnActorActionWarning(params string[] actions)
             {
-            foreach (var action in Actions)
+            foreach (var action in actions)
                 {
                 OnActorAction(action, ActorActionEventType.Warning);
                 }
@@ -194,19 +223,19 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Событие генерируется когда объект хочет сообщить об ошибке
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        protected void OnActorActionError(string Action)
+        /// <param name="action">Текст сообщения</param>
+        protected void OnActorActionError(string action)
             {
-            OnActorAction(Action, ActorActionEventType.Error);
+            OnActorAction(action, ActorActionEventType.Error);
             }
 
         /// <summary>
         /// Событие генерируется когда объект хочет сообщить об ошибке
         /// </summary>
-        /// <param name="Actions">Набор текстов сообщений</param>
-        protected void OnActorActionError(params string[] Actions)
+        /// <param name="actions">Набор текстов сообщений</param>
+        protected void OnActorActionError(params string[] actions)
             {
-            foreach (var action in Actions)
+            foreach (var action in actions)
                 {
                 OnActorAction(action, ActorActionEventType.Error);
                 }
@@ -215,31 +244,30 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Событие генерируется когда объект что-то хочет сообщить
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
+        /// <param name="action">Текст сообщения</param>
         /// <param name="EventType">Тип сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-        protected void OnActorAction(string Action, ActorActionEventType EventType)
+        protected void OnActorAction(string action, ActorActionEventType EventType)
             {
             switch (EventType)
                 {
                 case ActorActionEventType.Debug:
                     {
-                    RaiseDebug(Action);
+                    RaiseDebug(action);
                     break;
                     }
                 case ActorActionEventType.Neutral:
                     {
-                    RaiseMessage(Action);
+                    RaiseMessage(action);
                     break;
                     }
                 case ActorActionEventType.Warning:
                     {
-                    RaiseWarning(Action);
+                    RaiseWarning(action);
                     break;
                     }
                 case ActorActionEventType.Error:
                     {
-                    RaiseError(Action);
+                    RaiseError(action);
                     break;
                     }
 
@@ -267,9 +295,9 @@ namespace ActorsCP.Actors
         /// Событие генерируется при возникновении исключения при вызове какого-либо метода
         /// </summary>
         /// <param name="exception">Исключение</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         protected void OnActorThrownAnException(Exception exception)
             {
+            SetAnErrorOccurred();
             RaiseException(exception);
             }
 
@@ -282,7 +310,6 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="action">Текст сообщения</param>
         /// <param name="eventType">Тип сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
         public void RaiseOnActorAction(string action, ActorActionEventType eventType)
             {
             OnActorAction(action, eventType);
@@ -291,8 +318,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Сообщить что-то отладочное от имени объекта
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        /// <param name="action">Текст сообщения</param>
         public void RaiseOnActorActionDebug(string action)
             {
             OnActorActionDebug(action);
@@ -301,8 +327,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Сообщить что-то от имени объекта
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        /// <param name="action">Текст сообщения</param>
         public void RaiseOnActorAction(string action)
             {
             OnActorAction(action);
@@ -311,8 +336,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Предупредить о чем то от имени объекта
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        /// <param name="action">Текст сообщения</param>
         public void RaiseOnActorActionWarning(string action)
             {
             OnActorActionWarning(action);
@@ -321,8 +345,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Cообщить об ошибке от имени объекта
         /// </summary>
-        /// <param name="Action">Текст сообщения</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
+        /// <param name="action">Текст сообщения</param>
         public void RaiseOnActorActionError(string action)
             {
             OnActorActionError(action);
@@ -332,7 +355,6 @@ namespace ActorsCP.Actors
         /// Cообщить об возникновении исключения от имени объекта
         /// </summary>
         /// <param name="exception">Исключение</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
         public void RaiseOnActorThrownAnException(Exception exception)
             {
             OnActorThrownAnException(exception);

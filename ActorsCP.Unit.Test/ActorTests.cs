@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 namespace ActorsCP.Unit.Test
     {
     [TestFixture]
-    // [Description("Тесты актора")]
     [Category("Тесты актора")]
-    public class ActorTests : TestBase
+    public sealed class ActorTests : TestBase
         {
         /// <summary>
         /// Инициализация
@@ -133,7 +132,6 @@ namespace ActorsCP.Unit.Test
         [TestCase(TestName = "50. Тесты отмены без запуска")]
         public async Task CancellationTests_50()
             {
-            bool bres;
             var a = new ExceptionActor();
             Assert.AreEqual(ActorState.Pending, a.State);
             Assert.IsFalse(a.IsCanceled);
