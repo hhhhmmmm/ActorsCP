@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ActorsCP.Actors
@@ -7,15 +6,23 @@ namespace ActorsCP.Actors
     /// <summary>
     ///
     /// </summary>
-    public class ActorsQueue : ActorBase, IActors
+    public class ActorsQueue : ActorsSet
         {
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="parameter"></param>
-        public ActorsQueue() // (object parameter) : base(parameter)
+        public ActorsQueue()
+            {
+            SetName("Очередь объектов");
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название очереди объектов</param>
+        public ActorsQueue(string name) : base(name)
             {
             }
 
