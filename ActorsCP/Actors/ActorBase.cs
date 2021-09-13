@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
+using ActorsCP.Options;
 
 namespace ActorsCP.Actors
     {
@@ -127,6 +129,36 @@ namespace ActorsCP.Actors
                 {
                 return m_ExecutionTime;
                 }
+            }
+
+        #region Опции актора
+
+        private IActorOptions _actorOptions = null;
+
+        /// <summary>
+        /// Опции актора
+        /// </summary>
+        public IActorOptions Options
+            {
+            get
+                {
+                lock (Locker)
+                    {
+                    if (_actorOptions == null)
+                        {
+                        _actorOptions = new ActorOptions();
+                        }
+                    return _actorOptions;
+                    }
+                }
+            }
+
+        #endregion Опции актора
+
+        private static IActorOptions ff()
+            {
+            var o = new ActorOptions();
+            return o;
             }
 
         /// <summary>
@@ -351,6 +383,15 @@ namespace ActorsCP.Actors
             }
 
         #endregion Методы
+
+        /// <summary>
+        /// Установить персональные опции актора
+        /// </summary>
+        /// <param name="actorOptions">Опции актора</param>
+        private void SetActorOptions(IActorOptions actorOptions)
+            {
+            _actorOptions = actorOptions;
+            }
 
         /// <summary>
         ///
