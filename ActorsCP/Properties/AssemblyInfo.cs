@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Библиотека объектов")]
-[assembly: AssemblyDescription("Собрано VS2019")]
+[assembly: AssemblyDescription("Собрано VS2019.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ActorsCP")]
