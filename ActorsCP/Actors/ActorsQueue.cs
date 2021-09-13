@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ActorsCP.Actors
     {
@@ -27,6 +28,35 @@ namespace ActorsCP.Actors
             }
 
         #endregion Конструкторы
+
+        #region Перегруженные методы
+
+        /// <summary>
+        /// Перегружаемая функция для выполнения некоторых действий
+        /// </summary>
+        /// <returns>true если объект все выполнил успешно</returns>
+        protected override async Task<bool> InternalRunAsync()
+            {
+            bool bresult = true;
+            if (WaitingCount == 0)
+                {
+                return true;
+                }
+
+            var array = _waiting.ToArray();
+            foreach (var actor in array)
+                {
+                bool bres = await actor.RunAsync();
+                if (!bres)
+                    {
+                    bresult = false;
+                    }
+                }
+
+            return bresult;
+            }
+
+        #endregion Перегруженные методы
 
         #region Свойства
 

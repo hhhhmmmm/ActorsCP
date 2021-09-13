@@ -3,7 +3,7 @@
 namespace ActorsCP.Actors.Events
     {
     /// <summary>
-    /// Базовый класс сообщений актора
+    /// Базовый класс сообщений объекта
     /// </summary>
     public class ActorEventArgs : EventArgs
         {

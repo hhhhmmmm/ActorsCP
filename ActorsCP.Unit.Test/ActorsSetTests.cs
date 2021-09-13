@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ActorsCP.Unit.Test
     {
     [TestFixture]
-    [Category("Тесты набора акторов")]
+    [Category("Тесты набора объектов")]
     public sealed class ActorsSetTests : TestBase
         {
         /// <summary>
@@ -19,7 +19,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "10. Пустой набор акторов")]
+        [TestCase(TestName = "10. Пустой набор объектов")]
         public Task EmptyTest()
             {
             var aset = new ActorsSet();
@@ -31,7 +31,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "11. 1 Pending актор")]
+        [TestCase(TestName = "11. 1 Pending объект")]
         public Task PendingTest_1()
             {
             var actor = base.NewPendingActor;
@@ -50,7 +50,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "12. 2 Pending актора")]
+        [TestCase(TestName = "12. 2 Pending объект")]
         public Task PendingTest_2()
             {
             var actor = base.NewPendingActor;
@@ -77,7 +77,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "13. 1 runnning RunOnce актор")]
+        [TestCase(TestName = "13. 1 runnning RunOnce объект")]
         public async Task RunningTest_1()
             {
             var actor = base.NewPendingActor;
@@ -96,7 +96,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "14. 1 runnning & 1 Pending  актор")]
+        [TestCase(TestName = "14. 1 runnning & 1 Pending  объект")]
         public async Task RunningPendingTest_1()
             {
             var actor = base.NewPendingActor;
@@ -123,7 +123,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "15. 1 Pending->Run() актор")]
+        [TestCase(TestName = "15. 1 Pending->Run() объект")]
         public async Task Pending_Run_Test_1()
             {
             var actor = base.NewPendingActor;

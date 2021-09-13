@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors;
 
 namespace ActorsCP.TestActors
     {
     /// <summary>
-    /// Базовый класс тестового актора
+    /// Базовый класс тестового объекта
     /// </summary>
     public class TestActorBase : ActorBase
         {

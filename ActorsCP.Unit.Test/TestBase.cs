@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
 using ActorsCP.TestActors;
+
 using NUnit.Framework;
 
 namespace ActorsCP.Unit.Test
@@ -81,10 +83,10 @@ namespace ActorsCP.Unit.Test
             actor.SetIMessageChannel(this);
             }
 
-        #region Генераторы акторов
+        #region Генераторы объекта
 
         /// <summary>
-        /// Новый пустой актор
+        /// Новый пустой объект
         /// </summary>
         public ActorBase NewPendingActor
             {
@@ -97,7 +99,7 @@ namespace ActorsCP.Unit.Test
             }
 
         /// <summary>
-        /// Новый актор ExceptionActor
+        /// Новый объект ExceptionActor
         /// </summary>
         public ExceptionActor NewExceptionActor
             {
@@ -109,7 +111,7 @@ namespace ActorsCP.Unit.Test
                 }
             }
 
-        #endregion Генераторы акторов
+        #endregion Генераторы объекта
 
         #endregion Свойства
         } // end class TestBase

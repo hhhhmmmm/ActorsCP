@@ -54,7 +54,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Время выполнения Run()
         /// </summary>
-        private ActorTime m_ExecutionTime = default(ActorTime);
+        private ActorTime m_ExecutionTime = default;
 
         #endregion Внутренние объекты
 
@@ -112,7 +112,7 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
-        /// Состояние актора
+        /// Состояние объекта
         /// </summary>
         public ActorState State
             {
@@ -131,12 +131,12 @@ namespace ActorsCP.Actors
                 }
             }
 
-        #region Опции актора
+        #region Опции объекта
 
         private IActorOptions _actorOptions = null;
 
         /// <summary>
-        /// Опции актора
+        /// Опции объекта
         /// </summary>
         public IActorOptions Options
             {
@@ -153,13 +153,7 @@ namespace ActorsCP.Actors
                 }
             }
 
-        #endregion Опции актора
-
-        private static IActorOptions ff()
-            {
-            var o = new ActorOptions();
-            return o;
-            }
+        #endregion Опции объекта
 
         /// <summary>
         /// Разрешен запуск RunAsync() только один раз
@@ -260,7 +254,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Установить новое состояние объекта
         /// </summary>
-        /// <param name="newState">новое состояние актора</param>
+        /// <param name="newState">новое состояние объекта</param>
         private void SetActorState(ActorState newState)
             {
             if (State == newState)
@@ -385,10 +379,10 @@ namespace ActorsCP.Actors
         #endregion Методы
 
         /// <summary>
-        /// Установить персональные опции актора
+        /// Установить персональные опции объекта
         /// </summary>
-        /// <param name="actorOptions">Опции актора</param>
-        private void SetActorOptions(IActorOptions actorOptions)
+        /// <param name="actorOptions">Опции объекта</param>
+        public void SetActorOptions(IActorOptions actorOptions)
             {
             _actorOptions = actorOptions;
             }

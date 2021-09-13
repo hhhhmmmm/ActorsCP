@@ -4,7 +4,7 @@ using System.Text;
 namespace ActorsCP.Actors
     {
     /// <summary>
-    /// Состояние актора
+    /// Состояние объекта
     /// </summary>
     public enum ActorState
         {

@@ -14,31 +14,56 @@ namespace ActorsCP.Unit.Test
     [Category("Тесты очереди")]
     public class ActorQueueTests : TestBase
         {
-        #region Конструкторы
-
         /// <summary>
-        /// Конструктор
+        /// Инициализация
         /// </summary>
-        /// <param name="parameter"></param>
-        public ActorQueueTests() // (object parameter) : base(parameter)
+        [SetUp]
+        public void Init()
             {
             }
 
-        #endregion Конструкторы
+        [Test]
+        [TestCase(TestName = "10. Пустая очередь")]
+        public Task EmptyQueue()
+            {
+            var queue = new ActorsQueue();
+            Assert.AreEqual(0, queue.WaitingCount);
+            Assert.AreEqual(0, queue.RunningCount);
+            Assert.AreEqual(0, queue.CompletedCount);
+            Assert.AreEqual(0, queue.TotalCount);
+            return Task.CompletedTask;
+            }
 
-        #region Свойства
+        [Test]
+        [TestCase(TestName = "11. Простая очередь")]
+        public async Task SimpleActorQueue()
+            {
+            var queue = new ActorsQueue();
+            Assert.AreEqual(0, queue.WaitingCount);
+            Assert.AreEqual(0, queue.RunningCount);
+            Assert.AreEqual(0, queue.CompletedCount);
+            Assert.AreEqual(0, queue.TotalCount);
 
-        /// <summary>
-        ///
-        /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
+            const int N = 10;
 
-        #endregion Свойства
+            for (int i = 0; i < N; i++)
+                {
+                string name = string.Format("Объект {0}", i + 1);
+                var actor = new SimpleActor(name);
+                queue.Add(actor);
+                }
 
-        //
+            Assert.AreEqual(N, queue.WaitingCount);
+            Assert.AreEqual(0, queue.RunningCount);
+            Assert.AreEqual(0, queue.CompletedCount);
+            Assert.AreEqual(N, queue.TotalCount);
+
+            await queue.RunAsync();
+
+            Assert.AreEqual(0, queue.WaitingCount);
+            Assert.AreEqual(0, queue.RunningCount);
+            Assert.AreEqual(N, queue.CompletedCount);
+            Assert.AreEqual(N, queue.TotalCount);
+            }
         } // end class ActorQueueTests
     } // end namespace ActorsCP.Unit.Test

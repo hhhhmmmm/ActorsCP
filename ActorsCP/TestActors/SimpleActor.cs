@@ -21,6 +21,14 @@ namespace ActorsCP.TestActors
             {
             }
 
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">name</param>
+        public SimpleActor(string name) : base(name)
+            {
+            }
+
         #endregion Конструкторы
 
         #region Свойства

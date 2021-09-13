@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
+
 using ActorsCP.Actors;
 using ActorsCP.TestActors;
+
 using NUnit.Framework;
 
 namespace ActorsCP.Unit.Test
     {
     [TestFixture]
-    [Category("Тесты актора")]
+    [Category("Тесты объекта")]
     public sealed class ActorTests : TestBase
         {
         /// <summary>
@@ -18,7 +20,7 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "10. Тесты состояния актора пустого актора")]
+        [TestCase(TestName = "10. Тесты состояния пустого объекта")]
         public async Task StateTests()
             {
             bool bres;

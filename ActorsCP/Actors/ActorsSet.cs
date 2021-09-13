@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -87,7 +88,7 @@ namespace ActorsCP.Actors
         ///// <summary>
         ///// Список объектов ожидающих выполнения
         ///// </summary>
-        private readonly List<ActorBase> _waiting = new List<ActorBase>();
+        protected readonly List<ActorBase> _waiting = new List<ActorBase>();
 
         /// <summary>
         /// Количество объектов ожидающих выполнения
@@ -181,7 +182,7 @@ namespace ActorsCP.Actors
         #endregion Реализация интерфейса IDisposable
 
         /// <summary>
-        /// Обработчик событий акторов об изменении состояния
+        /// Обработчик событий объектов об изменении состояния
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -594,7 +595,7 @@ namespace ActorsCP.Actors
         //#region Методы
 
         ///// <summary>
-        ///// Ожидание для группы акторов
+        ///// Ожидание для группы объектов
         ///// </summary>
         ////protected virtual void WaitForActorsGroup()
         ////    {
