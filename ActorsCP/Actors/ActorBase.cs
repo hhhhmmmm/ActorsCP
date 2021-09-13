@@ -242,7 +242,7 @@ namespace ActorsCP.Actors
         #region Защищенные методы
 
         /// <summary>
-        /// Установит флаг AnErrorOccurred
+        /// Установить флаг AnErrorOccurred
         /// </summary>
         protected void SetAnErrorOccurred()
             {

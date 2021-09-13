@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if DEBUG
+#define DEBUG_TRACK_MOVES
+#endif // DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -359,6 +363,10 @@ namespace ActorsCP.Actors
                     throw new InvalidOperationException($"Объект {Name} уже активен поэтому объект {actor.Name} не может быть помещен в cписке ожидания");
                     }
 
+#if DEBUG_TRACK_MOVES
+                Debug.WriteLine($"MoveToWaiting(): actor = {actor.Name}");
+#endif // DEBUG_TRACK_MOVES
+
                 if (_waiting.Contains(actor))
                     {
                     //if (raiseActorsSetChangedEvent)
@@ -419,6 +427,10 @@ namespace ActorsCP.Actors
                     throw new InvalidOperationException($"Объект {Name} не активен");
                     }
 
+#if DEBUG_TRACK_MOVES
+                Debug.WriteLine($"MoveToRunning(): actor = {actor.Name}");
+#endif // DEBUG_TRACK_MOVES
+
                 if (_running.Contains(actor))
                     {
                     //if (raiseActorsSetChangedEvent)
@@ -470,6 +482,10 @@ namespace ActorsCP.Actors
                     actor.StateChangedEvents -= Actor_StateChangedEvents; // первым делом отписываемся от событий
                     }
 
+#if DEBUG_TRACK_MOVES
+                Debug.WriteLine($"MoveToCompleted(): actor = {actor.Name}");
+#endif // DEBUG_TRACK_MOVES
+
                 if (_completed.Contains(actor))
                     {
                     //if (raiseActorsSetChangedEvent)
@@ -484,6 +500,11 @@ namespace ActorsCP.Actors
                 if (actor.State == ActorState.Terminated)
                     {
                     Interlocked.Increment(ref _completedCount);
+                    }
+
+                if (actor.AnErrorOccurred) // выставляем флаг ошибки если произошла хоть одна ошибка
+                    {
+                    SetAnErrorOccurred();
                     }
 
                 if (CleanupAfterTermination) // если флаг CleanupAfterTermination установлен, то сразу выбрасываем объект
