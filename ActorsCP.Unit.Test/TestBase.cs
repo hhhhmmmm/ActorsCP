@@ -99,7 +99,7 @@ namespace ActorsCP.Unit.Test
         /// <summary>
         /// Новый актор ExceptionActor
         /// </summary>
-        public ActorBase NewExceptionActor
+        public ExceptionActor NewExceptionActor
             {
             get
                 {

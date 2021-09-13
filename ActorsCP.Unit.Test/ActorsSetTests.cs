@@ -140,5 +140,27 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(1, aset.CompletedCount);
             Assert.AreEqual(1, aset.TotalCount);
             }
+
+        [Test]
+        [TestCase(TestName = "16. Exception")]
+        public async Task Exception_Test_1()
+            {
+            var exceptionActor = base.NewExceptionActor;
+            exceptionActor.ExceptionOnRun = true;
+
+            var aset = new ActorsSet();
+            Assert.AreEqual(0, aset.WaitingCount);
+            Assert.AreEqual(0, aset.RunningCount);
+            Assert.AreEqual(0, aset.CompletedCount);
+            Assert.AreEqual(0, aset.TotalCount);
+
+            aset.Add(exceptionActor);
+            await exceptionActor.RunAsync();
+
+            Assert.AreEqual(0, aset.WaitingCount);
+            Assert.AreEqual(0, aset.RunningCount);
+            Assert.AreEqual(1, aset.CompletedCount);
+            Assert.AreEqual(1, aset.TotalCount);
+            }
         }
     }
