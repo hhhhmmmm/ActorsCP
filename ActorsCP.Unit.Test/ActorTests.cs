@@ -55,16 +55,20 @@ namespace ActorsCP.Unit.Test
             {
             bool bres;
             // старт
-            var exStart = new ExceptionActor();
-            exStart.ExceptionOnStart = true;
+            var exStart = new ExceptionActor
+                {
+                ExceptionOnStart = true
+                };
             bres = await exStart.StartAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exStart.State, ActorState.Terminated);
             Assert.IsTrue(exStart.AnErrorOccurred);
 
             // стоп
-            var exStop = new ExceptionActor();
-            exStop.ExceptionOnStop = true;
+            var exStop = new ExceptionActor
+                {
+                ExceptionOnStop = true
+                };
             bres = await exStop.StartAsync();
             Assert.IsTrue(bres);
             Assert.AreEqual(exStop.State, ActorState.Started);
@@ -76,8 +80,10 @@ namespace ActorsCP.Unit.Test
             Assert.IsTrue(exStop.AnErrorOccurred);
 
             // run
-            var exRun = new ExceptionActor();
-            exRun.ExceptionOnRun = true;
+            var exRun = new ExceptionActor
+                {
+                ExceptionOnRun = true
+                };
             bres = await exRun.RunAsync();
             Assert.IsFalse(bres);
             Assert.AreEqual(exRun.State, ActorState.Terminated);

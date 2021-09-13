@@ -53,7 +53,8 @@ namespace ActorsCP.Actors
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected virtual Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        protected virtual Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             return CompletedTaskBoolTrue;
             }
@@ -299,7 +300,7 @@ namespace ActorsCP.Actors
                         }
 
                     return runtask.Result;
-                    }
+                    } // end using
 
                 #endregion Выполнение
                 } // end try
@@ -341,7 +342,7 @@ namespace ActorsCP.Actors
                 }
             try
                 {
-                var bres = await RunCleanupBeforeTerminationAsync();
+                var bres = await RunCleanupBeforeTerminationAsync(false);
                 return bres;
                 }
             catch (Exception ex)

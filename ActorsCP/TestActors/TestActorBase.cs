@@ -90,10 +90,10 @@ namespace ActorsCP.TestActors
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             InternalRunCleanupBeforeTerminationAsync_Called = true;
-            return base.InternalRunCleanupBeforeTerminationAsync();
+            return base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
             }
 
         #endregion Перегрузки

@@ -81,6 +81,17 @@ namespace ActorsCP.Actors
                 }
             }
 
+        /// <summary>
+        /// Очистить объект от хранимых в нем временных данных,
+        /// чтобы программа потребляла меньше памяти
+        /// Фактически - не добавлять объект в список завершенных
+        /// </summary>
+        public bool CleanupAfterTermination
+            {
+            get;
+            protected set;
+            } = true;
+
         #endregion Свойства
 
         #region Приватные мемберы
@@ -117,6 +128,8 @@ namespace ActorsCP.Actors
 
         #endregion Приватные мемберы
 
+        #region Приватные методы
+
         /// <summary>
         /// Проверить состояние набора объектов
         /// </summary>
@@ -146,13 +159,18 @@ namespace ActorsCP.Actors
             RaiseActorStateChanged(ev);
             }
 
+        #endregion Приватные методы
+
+        #region Перегруженные методы
+
         /// <summary>
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            var bres = await base.InternalRunCleanupBeforeTerminationAsync();
+            var bres = await base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
 
             lock (Locker)
                 {
@@ -160,11 +178,57 @@ namespace ActorsCP.Actors
                 _waitingCount = 0;
                 _running?.Clear();
                 _runningCount = 0;
-                _completed?.Clear();
-                _completedCount = 0;
+                if (fromDispose)
+                    {
+                    _completed?.Clear();
+                    _completedCount = 0;
+                    }
                 }
+            // SoftGarbageCollection("Очистка по завершению '" + Name + "'");
             return bres;
             }
+
+        /// <summary>
+        /// Установить родительский объект
+        /// </summary>
+        /// <param name="parentActor">Родительский объект</param>
+        public override void SetParent(ActorBase parentActor)
+            {
+            lock (Locker)
+                {
+                base.SetParent(parentActor);
+
+                foreach (var actor in _waiting)
+                    {
+                    actor.SetParent(parentActor);
+                    }
+
+                foreach (var actor in _running.Keys)
+                    {
+                    actor.SetParent(parentActor);
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Отменяет выполнение списка объектов
+        /// </summary>
+        public override async Task CancelAsync()
+            {
+            await base.CancelAsync();
+
+            foreach (var actor in _waiting)
+                {
+                await actor.CancelAsync();
+                }
+
+            foreach (var actor in _running.Keys)
+                {
+                await actor.CancelAsync();
+                }
+            }
+
+        #endregion Перегруженные методы
 
         #region Реализация интерфейса IDisposable
 
@@ -181,12 +245,14 @@ namespace ActorsCP.Actors
 
         #endregion Реализация интерфейса IDisposable
 
+        #region Обработчики событий
+
         /// <summary>
         /// Обработчик событий объектов об изменении состояния
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
+        private async void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
             {
             if (e is ActorSetCountChangedEventArgs) // события изменения состояния набора не интересны
                 {
@@ -231,7 +297,14 @@ namespace ActorsCP.Actors
                         {
                         if (!_completed.Contains(actor))
                             {
-                            MoveToCompleted(actor);
+                            if (!(actor.State == ActorState.Terminated))
+                                {
+                                await actor.TerminateAsync();
+                                }
+                            else
+                                {
+                                MoveToCompleted(actor);
+                                }
                             }
                         }
                     else
@@ -257,6 +330,8 @@ namespace ActorsCP.Actors
                     }
                 }
             }
+
+        #endregion Обработчики событий
 
         #region Методы перемещения
 
@@ -406,8 +481,19 @@ namespace ActorsCP.Actors
 
                 CheckActorsSetState();
 
-                Interlocked.Increment(ref _completedCount);
-                _completed.Add(actor);
+                if (actor.State == ActorState.Terminated)
+                    {
+                    Interlocked.Increment(ref _completedCount);
+                    }
+
+                if (CleanupAfterTermination) // если флаг CleanupAfterTermination установлен, то сразу выбрасываем объект
+                    {
+                    actor.Dispose(); // Вызываем Dispose() для actor
+                    }
+                else
+                    {
+                    _completed.Add(actor); // кладем в список завершенных
+                    }
 
                 if (_waiting.Contains(actor))
                     {
@@ -442,11 +528,6 @@ namespace ActorsCP.Actors
                 {
                 throw new ArgumentNullException(nameof(actor));
                 }
-
-            //    if (PoolClosed)
-            //        {
-            //        throw new InvalidOperationException("Объект закрыт для добавления новых объектов");
-            //        }
 
             actor.SetParent(this);
 
@@ -484,24 +565,15 @@ namespace ActorsCP.Actors
                 }
             }
 
-        //    //if (PoolClosed)
-        //    //    {
-        //    //    throw new InvalidOperationException("Объект закрыт для добавления новых объектов");
-        //    //    }
-
-        //    if (IsRunning && (RunningList.Count != 0))
-        //        {
-        //        throw new InvalidOperationException("Объект уже выполняет работу");
-        //        }
-
-        //    if (IsTerminated)
-        //        {
-        //        throw new InvalidOperationException("Объект уже выполнил всю работу");
-        //        }
-
-        //    actor.SetParent(this);
-        //    WaitingList.Enqueue(actor);
-        //    }
+        /// <summary>
+        /// Установить флаг автоматической очистки после завершения объекта
+        /// </summary>
+        /// <param name="cleanupAfterTermination">Если true, то по завершении выполнения
+        /// объекта он не будет помещаться в очередь и для него будет вызван Dispose()</param>
+        public void SetCleanupAfterTermination(bool cleanupAfterTermination)
+            {
+            CleanupAfterTermination = cleanupAfterTermination;
+            }
 
         /// <summary>
         /// Dispose объект если он поддерживает такую возможность
@@ -524,138 +596,55 @@ namespace ActorsCP.Actors
             }
 
         #endregion Вспомогательные методы
-
-        ///// <summary>
-        ///// Остановка обработки очереди при возникновении ошибки в работе любого из объектов
-        ///// </summary>
-        /////private bool _stopPoolOnError = false;
-
-        ///// <summary>
-        ///// Вспомогательный объект для создания функции WaitFor()
-        ///// </summary>
-        //private ManualResetEvent _inifiniteWaitEvent = new ManualResetEvent(false);
-
-        //#region PoolState
-
-        /////// <summary>
-        /////// Пул закрыт
-        /////// </summary>
-        ////private bool _poolClosed;
-
-        /////// <summary>
-        /////// Пул закрыт
-        /////// </summary>
-        ////public bool PoolClosed
-        ////    {
-        ////    get
-        ////        {
-        ////        return _poolClosed;
-        ////        }
-        ////    }
-
-        /////// <summary>
-        ///////
-        /////// </summary>
-        ////protected void ClosePool()
-        ////    {
-        ////    _poolClosed = true;
-        ////    }
-
-        //#endregion PoolState
-
-        //#region Свойства
-
-        ///// <summary>
-        ///// Остановка обработки очереди при возникновении ошибки в работе любого из объектов
-        ///// </summary>
-        ////public bool StopPoolOnError
-        ////    {
-        ////    get
-        ////        {
-        ////        return _stopPoolOnError;
-        ////        }
-
-        ////    set
-        ////        {
-        ////        _stopPoolOnError = value;
-        ////        }
-        ////    }
-
-        ///// <summary>
-        ///// Очистить объект от хранимых в нем временных данных, чтобы программа потребляла меньше памяти
-        ///// </summary>
-        ////public bool CleanupAfterTermination
-        ////    {
-        ////    get;
-        ////    set;
-        ////    } = true;
-
-        //#endregion Свойства
-
-        //#region Методы
-
-        ///// <summary>
-        ///// Ожидание для группы объектов
-        ///// </summary>
-        ////protected virtual void WaitForActorsGroup()
-        ////    {
-        ////    }
-
-        /// <summary>
-        /// Прокачать сообщения если поток выполнения - UI
-        /// </summary>
-        /// <returns>true если поток выполнения - UI</returns>
-        //protected static bool DoEvents()
-        //    {
-        //    return true; //
-        //                 //MessagePumpHelper.DoEvents();
-        //    }
-
-        /// <summary>
-        /// Отменяет выполнение списка объектов
-        /// </summary>
-        //    public override async Task CancelAsync()
-        //        {
-        //        await base.CancelAsync();
-
-        //        // ClosePool();
-
-        //        /*switch (Status)
-        //{
-        //case GuActorExecutionStatus.Pending:
-        //case GuActorExecutionStatus.Initialized:
-        //	{
-        //	// отменяем только ожидающие выполнения объекты выполняющиеся - пусть
-        //	// выполняются завершенные - уже завершились
-        //	foreach (GuActor actor in WaitingList)
-        //		{
-        //		actor.Cancel();
-        //		}
-
-        //	return;
-        //	}
-        //        }*/
-        //        }
-
-        #region Набор методов для переопределения
-
-        ///// <summary>
-        ///// Метод вызывается после отправки сигнала OnActorTerminated и предназначен для очистки
-        ///// объекта от хранимых в нем временных данных, чтобы программа потребляла меньше памяти
-        ///// </summary>
-        //protected override void RunCleanupAfterTermination()
-        //	{
-        //	if (CleanupAfterTermination)
-        //		{
-        //		ClearConcurrentQueue<GuActor>(this.WaitingList);
-        //		this.RunningList?.Clear();
-        //		ClearConcurrentQueue<GuActor>(this.CompletedList);
-        //		}
-
-        //	base.RunCleanupAfterTermination();
-        //	SoftGarbageCollection("Очистка по завершению '" + Name + "'");
-        //	}
-
-        #endregion Набор методов для переопределения
         }
     }
+
+///// <summary>
+///// Остановка обработки очереди при возникновении ошибки в работе любого из объектов
+///// </summary>
+/////private bool _stopPoolOnError = false;
+
+///// <summary>
+///// Вспомогательный объект для создания функции WaitFor()
+///// </summary>
+//private ManualResetEvent _inifiniteWaitEvent = new ManualResetEvent(false);
+
+/////// <summary>
+/////// Пул закрыт
+/////// </summary>
+////private bool _poolClosed;
+
+/////// <summary>
+/////// Пул закрыт
+/////// </summary>
+////public bool PoolClosed
+////    {
+////    get
+////        {
+////        return _poolClosed;
+////        }
+////    }
+
+/////// <summary>
+///////
+/////// </summary>
+////protected void ClosePool()
+////    {
+////    _poolClosed = true;
+////    }
+
+///// <summary>
+///// Остановка обработки очереди при возникновении ошибки в работе любого из объектов
+///// </summary>
+////public bool StopPoolOnError
+////    {
+////    get
+////        {
+////        return _stopPoolOnError;
+////        }
+
+////    set
+////        {
+////        _stopPoolOnError = value;
+////        }
+////    }

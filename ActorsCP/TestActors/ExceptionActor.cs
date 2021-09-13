@@ -106,13 +106,14 @@ namespace ActorsCP.TestActors
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             if (ExceptionOnRunCleanupBeforeTerminationAsync)
                 {
                 throw new Exception();
                 }
-            return base.InternalRunCleanupBeforeTerminationAsync();
+            return base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
             }
         } // end class ExceptionActor
     } // end namespace ActorsCP.TestActors

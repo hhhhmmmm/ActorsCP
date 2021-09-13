@@ -49,6 +49,17 @@ namespace ActorsCP.Helpers
                 }
             }
 
+        /// <summary>
+        /// Ключи
+        /// </summary>
+        public ICollection<TTypeparam> Keys
+            {
+            get
+                {
+                return Bag.Keys;
+                }
+            }
+
         #endregion Свойства
 
         #region Методы

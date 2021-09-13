@@ -199,7 +199,9 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Вызывает InternalRunCleanupBeforeTermination() один раз
         /// </summary>
-        private async Task<bool> RunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        /// <returns></returns>
+        private async Task<bool> RunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             if (m_InternalRunCleanupBeforeTermination)
                 {
@@ -207,7 +209,7 @@ namespace ActorsCP.Actors
                 }
             else
                 {
-                m_RunCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync();
+                m_RunCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose);
                 m_InternalRunCleanupBeforeTermination = true;
                 return m_RunCleanupBeforeTerminationAsyncResult;
                 }
@@ -217,15 +219,20 @@ namespace ActorsCP.Actors
 
         #region Реализация интерфейса IDisposable
 
-        /// <summary>Метод вызывается перед началом Dispose</summary>
+        /// <summary>
+        /// Метод вызывается перед началом Dispose
+        /// </summary>
         private async void PreDisposeHandler()
             {
             await TerminateAsync();
             }
 
-        /// <summary>Освободить управляемые ресурсы</summary>
-        protected override void DisposeManagedResources()
+        /// <summary>
+        /// Освободить управляемые ресурсы
+        /// </summary>
+        protected override async void DisposeManagedResources()
             {
+            await RunCleanupBeforeTerminationAsync(true);
             m_CancellationTokenSource?.Dispose();
             base.DisposeManagedResources();
             }
@@ -349,7 +356,7 @@ namespace ActorsCP.Actors
         /// Установить флаг разрешения запуска только один раз
         /// </summary>
         /// <param name="runOnlyOnce"></param>
-        public void SetRunOnlyOnce(bool runOnlyOnce)
+        public void SetRunOnlyOnce(bool runOnlyOnce = true)
             {
             RunOnlyOnce = runOnlyOnce;
             }
@@ -358,7 +365,7 @@ namespace ActorsCP.Actors
         /// Установить родительский объект
         /// </summary>
         /// <param name="parentActor">Родительский объект</param>
-        public void SetParent(ActorBase parentActor)
+        public virtual void SetParent(ActorBase parentActor)
             {
             if (m_ParentActor == parentActor)
                 {
