@@ -1,20 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActorsCP.Actors.Events
     {
     /// <summary>
-    /// Базовый класс сообщений актора
+    ///
     /// </summary>
-    public class ActorEventArgs : EventArgs
+    public class ActorStateChangedEventArgs : ActorEventArgs
         {
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ActorEventArgs()
+        /// <param name="state">Состояние актора</param>
+        public ActorStateChangedEventArgs(ActorState state)
             {
-            EventDate = DateTime.Now;
+            State = state;
             }
 
         #endregion Конструкторы
@@ -22,14 +25,16 @@ namespace ActorsCP.Actors.Events
         #region Свойства
 
         /// <summary>
-        /// Дата события
+        /// Состояние актора
         /// </summary>
-        public DateTime EventDate
+        public ActorState State
             {
             get;
             private set;
             }
 
         #endregion Свойства
-        }
-    }
+
+        //
+        } // end class ActorStateChangedEventArgs
+    } // end namespace ActorsCP.Actors.Events

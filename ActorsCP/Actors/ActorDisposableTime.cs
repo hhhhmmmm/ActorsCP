@@ -4,15 +4,10 @@ using System.Runtime.InteropServices;
 namespace ActorsCP.Actors
     {
     /// <summary>
-    /// Делегат который будет вызван по завершении жизни
-    /// </summary>
-    public delegate void GuActorDisposableTimeDelegate(string text);
-
-    /// <summary>
     /// Счетчик времени для использования совместно с using
     /// </summary>
     [ClassInterface(ClassInterfaceType.None)]
-    public class ActorDisposableTime : IDisposable
+    public sealed class ActorDisposableTime : IDisposable
         {
         /// <summary>
         /// Название счетчика
@@ -27,7 +22,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Делегат который будет вызван по завершении жизни
         /// </summary>
-        private readonly GuActorDisposableTimeDelegate m_Delegate;
+        private readonly Action<string> m_Delegate;
 
         #region Свойства
 
@@ -49,22 +44,22 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="CounterName">Название счетчика</param>
-        /// <param name="Delegate">Делегат который будет вызван по завершении жизни </param>
-        public ActorDisposableTime(string CounterName, GuActorDisposableTimeDelegate Delegate)
+        /// <param name="counterName">Название счетчика</param>
+        /// <param name="_delegate">Делегат который будет вызван по завершении жизни </param>
+        public ActorDisposableTime(string counterName, Action<string> _delegate)
             {
-            if (CounterName == null)
+            if (counterName == null)
                 {
-                throw new ArgumentNullException(nameof(CounterName), "CounterName не может быть null");
+                throw new ArgumentNullException(nameof(counterName), "CounterName не может быть null");
                 }
 
-            if (Delegate == null)
+            if (_delegate == null)
                 {
                 throw new ArgumentNullException(nameof(Delegate), "Delegate не может быть null");
                 }
 
-            m_CounterName = CounterName;
-            m_Delegate = Delegate;
+            m_CounterName = counterName;
+            m_Delegate = _delegate;
             m_ActorTime.SetStartDate();
 
             m_Delegate($"Начало {m_CounterName}");
