@@ -35,8 +35,13 @@ namespace ActorsCP.Unit.Test
             }
 
         [Test]
-        [TestCase(TestName = "11. Толпа из одного элемента")]
-        public async Task SimpleActorCrowd1()
+        [TestCase(1, TestName = "11.  1 - Толпа из [1] элементов")]
+        [TestCase(2, TestName = "11.  2 - Толпа из [2] элементов")]
+        [TestCase(5, TestName = "11.  5 - Толпа из [5] элементов")]
+        [TestCase(10, TestName = "11. 10 - Толпа из [10] элементов")]
+        [TestCase(1000, TestName = "11. 1000 - Толпа из [1000] элементов")]
+        [TestCase(100000, TestName = "11. 10000 - Толпа из [100000] элементов")]
+        public async Task SimpleActorCrowd1(int nCount)
             {
             var crowd = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
@@ -45,8 +50,6 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(0, crowd.RunningCount);
             Assert.AreEqual(0, crowd.CompletedCount);
             Assert.AreEqual(0, crowd.TotalCount);
-
-            const int nCount = 1;
 
             for (int i = 0; i < nCount; i++)
                 {

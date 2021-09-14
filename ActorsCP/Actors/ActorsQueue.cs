@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace ActorsCP.Actors
     {
     /// <summary>
-    ///
+    /// Очередь для последовательного выполнения
     /// </summary>
     public class ActorsQueue : ActorsSet
         {
@@ -58,20 +58,5 @@ namespace ActorsCP.Actors
             }
 
         #endregion Перегруженные методы
-
-        #region Свойства
-
-        /// <summary>
-        ///
-        /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
-
-        #endregion Свойства
-
-        //
         } // end class ActorsQueue
     } // end namespace ActorsCP.Actors

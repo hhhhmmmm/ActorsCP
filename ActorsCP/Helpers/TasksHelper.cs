@@ -103,7 +103,7 @@ namespace ActorsCP.Helpers
                                 semaphoreSlim.Release();
                             });
                         }));
-                        }
+                        } // end foreach
 
                     // Wait for all tasks to complete.
                     await Task.WhenAll(tasksWithThrottler.ToArray());
