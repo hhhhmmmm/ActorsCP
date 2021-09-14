@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
-using ActorsCP.TestActors;
+using ActorsCP.Tests.TestActors;
 
 using NUnit.Framework;
 

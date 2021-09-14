@@ -24,13 +24,19 @@ namespace ActorsCP.Unit.Test
             var actor = NewPendingActor;
             var externalObjectsList = actor.ExternalObjects;
             Assert.IsNotNull(externalObjectsList);
-            externalObjectsList.Add(new WeakReference("aaa"));
+            externalObjectsList.TryAdd("aaa", new WeakReference("aaa value"));
             Assert.AreEqual(1, externalObjectsList.Count);
             Assert.AreEqual(1, actor.ExternalObjects.Count);
 
-            actor.ExternalObjects.Add(new WeakReference("bbb"));
+            actor.ExternalObjects.TryAdd("bbb", new WeakReference("bbb value"));
             Assert.AreEqual(2, externalObjectsList.Count);
             Assert.AreEqual(2, actor.ExternalObjects.Count);
+
+            actor.ExternalObjects.TryGetValue("bbb", out WeakReference wr);
+
+            actor.ExternalObjects.Clear();
+            Assert.AreEqual(0, externalObjectsList.Count);
+            Assert.AreEqual(0, actor.ExternalObjects.Count);
             }
 
         //

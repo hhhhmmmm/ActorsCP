@@ -17,7 +17,7 @@ namespace ActorsCP.Actors
     /// <summary>
     /// Набор объектов для построения очередей и куч
     /// </summary>
-    public class ActorsSet : ActorBase
+    public partial class ActorsSet : ActorBase
         {
         #region Конструкторы
 
@@ -207,7 +207,7 @@ namespace ActorsCP.Actors
                     actor.SetParent(parentActor);
                     }
 
-                foreach (var actor in _running.Keys)
+                foreach (var actor in _running.Items)
                     {
                     actor.SetParent(parentActor);
                     }
@@ -226,7 +226,7 @@ namespace ActorsCP.Actors
                 await actor.CancelAsync();
                 }
 
-            foreach (var actor in _running.Keys)
+            foreach (var actor in _running.Items)
                 {
                 await actor.CancelAsync();
                 }

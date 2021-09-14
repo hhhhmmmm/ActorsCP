@@ -224,7 +224,10 @@ namespace ActorsCP.Actors
         /// </summary>
         private async void PreDisposeHandler()
             {
-            await TerminateAsync();
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync();
+                }
             }
 
         /// <summary>
@@ -232,6 +235,10 @@ namespace ActorsCP.Actors
         /// </summary>
         protected override async void DisposeManagedResources()
             {
+            _externalObjects?.Clear();
+            _externalObjects = null;
+            _iViewPortList.Value?.Clear();
+            _iViewPortList = null;
             await RunCleanupBeforeTerminationAsync(true);
             m_CancellationTokenSource?.Dispose();
             base.DisposeManagedResources();
@@ -256,6 +263,7 @@ namespace ActorsCP.Actors
             {
             m_ParentActor = null;
             m_IMessageChannel = null;
+            UnbindAllViewPorts();
             }
 
         /// <summary>

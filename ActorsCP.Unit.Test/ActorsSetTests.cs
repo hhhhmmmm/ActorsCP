@@ -1,4 +1,4 @@
-﻿using ActorsCP.TestActors;
+﻿using ActorsCP.Tests.TestActors;
 using ActorsCP.Actors;
 
 using NUnit.Framework;

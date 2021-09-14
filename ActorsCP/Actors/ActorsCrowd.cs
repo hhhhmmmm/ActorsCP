@@ -118,6 +118,8 @@ namespace ActorsCP.Actors
 
         /// <summary>
         /// Выполнить без ограничения по параллельности
+        /// Работает примерно на 15% медленнее чем RunInParallelWithLimits()
+        /// 10.7-9.0 10.5-9.4 11.1-9.4
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns>true если все объекты вернули true</returns>

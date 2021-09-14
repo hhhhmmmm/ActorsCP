@@ -13,13 +13,13 @@ namespace ActorsCP.ViewPorts
     public interface IActorBindEventsHandler
         {
         /// <summary>
-        /// Вызывается, когда объект успешно подписался на события
+        /// Вызывается, когда объект подписан на события
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
         void Actor_EventHandlersBound(ActorBase actor);
 
         /// <summary>
-        /// Вызывается, когда объект отписался от событий
+        /// Вызывается, когда объект отписан от событий
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
         void Actor_EventHandlersUnbound(ActorBase actor);

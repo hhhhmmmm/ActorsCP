@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Concurrent;
 
 namespace ActorsCP.Actors
     {
@@ -9,31 +8,32 @@ namespace ActorsCP.Actors
     /// </summary>
     public partial class ActorBase
         {
-        #region Конструкторы
-
         /// <summary>
-        /// Конструктор
+        /// Словарь для хранения слабых ссылок на внешние объекты
         /// </summary>
-        /// <param name="parameter"></param>
-        public ActorBase_ExternalObjects() // (object parameter) : base(parameter)
-            {
-            }
-
-        #endregion Конструкторы
+        private ConcurrentDictionary<string, WeakReference> _externalObjects = null;
 
         #region Свойства
 
         /// <summary>
-        ///
+        /// Список для хранения внешних объектов
         /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+        public ConcurrentDictionary<string, WeakReference> ExternalObjects
+            {
+            get
+                {
+                lock (Locker)
+                    {
+                    if (_externalObjects == null)
+                        {
+                        _externalObjects = new ConcurrentDictionary<string, WeakReference>();
+                        }
+                    }
+                return _externalObjects;
+                }
+            }
 
         #endregion Свойства
-
-        //
         } // end class ActorBase
     } // end namespace ActorsCP.Actors
