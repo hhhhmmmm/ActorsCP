@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +13,11 @@ namespace ActorsCP.Actors
     /// </summary>
     public class ActorsCrowd : ActorsSet
         {
+        //
+        // Про семафоры
+        // https://metanit.com/sharp/tutorial/11.8.php
+        //
+
         #region Конструкторы
 
         /// <summary>
@@ -19,6 +26,7 @@ namespace ActorsCP.Actors
         public ActorsCrowd()
             {
             SetName("Набор объектов");
+            SetMaxDegreeOfParallelism(Environment.ProcessorCount);
             }
 
         /// <summary>
@@ -47,71 +55,125 @@ namespace ActorsCP.Actors
 
             //var array = _waiting.ToArray();
             // await TasksHelper.ForEachAsyncConcurrentAutoAsync<ActorBase>(array, (x) => { return x.RunAsync(); });
-            bresult = await RunWithLimits(_waiting);
+            bresult = await RunInParallel(_waiting);
             return bresult;
             }
 
         #endregion Перегруженные методы
 
         /// <summary>
+        /// Установить параллелизм (количество одновременно выполняющихся объектов)
+        /// </summary>
+        /// <param name="maxDegreeOfParallelism"></param>
+        public void SetMaxDegreeOfParallelism(int? maxDegreeOfParallelism)
+            {
+            MaxDegreeOfParallelism = maxDegreeOfParallelism;
+            }
+
+        #region Свойства
+
+        /// <summary>
+        /// Параллелизм (количество одновременно выполняющихся объектов)
+        /// </summary>
+        public int? MaxDegreeOfParallelism
+            {
+            get;
+            private set;
+            }
+
+        #endregion Свойства
+
+        #region Приватные методы
+
+        /// <summary>
+        /// Выполнить парллельно
+        /// </summary>
+        /// <param name="actorsList">Список объектов</param>
+        /// <returns></returns>
+        private async Task<bool> RunInParallel(List<ActorBase> actorsList)
+            {
+            int nCount = actorsList.Count;
+            ActorTime actorTime = default;
+            try
+                {
+                actorTime.SetStartDate();
+                if (!MaxDegreeOfParallelism.HasValue)
+                    {
+                    return await RunInParallelWithoutLimits(actorsList);
+                    }
+                else
+                    {
+                    return await RunInParallelWithLimits(actorsList);
+                    }
+                }
+            finally
+                {
+                actorTime.SetEndDate();
+#if DEBUG
+                var result = actorTime.GetTimeIntervalWithComment(nCount);
+                OnActorAction(result);
+#endif // DEBUG
+                }
+            }
+
+        /// <summary>
         /// Выполнить без ограничения по параллельности
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns>true если все объекты вернули true</returns>
-        private static async Task<bool> RunWithoutLimits(IEnumerable<ActorBase> actorsList)
+        private static async Task<bool> RunInParallelWithoutLimits(List<ActorBase> actorsList)
             {
-            var runningTasks = new List<Task<bool>>();
-            foreach (var actor in actorsList)
-                {
+            int nCount = actorsList.Count;
+
+            // var runningTasks = new List<Task<bool>>(nCount);
+            var runningTasks = new ConcurrentQueue<Task<bool>>();
+
+            var localActorsList = new List<ActorBase>(nCount);
+
+            localActorsList.AddRange(actorsList);
+
+            Parallel.ForEach(localActorsList, (ActorBase actor) =>
+            {
                 var task = actor.RunAsync();
-                runningTasks.Add(task);
-                }
+                runningTasks.Enqueue(task);
+            });
+            // или
+            //foreach (var actor in localActorsList)
+            //    {
+            //    var task = actor.RunAsync();
+            //    runningTasks.Add(task);
+            //    }
 
-            var results = await Task.WhenAll(runningTasks);
-
-            var bres = true;
+            var results = await Task.WhenAll(runningTasks).ConfigureAwait(false);
 
             #region Изучаем результаты
 
-            //foreach (var result in results)
-            //    {
-            //    if (!result)
-            //        {
-            //        bres = false;
-            //        break;
-            //        }
-            //    }
+            if (results.Any((bool x) => { return x == false; })) // если есть хоть один равный false
+                {
+                return false;
+                }
+
+            return true;
 
             #endregion Изучаем результаты
-
-            return bres;
             }
 
-        /// <summary>
-        /// https://metanit.com/sharp/tutorial/11.8.php
-        /// </summary>
-        /// <param name="actorsList">Список объектов</param>
-        /// <param name="maxDegreeOfParallelism"></param>
-        /// <returns></returns>
-        public async Task<bool> RunWithLimits(IEnumerable<ActorBase> actorsList)
-            {
-            int maxDegreeOfParallelism = Environment.ProcessorCount;
-            return await RunWithLimits(actorsList, maxDegreeOfParallelism);
-            }
+        #endregion Приватные методы
 
         /// <summary>
-        /// https://metanit.com/sharp/tutorial/11.8.php
+        /// Выполнить c ограничением по параллельности
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
-        /// <param name="maxDegreeOfParallelism"></param>
         /// <returns></returns>
-        public async Task<bool> RunWithLimits(IEnumerable<ActorBase> actorsList, int maxDegreeOfParallelism)
+        public async Task<bool> RunInParallelWithLimits(List<ActorBase> actorsList)
             {
-            var runningTasks = new List<Task<bool>>();
+            int nCount = actorsList.Count;
+
+            var runningTasks = new ConcurrentQueue<Task<bool>>();
 
             // первый параметр указывает, какому числу объектов изначально будет доступен семафор
             // а второй параметр указывает, какой максимальное число объектов будет использовать данный семафор
-            using (var semaphoreSlim = new SemaphoreSlim(maxDegreeOfParallelism, maxDegreeOfParallelism))
+            using (var semaphoreSlim = new SemaphoreSlim(MaxDegreeOfParallelism.Value, MaxDegreeOfParallelism.Value))
                 {
                 #region Локальные функции
 
@@ -123,63 +185,47 @@ namespace ActorsCP.Actors
 
                 #endregion Локальные функции
 
-                var localActorsList = new List<ActorBase>();
+                var localActorsQueue = new ConcurrentQueue<ActorBase>(actorsList);
 
-                localActorsList.AddRange(actorsList);
-
-                foreach (var actor in localActorsList)
+                foreach (var actor in localActorsQueue)
                     {
                     // В начале для ожидания получения семафора используется метод semaphoreSlim.WaitAsync()
                     // При этом увеличивается количество запущенных задач
                     // или ожидается если их больше чем лимит
                     if (CancellationTokenSource != null)
                         {
-                        await semaphoreSlim.WaitAsync(CancellationTokenSource.Token);
+                        await semaphoreSlim.WaitAsync(CancellationTokenSource.Token).ConfigureAwait(false);
                         }
                     else
                         {
-                        await semaphoreSlim.WaitAsync();
+                        await semaphoreSlim.WaitAsync().ConfigureAwait(false);
                         }
 
-                    // Получено одно место светофора
-                    // запускаем задачу
-                    var tb = actor.RunAsync();
+                    // Получено одно место светофора, запускаем задачу
+                    var task = actor.RunAsync();
                     // настраиваем задачу
-                    await tb.ContinueWith(ReleaseSemaphoreOnCompletion);
-                    await tb.ConfigureAwait(false);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    task.ContinueWith(ReleaseSemaphoreOnCompletion);
+                    task.ConfigureAwait(false);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                    runningTasks.Add(tb);
+                    runningTasks.Enqueue(task);
                     } // end foreach
 
                 // Ожидаем завершения всех задач
-                await Task.WhenAll(runningTasks.ToArray());
+                await Task.WhenAll(runningTasks.ToArray()).ConfigureAwait(false);
                 } // end using
-
-            var bres = true;
 
             #region Изучаем результаты
 
-            foreach (var result in runningTasks)
+            if (runningTasks.Any((Task<bool> x) => { return x.Result == false; })) // если есть хоть один равный false
                 {
-                if (!result.Result)
-                    {
-                    bres = false;
-                    break;
-                    }
+                return false;
                 }
 
+            return true;
+
             #endregion Изучаем результаты
-
-            return bres;
             }
-
-        // отпустить сфетофор
-        // action is completed, so decrement the number of currently running tasks
-        //Func<ActorBase, Task<bool>> RunFunc = async (ActorBase item) =>
-        //    {
-        //        var tb = item.RunAsync();
-        //        await tb.ContinueWith(ReleaseSemaphoreOnCompletion);
-        //        return tb.Result;
-        //    };
         }
     }
