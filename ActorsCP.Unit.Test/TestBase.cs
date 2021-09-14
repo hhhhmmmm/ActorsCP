@@ -17,6 +17,7 @@ namespace ActorsCP.Unit.Test
     public class TestBase : IMessageChannel
         {
         private bool _isInitialized;
+        private TestActorsBuilder _testActorsBuilder;
 
         /// <summary>
         /// Инициализация
@@ -68,11 +69,20 @@ namespace ActorsCP.Unit.Test
         /// </summary>
         public TestBase()
             {
+            _testActorsBuilder = new TestActorsBuilder(this);
             }
 
         #endregion Конструкторы
 
         #region Свойства
+
+        public TestActorsBuilder TestActorsBuilder
+            {
+            get
+                {
+                return _testActorsBuilder;
+                }
+            }
 
         /// <summary>
         ///

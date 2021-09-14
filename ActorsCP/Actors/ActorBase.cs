@@ -320,7 +320,7 @@ namespace ActorsCP.Actors
         /// Установить название объекта
         /// </summary>
         /// <param name="name">Название объекта</param>
-        protected void SetName(string name)
+        public void SetName(string name)
             {
             if (string.IsNullOrEmpty(name))
                 {

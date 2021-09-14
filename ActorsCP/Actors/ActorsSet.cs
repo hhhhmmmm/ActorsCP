@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
 
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
@@ -583,6 +583,30 @@ namespace ActorsCP.Actors
                     {
                     throw new InvalidOperationException("Непонятное состояние");
                     }
+                }
+            }
+
+        /// <summary>
+        /// Добавить объекты в список объектов для выполнения
+        /// </summary>
+        /// <param name="actors">Набор объектов для выполнения</param>
+        public void Add(params ActorBase[] actors)
+            {
+            foreach (var actor in actors)
+                {
+                Add(actor);
+                }
+            }
+
+        /// <summary>
+        /// Добавить объекты в список объектов для выполнения
+        /// </summary>
+        /// <param name="actors">Набор объектов для выполнения</param>
+        public void Add(IEnumerable<ActorBase> actors)
+            {
+            foreach (var actor in actors)
+                {
+                Add(actor);
                 }
             }
 

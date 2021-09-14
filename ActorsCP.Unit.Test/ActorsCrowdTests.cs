@@ -48,9 +48,9 @@ namespace ActorsCP.Unit.Test
         [TestCase(10000, true, TestName = "11. 10000 T - Толпа из [10000] элементов")]
         [TestCase(20000, false, TestName = "11. 20000 F - Толпа из [20000] элементов")]
         [TestCase(20000, true, TestName = "11. 20000 T - Толпа из [20000] элементов")]
-        [TestCase(50000, false, TestName = "11. 50000 F - Толпа из [50000] элементов")]
-        [TestCase(50000, true, TestName = "11. 50000 T - Толпа из [50000] элементов")]
-        [TestCase(100000, false, TestName = "11. 100000 F - Толпа из [100000] элементов")]
+        // [TestCase(50000, false, TestName = "11. 50000 F - Толпа из [50000] элементов")]
+        // [TestCase(50000, true, TestName = "11. 50000 T - Толпа из [50000] элементов")]
+        // [TestCase(100000, false, TestName = "11. 100000 F - Толпа из [100000] элементов")]
         public async Task SimpleActorCrowd1(int nCount, bool limitParallelelism)
             {
             var crowd = new ActorsCrowd();

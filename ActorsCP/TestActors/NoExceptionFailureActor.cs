@@ -8,7 +8,7 @@ using ActorsCP.Actors;
 namespace ActorsCP.TestActors
     {
     /// <summary>
-    /// Выбрасывает исключения при разных условиях
+    /// Не выбрасывает исключения при разных условиях, но завершается с ошибкой
     /// </summary>
     public class NoExceptionFailureActor : TestActorBase
         {
