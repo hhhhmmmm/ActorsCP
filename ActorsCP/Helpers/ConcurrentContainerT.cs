@@ -52,7 +52,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Ключи
         /// </summary>
-        public ICollection<TTypeparam> Keys
+        public ICollection<TTypeparam> Items
             {
             get
                 {

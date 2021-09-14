@@ -342,6 +342,7 @@ namespace ActorsCP.Actors
                 }
             try
                 {
+                UnbindAllViewPorts();
                 var bres = await RunCleanupBeforeTerminationAsync(false);
                 return bres;
                 }

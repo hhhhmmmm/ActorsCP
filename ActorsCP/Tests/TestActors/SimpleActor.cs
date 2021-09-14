@@ -4,7 +4,7 @@ using System.Text;
 
 using ActorsCP.Actors;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
     ///

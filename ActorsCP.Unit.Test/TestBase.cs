@@ -4,7 +4,7 @@ using System.Text;
 
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
-using ActorsCP.TestActors;
+using ActorsCP.Tests.TestActors;
 
 using NUnit.Framework;
 
@@ -102,9 +102,7 @@ namespace ActorsCP.Unit.Test
             {
             get
                 {
-                var actor = new SimpleActor();
-                ConfigureActor(actor);
-                return actor;
+                return TestActorsBuilder.NewSimpleActor;
                 }
             }
 
@@ -115,9 +113,7 @@ namespace ActorsCP.Unit.Test
             {
             get
                 {
-                var actor = new ExceptionActor();
-                ConfigureActor(actor);
-                return actor;
+                return TestActorsBuilder.NewExceptionActor;
                 }
             }
 

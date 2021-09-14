@@ -4,8 +4,9 @@ using System.Text;
 
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
+using ActorsCP.Tests.ViewPorts;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
     /// Билдер тестовых классов
@@ -27,8 +28,13 @@ namespace ActorsCP.TestActors
 
         #endregion Конструкторы
 
+        /// <summary>
+        /// Нстроить объект
+        /// </summary>
+        /// <param name="actor"></param>
         private void ConfigureActor(ActorBase actor)
             {
+            actor.SetIMessageChannel(_messageChannel);
             }
 
         #region Свойства
@@ -83,7 +89,7 @@ namespace ActorsCP.TestActors
         /// <param name="type">тип</param>
         /// <param name="nCount">Количество</param>
         /// <returns></returns>
-        public List<ActorBase> GetList(char type, int nCount)
+        public List<ActorBase> CreateListOfActors(char type, int nCount)
             {
             var list = new List<ActorBase>();
             for (int i = 1; i <= nCount; i++)
@@ -133,7 +139,7 @@ namespace ActorsCP.TestActors
         /// </summary>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        public List<ActorBase> GetList(string cmd)
+        public List<ActorBase> CreateListOfActors(string cmd)
             {
             var list = new List<ActorBase>();
 
@@ -178,6 +184,16 @@ namespace ActorsCP.TestActors
                 }
 
             return list;
+            }
+
+        /// <summary>
+        /// Создать Вьюпорт
+        /// </summary>
+        /// <returns></returns>
+        public TestViewPortBase CreateViewPort()
+            {
+            var v = new TestViewPortBase(_messageChannel);
+            return v;
             }
         } // end class TestActorsBuilder
     } // end namespace ActorsCP.TestActors

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -224,7 +223,10 @@ namespace ActorsCP.Actors
         /// </summary>
         private async void PreDisposeHandler()
             {
-            await TerminateAsync();
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync();
+                }
             }
 
         /// <summary>
@@ -233,7 +235,15 @@ namespace ActorsCP.Actors
         protected override async void DisposeManagedResources()
             {
             await RunCleanupBeforeTerminationAsync(true);
-            m_CancellationTokenSource?.Dispose();
+            _externalObjects?.Clear();
+            _externalObjects = null;
+            UnbindAllViewPorts();
+            _iViewPortList.Value?.Clear();
+            _iViewPortList = null;
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+            m_ParentActor = null;
+            m_IMessageChannel = null;
             base.DisposeManagedResources();
             }
 
@@ -247,15 +257,6 @@ namespace ActorsCP.Actors
         protected void SetAnErrorOccurred()
             {
             AnErrorOccurred = true;
-            }
-
-        /// <summary>
-        /// Внутренняя очистка
-        /// </summary>
-        private void CleanUp()
-            {
-            m_ParentActor = null;
-            m_IMessageChannel = null;
             }
 
         /// <summary>
@@ -306,7 +307,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
-                    CleanUp();
+                    UnbindAllViewPorts();
                     break;
                     }
                 default:

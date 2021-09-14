@@ -17,6 +17,9 @@ namespace ActorsCP.Actors
         // Про семафоры
         // https://metanit.com/sharp/tutorial/11.8.php
         //
+        // Тесты:         /// XEON: 50000 T - 36 секунд, F  - 59 секунд
+        // Тесты:         /// XEON: 20000 T - 5.6 секунд, F - 9.7 секунд
+        // Тесты:         /// XEON: 10000 T - 1.8 секунд, F - 3.0 секунд
 
         #region Конструкторы
 
@@ -118,6 +121,8 @@ namespace ActorsCP.Actors
 
         /// <summary>
         /// Выполнить без ограничения по параллельности
+        /// Работает примерно на 15% медленнее чем RunInParallelWithLimits()
+        /// 10.7-9.0 10.5-9.4 11.1-9.4
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns>true если все объекты вернули true</returns>

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using ActorsCP.Actors;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
     /// Базовый класс тестового объекта

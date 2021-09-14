@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 
 using ActorsCP.Actors;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
-    /// Не выбрасывает исключения при разных условиях, но завершается с ошибкой
+    /// Выбрасывает исключения при разных условиях
     /// </summary>
-    public class NoExceptionFailureActor : TestActorBase
+    public class ExceptionActor : TestActorBase
         {
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        public NoExceptionFailureActor()
+        public ExceptionActor()
             {
             }
 
@@ -28,7 +28,7 @@ namespace ActorsCP.TestActors
         /// <summary>
         ///
         /// </summary>
-        public bool FailureOnStart
+        public bool ExceptionOnStart
             {
             get;
             set;
@@ -37,7 +37,7 @@ namespace ActorsCP.TestActors
         /// <summary>
         ///
         /// </summary>
-        public bool FailureOnStop
+        public bool ExceptionOnStop
             {
             get;
             set;
@@ -46,7 +46,7 @@ namespace ActorsCP.TestActors
         /// <summary>
         ///
         /// </summary>
-        public bool FailureOnRun
+        public bool ExceptionOnRun
             {
             get;
             set;
@@ -55,7 +55,7 @@ namespace ActorsCP.TestActors
         /// <summary>
         ///
         /// </summary>
-        public bool FailureOnRunCleanupBeforeTerminationAsync
+        public bool ExceptionOnRunCleanupBeforeTerminationAsync
             {
             get;
             set;
@@ -69,9 +69,9 @@ namespace ActorsCP.TestActors
         /// <returns>true если все хорошо</returns>
         protected override async Task<bool> InternalStartAsync()
             {
-            if (FailureOnStart)
+            if (ExceptionOnStart)
                 {
-                SetAnErrorOccurred();
+                throw new Exception();
                 }
             return await base.InternalStartAsync();
             }
@@ -82,9 +82,9 @@ namespace ActorsCP.TestActors
         /// <returns>true если все хорошо</returns>
         protected override async Task<bool> InternalStopAsync()
             {
-            if (FailureOnStop)
+            if (ExceptionOnStop)
                 {
-                SetAnErrorOccurred();
+                throw new Exception();
                 }
             return await base.InternalStopAsync();
             }
@@ -95,9 +95,9 @@ namespace ActorsCP.TestActors
         /// <returns>true если все хорошо</returns>
         protected override async Task<bool> InternalRunAsync()
             {
-            if (FailureOnRun)
+            if (ExceptionOnRun)
                 {
-                SetAnErrorOccurred();
+                throw new Exception();
                 }
             return await base.InternalRunAsync();
             }
@@ -109,11 +109,11 @@ namespace ActorsCP.TestActors
         /// <param name="fromDispose">Вызов из Dispose()</param>
         protected override Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            if (FailureOnRunCleanupBeforeTerminationAsync)
+            if (ExceptionOnRunCleanupBeforeTerminationAsync)
                 {
-                SetAnErrorOccurred();
+                throw new Exception();
                 }
             return base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
             }
         } // end class ExceptionActor
-    }
+    } // end namespace ActorsCP.TestActors
