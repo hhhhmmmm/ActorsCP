@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
+using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
     {
@@ -54,6 +55,11 @@ namespace ActorsCP.Actors
         /// Время выполнения Run()
         /// </summary>
         private ActorTime m_ExecutionTime = default;
+
+        /// <summary>
+        /// Контейнер вьюпортов
+        /// </summary>
+        private Lazy<ViewPortsContainer> _viewPortsContainer = new Lazy<ViewPortsContainer>();
 
         #endregion Внутренние объекты
 
@@ -237,9 +243,8 @@ namespace ActorsCP.Actors
             await RunCleanupBeforeTerminationAsync(true);
             _externalObjects?.Clear();
             _externalObjects = null;
-            UnbindAllViewPorts();
-            _iViewPortList.Value?.Clear();
-            _iViewPortList = null;
+            ClearViewPortHelper();
+
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
             m_ParentActor = null;

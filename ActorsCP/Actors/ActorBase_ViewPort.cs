@@ -17,6 +17,21 @@ namespace ActorsCP.Actors
     public partial class ActorBase
         {
         /// <summary>
+        /// Очистить все связанное с вьюпортами
+        /// </summary>
+        private void ClearViewPortHelper()
+            {
+            if (_viewPortsContainer.IsValueCreated)
+                {
+                _viewPortsContainer.Value.Dispose();
+                _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
+                }
+            UnbindAllViewPorts();
+            //_iViewPortList.Value?.Clear();
+            //_iViewPortList = null;
+            }
+
+        /// <summary>
         /// Счетчик подписок/отписок
         /// </summary>
         private int _bindEventsHandlerCounter = 0;
@@ -47,7 +62,10 @@ namespace ActorsCP.Actors
             #endregion Привязываем события объекта к их получателю
 
             // Сохраняем для возможных потомков порожденных при вызове метода Run()
-            _iViewPortList.Value.Add(new WeakReference(iViewPort, false));
+
+            _viewPortsContainer.Value.Add(iViewPort);
+
+            // _iViewPortList.Value.Add(new WeakReference(iViewPort, false));
 
             #region Окончательное уведомление
 
@@ -99,11 +117,16 @@ namespace ActorsCP.Actors
 
             #region Очистка списка - олжна вызываться последней, иначе последнее событие не будет отправлено
 
-            if (_iViewPortList != null && _iViewPortList.Value != null)
+            if (_viewPortsContainer.IsValueCreated)
                 {
-                var list = _iViewPortList.Value;
-                WeakReferenceHelper.DeleteWeakReference(list, iViewPort);
+                _viewPortsContainer.Value.DeleteWeakReference(iViewPort);
                 }
+
+            //if (_iViewPortList != null && _iViewPortList.Value != null)
+            //    {
+            //    var list = _iViewPortList.Value;
+            //    WeakReferenceHelper.DeleteWeakReference(list, iViewPort);
+            //    }
 
             #endregion Очистка списка - олжна вызываться последней, иначе последнее событие не будет отправлено
             }
@@ -111,23 +134,27 @@ namespace ActorsCP.Actors
         #endregion Подписка/отписка на события
 
         /// <summary>
-        /// Список внешних объектов (реализующих интерфейс IGuActorBindEventsHandler) которые вызвали
+        /// Список внешних объектов (реализующих интерфейс IActorViewPort) которые вызвали
         /// метод BindEventsHandlers() Нужен для того, чтобы привязать объекты, созданные при вызове
         /// метода Run() Список дополняется в методе BindEventsHandlers() и освобождается в методе UnbindEventsHandlers()
         /// </summary>
-        private Lazy<List<WeakReference>> _iViewPortList = new Lazy<List<WeakReference>>(() => new List<WeakReference>());
+        // private Lazy<List<WeakReference>> _iViewPortList = new Lazy<List<WeakReference>>(() => new List<WeakReference>());
 
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
         public virtual void UnbindAllViewPorts()
             {
-            if ((_iViewPortList == null) || (_iViewPortList.Value == null) || (_iViewPortList.Value.Count == 0))
+            if (!_viewPortsContainer.IsValueCreated)
                 {
                 return;
                 }
-
-            var tmpList = new List<WeakReference>(_iViewPortList.Value);
+            //if ((_iViewPortList == null) || (_iViewPortList.Value == null) || (_iViewPortList.Value.Count == 0))
+            //    {
+            //    return;
+            //    }
+            var tmpList = _viewPortsContainer.Value.GetCopy();
+            // var tmpList = new List<WeakReference>(_iViewPortList.Value);
 
             foreach (var wr in tmpList)
                 {
@@ -167,7 +194,8 @@ namespace ActorsCP.Actors
 
             lock (Locker)
                 {
-                foreach (var wr in _iViewPortList.Value)
+                foreach (var wr in _viewPortsContainer.Value.ViewPortsList)
+                //    foreach (var wr in _iViewPortList.Value)
                     {
                     if (wr.IsAlive)
                         {
@@ -208,8 +236,8 @@ namespace ActorsCP.Actors
 #if DEBUG_BIND_UNBIND
                 OnActorActionDebug($"Вызван UnbindChild, _bindChildCounter = {_bindChildCounter}");
 #endif // DEBUG_BIND_UNBIND
-
-                foreach (var wr in _iViewPortList.Value)
+                foreach (var wr in _viewPortsContainer.Value.ViewPortsList)
+                //foreach (var wr in _iViewPortList.Value)
                     {
                     if (wr.IsAlive)
                         {
