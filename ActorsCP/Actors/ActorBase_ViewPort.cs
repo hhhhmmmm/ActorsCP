@@ -122,11 +122,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public virtual void UnbindAllViewPorts()
             {
-            if (_iViewPortList == null)
-                {
-                return;
-                }
-            if (_iViewPortList.Value == null)
+            if ((_iViewPortList == null) || (_iViewPortList.Value == null) || (_iViewPortList.Value.Count == 0))
                 {
                 return;
                 }

@@ -19,7 +19,7 @@ namespace ActorsCP.Unit.Test
 
         [Test]
         [TestCase(TestName = "10. ExternalObjects")]
-        public async Task ExternalObjects_Tests()
+        public Task ExternalObjects_Tests()
             {
             var actor = NewPendingActor;
             var externalObjectsList = actor.ExternalObjects;
@@ -37,6 +37,7 @@ namespace ActorsCP.Unit.Test
             actor.ExternalObjects.Clear();
             Assert.AreEqual(0, externalObjectsList.Count);
             Assert.AreEqual(0, actor.ExternalObjects.Count);
+            return Task.CompletedTask;
             }
 
         //

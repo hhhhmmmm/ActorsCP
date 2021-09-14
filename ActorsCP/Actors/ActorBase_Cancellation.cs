@@ -13,7 +13,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Источник отмены задачи
         /// </summary>
-        private readonly CancellationTokenSource m_CancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         #region Свойства
 
@@ -24,7 +24,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_CancellationTokenSource;
+                return _cancellationTokenSource;
                 }
             }
 
@@ -61,7 +61,7 @@ namespace ActorsCP.Actors
                 return;
                 }
 
-            m_CancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Cancel();
             IsCanceled = true;
 
             OnActorActionWarning(_CancelText);
@@ -83,7 +83,7 @@ namespace ActorsCP.Actors
         /// </summary>
         protected void ThrowIfCancellationRequested()
             {
-            m_CancellationTokenSource?.Token.ThrowIfCancellationRequested();
+            _cancellationTokenSource?.Token.ThrowIfCancellationRequested();
             }
 
         /// <summary>

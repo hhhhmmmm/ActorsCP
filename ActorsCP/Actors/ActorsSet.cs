@@ -239,13 +239,10 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Освободить управляемые ресурсы
         /// </summary>
-        protected override void DisposeManagedResources()
-            {
-            base.DisposeManagedResources();
-
-            // _inifiniteWaitEvent?.Dispose();
-            // _inifiniteWaitEvent = null;
-            }
+        //protected override void DisposeManagedResources()
+        //    {
+        //    base.DisposeManagedResources();
+        //    }
 
         #endregion Реализация интерфейса IDisposable
 
