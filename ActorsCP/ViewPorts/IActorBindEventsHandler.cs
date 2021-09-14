@@ -8,7 +8,7 @@ namespace ActorsCP.ViewPorts
     {
     /// <summary>
     /// Интерфейс описывает события, возникающие при подписке и отписке
-    /// от ивентов при вызове методов BindEventsHandlers() и UnbindEventsHandlers()
+    /// от ивентов при вызове методов BindChild() и UnbindChild()
     /// </summary>
     public interface IActorBindEventsHandler
         {

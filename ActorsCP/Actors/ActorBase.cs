@@ -244,7 +244,7 @@ namespace ActorsCP.Actors
             await RunCleanupBeforeTerminationAsync(true);
             _externalObjects?.Clear();
             _externalObjects = null;
-            ClearViewPortHelper();
+            ClearViewPortHelper(); // в DisposeManagedResources()
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
@@ -313,7 +313,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
-                    UnbindAllViewPorts();
+                    ClearViewPortHelper(); // SetActorState: UnbindAllViewPorts(); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
                     }
                 default:

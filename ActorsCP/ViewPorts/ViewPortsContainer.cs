@@ -12,32 +12,55 @@ namespace ActorsCP.ViewPorts
     /// </summary>
     public sealed class ViewPortsContainer : DisposableImplementation<ViewPortsContainer>
         {
-        #region Мемберы
+        #region Приватные мемберы
 
-        private readonly ActorBase _parentActor;
+        /// <summary>
+        /// Родительский объект - кто владеет экземпляром этого класса
+        /// </summary>
+        private ActorBase _parentActor;
 
         /// <summary>
         /// Список внешних объектов (реализующих интерфейс IActorViewPort) которые вызвали
-        /// метод BindEventsHandlers() Нужен для того, чтобы привязать объекты, созданные при вызове
-        /// метода Run() Список дополняется в методе BindEventsHandlers() и освобождается в методе UnbindEventsHandlers()
+        /// метод BindChild() Нужен для того, чтобы привязать объекты, созданные при вызове
+        /// метода Run() Список дополняется в методе BindChild() и освобождается в методе UnbindChild()
         /// </summary>
         private readonly List<WeakReference> _iViewPortList = new List<WeakReference>();
 
+        /// <summary>
+        /// Счетчик вызовов BindChild()
+        /// </summary>
         private int _bindChildCounter;
 
-        #endregion Мемберы
+        /// <summary>
+        /// Счетчик вызовов BindChild()/UnbindChild()
+        /// </summary>
+        private int _bindEventsHandlerCounter;
 
-        public ViewPortsContainer(ActorBase parentActor = null)
+        #endregion Приватные мемберы
+
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="parentActor">Родительский объект - кто владеет экземпляром этого класса</param>
+        public ViewPortsContainer(ActorBase parentActor)
             {
+            if (parentActor == null)
+                {
+                throw new ArgumentNullException(nameof(parentActor));
+                }
             _parentActor = parentActor;
             }
+
+        #endregion Конструкторы
 
         #region Свойства
 
         /// <summary>
         /// Список вьюпортов
         /// </summary>
-        public List<WeakReference> ViewPortsList
+        private List<WeakReference> ViewPortsList
             {
             get
                 {
@@ -45,6 +68,9 @@ namespace ActorsCP.ViewPorts
                 }
             }
 
+        /// <summary>
+        /// Счетчик вызовов BindChild()
+        /// </summary>
         public int BindChildCounter
             {
             get
@@ -53,6 +79,20 @@ namespace ActorsCP.ViewPorts
                 }
             }
 
+        /// <summary>
+        /// Счетчик вызовов BindChild()/UnbindChild()
+        /// </summary>
+        public int BindEventsHandlerCounter
+            {
+            get
+                {
+                return _bindEventsHandlerCounter;
+                }
+            }
+
+        /// <summary>
+        /// Список вьюпортов пуст
+        /// </summary>
         public bool IsEmpty
             {
             get
@@ -63,14 +103,62 @@ namespace ActorsCP.ViewPorts
 
         #endregion Свойства
 
-        public void DeleteWeakReference(IActorViewPort iViewPort)
+        /// <summary>
+        /// Увеличить счетчик вызовов BindChild()/UnbindChild()
+        /// </summary>
+        public void IncrementBindEventsHandlerCounter()
             {
-            WeakReferenceHelper.DeleteWeakReference(_iViewPortList, iViewPort);
+            Interlocked.Increment(ref _bindEventsHandlerCounter);
             }
 
-        public void Add(IActorViewPort iViewPort)
+        /// <summary>
+        /// Уменьшить счетчик вызовов BindChild()/UnbindChild()
+        /// </summary>
+        public void DecrementBindEventsHandlerCounter()
+            {
+            Interlocked.Decrement(ref _bindEventsHandlerCounter);
+            }
+
+        /// <summary>
+        /// Удалить вьюпорт из списка
+        /// </summary>
+        /// <param name="iViewPort">вьюпорт</param>
+        public void RemoveAndNotify(IActorViewPort iViewPort)
+            {
+            #region Окончательное уведомление
+
+            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
+            DecrementBindEventsHandlerCounter();
+            actorBindEventsHandler?.Actor_EventHandlersUnbound(_parentActor);
+
+#if DEBUG_BIND_UNBIND
+            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {_viewPortsContainer.BindEventsHandlerCounter}");
+#endif // DEBUG_BIND_UNBIND
+
+            #endregion Окончательное уведомление
+
+            #region Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
+
+            WeakReferenceHelper.DeleteWeakReference(_iViewPortList, iViewPort);
+
+            #endregion Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
+            }
+
+        /// <summary>
+        /// Добавить вьюпорт в список
+        /// </summary>
+        /// <param name="iViewPort">вьюпорт</param>
+        public void AddAndNotify(IActorViewPort iViewPort)
             {
             _iViewPortList.Add(new WeakReference(iViewPort, false));
+
+            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
+            IncrementBindEventsHandlerCounter();
+            actorBindEventsHandler?.Actor_EventHandlersBound(_parentActor);
+
+#if DEBUG_BIND_UNBIND
+            _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindEventsHandlerCounter = {_viewPortsContainer.BindEventsHandlerCounter}");
+#endif // DEBUG_BIND_UNBIND
             }
 
         public List<WeakReference> GetCopy()
@@ -79,8 +167,22 @@ namespace ActorsCP.ViewPorts
             return l;
             }
 
-        public void BindEventsHandlers(ActorBase childActor)
+        /// <summary>
+        /// Привязать к объекту все имеющиеся вьюпорты
+        /// </summary>
+        /// <param name="childActor">Объект</param>
+        public void BindChild(ActorBase childActor)
             {
+            if (childActor == null)
+                {
+                throw new ArgumentNullException(nameof(childActor));
+                }
+
+            if (childActor.Parent != _parentActor)
+                {
+                throw new ArgumentException("Переданный объект не является дочерним");
+                }
+
             foreach (var wr in ViewPortsList)
                 {
                 if (wr.IsAlive)
@@ -94,10 +196,28 @@ namespace ActorsCP.ViewPorts
                 } // end foreach
 
             Interlocked.Increment(ref _bindChildCounter);
+
+#if DEBUG_BIND_UNBIND
+                _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, m_BindChildCounter = {BindChildCounter}");
+#endif // DEBUG_BIND_UNBIND
             }
 
-        public void UnbindEventsHandlers(ActorBase childActor)
+        /// <summary>
+        /// Отвязать от объекта все имеющиеся вьюпорты
+        /// </summary>
+        /// <param name="childActor">Объект</param>
+        public void UnbindChild(ActorBase childActor)
             {
+            if (childActor == null)
+                {
+                throw new ArgumentNullException(nameof(childActor));
+                }
+
+            if (childActor.Parent != _parentActor)
+                {
+                throw new ArgumentException("Переданный объект не является дочерним");
+                }
+
             foreach (var wr in ViewPortsList)
                 {
                 if (wr.IsAlive)
@@ -111,6 +231,10 @@ namespace ActorsCP.ViewPorts
                 } // end foreach
 
             Interlocked.Decrement(ref _bindChildCounter);
+
+#if DEBUG_BIND_UNBIND
+                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
+#endif // DEBUG_BIND_UNBIND
             }
 
         #region Реализация интерфейса IDisposable
@@ -120,6 +244,7 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         protected override void DisposeManagedResources()
             {
+            _parentActor = null;
             _iViewPortList.Clear();
             base.DisposeManagedResources();
             }

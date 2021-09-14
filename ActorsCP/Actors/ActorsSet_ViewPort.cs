@@ -13,26 +13,26 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
-        public override void UnbindAllViewPorts()
+        public override void UnbindAllViewPorts() // перегруженный метод для ActorsSet
             {
-            base.UnbindAllViewPorts();
+            base.UnbindAllViewPorts(); // в ActorsSet
 
             // по идее на момент вызова все должны быть здесь
             foreach (var actor in _waiting)
                 {
-                actor.UnbindAllViewPorts();
+                actor.UnbindAllViewPorts(); // в ActorsSet
                 }
 
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _running.Items)
                 {
-                actor.UnbindAllViewPorts();
+                actor.UnbindAllViewPorts(); // в ActorsSet
                 }
 
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _completed.Items)
                 {
-                actor.UnbindAllViewPorts();
+                actor.UnbindAllViewPorts(); // в ActorsSet
                 }
             }
 

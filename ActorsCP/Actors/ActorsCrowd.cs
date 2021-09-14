@@ -142,12 +142,6 @@ namespace ActorsCP.Actors
                 var task = actor.RunAsync();
                 runningTasks.Enqueue(task);
             });
-            // или
-            //foreach (var actor in localActorsList)
-            //    {
-            //    var task = actor.RunAsync();
-            //    runningTasks.Add(task);
-            //    }
 
             var results = await Task.WhenAll(runningTasks).ConfigureAwait(false);
 

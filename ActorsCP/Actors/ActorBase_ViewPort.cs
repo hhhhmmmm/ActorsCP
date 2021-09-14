@@ -3,7 +3,6 @@
 #endif // DEBUG
 
 using System;
-using System.Threading;
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
@@ -23,11 +22,6 @@ namespace ActorsCP.Actors
 
             UnbindAllViewPorts();
             }
-
-        /// <summary>
-        /// Счетчик подписок/отписок
-        /// </summary>
-        private int _bindEventsHandlerCounter = 0;
 
         #region Подписка/отписка на события
 
@@ -54,21 +48,11 @@ namespace ActorsCP.Actors
 
             #endregion Привязываем события объекта к их получателю
 
-            // Сохраняем для возможных потомков порожденных при вызове метода Run()
+            #region Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
 
-            _viewPortsContainer.Add(iViewPort);
+            _viewPortsContainer.AddAndNotify(iViewPort);
 
-            #region Окончательное уведомление
-
-            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
-            Interlocked.Increment(ref _bindEventsHandlerCounter);
-            actorBindEventsHandler?.Actor_EventHandlersBound(this);
-
-#if DEBUG_BIND_UNBIND
-            OnActorActionDebug($"Вызван BindEventsHandlers, _bindEventsHandlerCounter = {_bindEventsHandlerCounter}");
-#endif // DEBUG_BIND_UNBIND
-
-            #endregion Окончательное уведомление
+            #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
 
         /// <summary>
@@ -94,23 +78,11 @@ namespace ActorsCP.Actors
 
             #endregion Отвязываем события объекта от их получателя
 
-            #region Окончательное уведомление
+            #region Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
 
-            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
-            Interlocked.Decrement(ref _bindEventsHandlerCounter);
-            actorBindEventsHandler?.Actor_EventHandlersUnbound(this);
+            _viewPortsContainer.RemoveAndNotify(iViewPort);
 
-#if DEBUG_BIND_UNBIND
-            OnActorActionDebug($"Вызван UnbindEventsHandlers, _bindEventsHandlerCounter = {_bindEventsHandlerCounter}");
-#endif // DEBUG_BIND_UNBIND
-
-            #endregion Окончательное уведомление
-
-            #region Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
-
-            _viewPortsContainer.DeleteWeakReference(iViewPort);
-
-            #endregion Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
+            #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
 
         #endregion Подписка/отписка на события
@@ -118,7 +90,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
-        public virtual void UnbindAllViewPorts()
+        public virtual void UnbindAllViewPorts() // оригинальный метод для ActorBase
             {
             if (_viewPortsContainer.IsEmpty)
                 {
@@ -148,23 +120,9 @@ namespace ActorsCP.Actors
         /// <param name="childActor">Производный объект</param>
         public void BindChild(ActorBase childActor)
             {
-            if (childActor == null)
-                {
-                throw new ArgumentNullException(nameof(childActor));
-                }
-
-            if (childActor.Parent != this)
-                {
-                throw new ArgumentException("Переданный объект не является дочерним");
-                }
-
             lock (Locker)
                 {
-                _viewPortsContainer.BindEventsHandlers(childActor);
-
-#if DEBUG_BIND_UNBIND
-                OnActorActionDebug($"Вызван BindChild, m_BindChildCounter = {_viewPortsContainer.BindChildCounter}");
-#endif // DEBUG_BIND_UNBIND
+                _viewPortsContainer.BindChild(childActor);
                 }  // end lock
             }
 
@@ -174,23 +132,9 @@ namespace ActorsCP.Actors
         /// <param name="childActor">Производный объект</param>
         public void UnbindChild(ActorBase childActor)
             {
-            if (childActor == null)
-                {
-                throw new ArgumentNullException(nameof(childActor));
-                }
-
-            if (childActor.Parent != this)
-                {
-                throw new ArgumentException("Переданный объект не является дочерним");
-                }
-
             lock (Locker)
                 {
-#if DEBUG_BIND_UNBIND
-                OnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
-#endif // DEBUG_BIND_UNBIND
-
-                _viewPortsContainer.UnbindEventsHandlers(childActor);
+                _viewPortsContainer.UnbindChild(childActor);
                 }  // end lock
             }
 
