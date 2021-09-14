@@ -59,7 +59,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Контейнер вьюпортов
         /// </summary>
-        private Lazy<ViewPortsContainer> _viewPortsContainer = new Lazy<ViewPortsContainer>();
+        private ViewPortsContainer _viewPortsContainer;
 
         #endregion Внутренние объекты
 
@@ -74,6 +74,7 @@ namespace ActorsCP.Actors
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
+            _viewPortsContainer = new ViewPortsContainer(this);
             }
 
         /// <summary>Конструктор</summary>

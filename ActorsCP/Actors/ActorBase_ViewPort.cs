@@ -3,10 +3,7 @@
 #endif // DEBUG
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
-
-using ActorsCP.Helpers;
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
@@ -21,14 +18,10 @@ namespace ActorsCP.Actors
         /// </summary>
         private void ClearViewPortHelper()
             {
-            if (_viewPortsContainer.IsValueCreated)
-                {
-                _viewPortsContainer.Value.Dispose();
-                _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
-                }
+            _viewPortsContainer.Dispose();
+            _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
+
             UnbindAllViewPorts();
-            //_iViewPortList.Value?.Clear();
-            //_iViewPortList = null;
             }
 
         /// <summary>
@@ -63,9 +56,7 @@ namespace ActorsCP.Actors
 
             // Сохраняем для возможных потомков порожденных при вызове метода Run()
 
-            _viewPortsContainer.Value.Add(iViewPort);
-
-            // _iViewPortList.Value.Add(new WeakReference(iViewPort, false));
+            _viewPortsContainer.Add(iViewPort);
 
             #region Окончательное уведомление
 
@@ -115,46 +106,26 @@ namespace ActorsCP.Actors
 
             #endregion Окончательное уведомление
 
-            #region Очистка списка - олжна вызываться последней, иначе последнее событие не будет отправлено
+            #region Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
 
-            if (_viewPortsContainer.IsValueCreated)
-                {
-                _viewPortsContainer.Value.DeleteWeakReference(iViewPort);
-                }
+            _viewPortsContainer.DeleteWeakReference(iViewPort);
 
-            //if (_iViewPortList != null && _iViewPortList.Value != null)
-            //    {
-            //    var list = _iViewPortList.Value;
-            //    WeakReferenceHelper.DeleteWeakReference(list, iViewPort);
-            //    }
-
-            #endregion Очистка списка - олжна вызываться последней, иначе последнее событие не будет отправлено
+            #endregion Очистка списка - должна вызываться последней, иначе последнее событие не будет отправлено
             }
 
         #endregion Подписка/отписка на события
-
-        /// <summary>
-        /// Список внешних объектов (реализующих интерфейс IActorViewPort) которые вызвали
-        /// метод BindEventsHandlers() Нужен для того, чтобы привязать объекты, созданные при вызове
-        /// метода Run() Список дополняется в методе BindEventsHandlers() и освобождается в методе UnbindEventsHandlers()
-        /// </summary>
-        // private Lazy<List<WeakReference>> _iViewPortList = new Lazy<List<WeakReference>>(() => new List<WeakReference>());
 
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
         public virtual void UnbindAllViewPorts()
             {
-            if (!_viewPortsContainer.IsValueCreated)
+            if (_viewPortsContainer.IsEmpty)
                 {
                 return;
                 }
-            //if ((_iViewPortList == null) || (_iViewPortList.Value == null) || (_iViewPortList.Value.Count == 0))
-            //    {
-            //    return;
-            //    }
-            var tmpList = _viewPortsContainer.Value.GetCopy();
-            // var tmpList = new List<WeakReference>(_iViewPortList.Value);
+
+            var tmpList = _viewPortsContainer.GetCopy();
 
             foreach (var wr in tmpList)
                 {
@@ -170,11 +141,6 @@ namespace ActorsCP.Actors
             }
 
         #region Методы для привязки дочерних объектов созданных при вызове метода Run()
-
-        /// <summary>
-        /// Для отладки - счетчик вызовов BindChild/UnbindChild
-        /// </summary>
-        private int _bindChildCounter;
 
         /// <summary>
         /// Привязка производного объекта, созданного при вызове метода Run()
@@ -194,23 +160,10 @@ namespace ActorsCP.Actors
 
             lock (Locker)
                 {
-                foreach (var wr in _viewPortsContainer.Value.ViewPortsList)
-                //    foreach (var wr in _iViewPortList.Value)
-                    {
-                    if (wr.IsAlive)
-                        {
-                        var eh = wr.Target as IActorViewPort;
-                        if (eh != null)
-                            {
-                            childActor.BindEventsHandlers(eh);
-                            }
-                        } // end IsAlive
-                    } // end foreach
-
-                Interlocked.Increment(ref _bindChildCounter);
+                _viewPortsContainer.BindEventsHandlers(childActor);
 
 #if DEBUG_BIND_UNBIND
-                OnActorActionDebug($"Вызван BindChild, m_BindChildCounter = {_bindChildCounter}");
+                OnActorActionDebug($"Вызван BindChild, m_BindChildCounter = {_viewPortsContainer.BindChildCounter}");
 #endif // DEBUG_BIND_UNBIND
                 }  // end lock
             }
@@ -234,22 +187,10 @@ namespace ActorsCP.Actors
             lock (Locker)
                 {
 #if DEBUG_BIND_UNBIND
-                OnActorActionDebug($"Вызван UnbindChild, _bindChildCounter = {_bindChildCounter}");
+                OnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
 #endif // DEBUG_BIND_UNBIND
-                foreach (var wr in _viewPortsContainer.Value.ViewPortsList)
-                //foreach (var wr in _iViewPortList.Value)
-                    {
-                    if (wr.IsAlive)
-                        {
-                        var eh = wr.Target as IActorViewPort;
-                        if (eh != null)
-                            {
-                            childActor.UnbindEventsHandlers(eh);
-                            }
-                        } // end IsAlive
-                    } // end foreach
 
-                Interlocked.Decrement(ref _bindChildCounter);
+                _viewPortsContainer.UnbindEventsHandlers(childActor);
                 }  // end lock
             }
 
