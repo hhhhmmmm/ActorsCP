@@ -60,9 +60,7 @@ namespace ActorsCP.Actors
                 return true;
                 }
 
-            //var array = _waiting.ToArray();
-            // await TasksHelper.ForEachAsyncConcurrentAutoAsync<ActorBase>(array, (x) => { return x.RunAsync(); });
-            bresult = await RunInParallel(_waiting.ToArray<ActorBase>().ToList());
+            bresult = await RunInParallel(WaitingList);
             return bresult;
             }
 
@@ -97,7 +95,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns></returns>
-        private async Task<bool> RunInParallel(List<ActorBase> actorsList)
+        private async Task<bool> RunInParallel(HashSet<ActorBase> actorsList)
             {
             int nCount = actorsList.Count;
             ActorTime actorTime = default;
@@ -130,7 +128,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns>true если все объекты вернули true</returns>
-        private static async Task<bool> RunInParallelWithoutLimits(List<ActorBase> actorsList)
+        private static async Task<bool> RunInParallelWithoutLimits(HashSet<ActorBase> actorsList)
             {
             int nCount = actorsList.Count;
 
@@ -168,7 +166,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns></returns>
-        public async Task<bool> RunInParallelWithLimits(List<ActorBase> actorsList)
+        public async Task<bool> RunInParallelWithLimits(HashSet<ActorBase> actorsList)
             {
             int nCount = actorsList.Count;
 

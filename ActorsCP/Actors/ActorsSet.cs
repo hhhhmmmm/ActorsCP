@@ -96,6 +96,17 @@ namespace ActorsCP.Actors
             protected set;
             } = true;
 
+        /// <summary>
+        /// Список ожидающих выполнения объектов
+        /// </summary>
+        protected HashSet<ActorBase> WaitingList
+            {
+            get
+                {
+                return _waiting;
+                }
+            }
+
         #endregion Свойства
 
         #region Приватные мемберы
@@ -103,7 +114,7 @@ namespace ActorsCP.Actors
         ///// <summary>
         ///// Список объектов ожидающих выполнения
         ///// </summary>
-        protected readonly HashSet<ActorBase> _waiting = new HashSet<ActorBase>();
+        private readonly HashSet<ActorBase> _waiting = new HashSet<ActorBase>();
 
         /// <summary>
         /// Количество объектов ожидающих выполнения

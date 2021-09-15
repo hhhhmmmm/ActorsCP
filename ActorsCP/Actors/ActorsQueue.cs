@@ -44,7 +44,7 @@ namespace ActorsCP.Actors
                 return true;
                 }
 
-            var array = _waiting.ToArray();
+            var array = WaitingList.ToArray();
             foreach (var actor in array)
                 {
                 ThrowIfCancellationRequested();
