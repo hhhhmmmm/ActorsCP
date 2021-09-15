@@ -57,11 +57,6 @@ namespace ActorsCP.Actors
         /// </summary>
         private ActorTime m_ExecutionTime = default;
 
-        /// <summary>
-        /// Контейнер вьюпортов
-        /// </summary>
-        private ViewPortsContainer _viewPortsContainer;
-
         #endregion Внутренние объекты
 
         #region Конструкторы
@@ -75,7 +70,6 @@ namespace ActorsCP.Actors
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
-            _viewPortsContainer = new ViewPortsContainer(this);
             }
 
         /// <summary>Конструктор</summary>
@@ -247,10 +241,8 @@ namespace ActorsCP.Actors
                 await TerminateAsync();
                 }
 
-            // await RunCleanupBeforeTerminationAsync(true);
             _externalObjects?.Clear();
             _externalObjects = null;
-            ClearViewPortHelper(); // в ActorBase::DisposeManagedResources()
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
@@ -319,6 +311,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
+                    UnbindAllViewPorts();
                     ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
                     }
