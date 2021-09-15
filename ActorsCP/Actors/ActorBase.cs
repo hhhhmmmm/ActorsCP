@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
+using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
     {
@@ -55,6 +57,11 @@ namespace ActorsCP.Actors
         /// </summary>
         private ActorTime m_ExecutionTime = default;
 
+        /// <summary>
+        /// Контейнер вьюпортов
+        /// </summary>
+        private ViewPortsContainer _viewPortsContainer;
+
         #endregion Внутренние объекты
 
         #region Конструкторы
@@ -68,6 +75,7 @@ namespace ActorsCP.Actors
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
+            _viewPortsContainer = new ViewPortsContainer(this);
             }
 
         /// <summary>Конструктор</summary>
@@ -234,12 +242,16 @@ namespace ActorsCP.Actors
         /// </summary>
         protected override async void DisposeManagedResources()
             {
-            await RunCleanupBeforeTerminationAsync(true);
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync();
+                }
+
+            // await RunCleanupBeforeTerminationAsync(true);
             _externalObjects?.Clear();
             _externalObjects = null;
-            UnbindAllViewPorts();
-            _iViewPortList.Value?.Clear();
-            _iViewPortList = null;
+            ClearViewPortHelper(); // в ActorBase::DisposeManagedResources()
+
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
             m_ParentActor = null;
@@ -307,7 +319,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
-                    UnbindAllViewPorts();
+                    ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
                     }
                 default:

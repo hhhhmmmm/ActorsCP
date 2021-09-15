@@ -13,27 +13,53 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
-        public override void UnbindAllViewPorts()
+        //public override void UnbindAllViewPorts() // перегруженный метод для ActorsSet
+        //    {
+        //    base.UnbindAllViewPorts(); // в ActorsSet
+
+        //    // по идее на момент вызова все должны быть здесь
+        //    foreach (var actor in _waiting)
+        //        {
+        //        actor.UnbindAllViewPorts(); // в ActorsSet
+        //        }
+
+        //    // смысла мало (список должен быть пустой), но вызовем
+        //    foreach (var actor in _running.Items)
+        //        {
+        //        actor.UnbindAllViewPorts(); // в ActorsSet
+        //        }
+
+        //    // смысла мало (список должен быть пустой), но вызовем
+        //    foreach (var actor in _completed.Items)
+        //        {
+        //        actor.UnbindAllViewPorts(); // в ActorsSet
+        //        }
+        //    }
+
+        /// <summary>
+        /// Очистить все связанное с вьюпортами
+        /// </summary>
+        public override void ClearViewPortHelper()
             {
-            base.UnbindAllViewPorts();
+            //// по идее на момент вызова все должны быть здесь
+            //foreach (var actor in _waiting)
+            //    {
+            //    actor.ClearViewPortHelper(); // в ActorsSet
+            //    }
 
-            // по идее на момент вызова все должны быть здесь
-            foreach (var actor in _waiting)
-                {
-                actor.UnbindAllViewPorts();
-                }
+            //// смысла мало (список должен быть пустой), но вызовем
+            //foreach (var actor in _running.Items)
+            //    {
+            //    actor.ClearViewPortHelper(); // в ActorsSet
+            //    }
 
-            // смысла мало (список должен быть пустой), но вызовем
-            foreach (var actor in _running.Items)
-                {
-                actor.UnbindAllViewPorts();
-                }
+            //// смысла мало (список должен быть пустой), но вызовем
+            //foreach (var actor in _completed.Items)
+            //    {
+            //    actor.ClearViewPortHelper(); // в ActorsSet
+            //    }
 
-            // смысла мало (список должен быть пустой), но вызовем
-            foreach (var actor in _completed.Items)
-                {
-                actor.UnbindAllViewPorts();
-                }
+            base.ClearViewPortHelper();
             }
 
         /// <summary>
@@ -69,8 +95,6 @@ namespace ActorsCP.Actors
         /// <param name="iViewPort">Объект который получает уведомление об отписке от событий</param>
         public override void UnbindEventsHandlers(IActorViewPort iViewPort)
             {
-            base.UnbindEventsHandlers(iViewPort);
-
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _waiting)
                 {
@@ -88,6 +112,8 @@ namespace ActorsCP.Actors
                 {
                 actor.UnbindEventsHandlers(iViewPort);
                 }
+
+            base.UnbindEventsHandlers(iViewPort);
             }
         } // end class ActorsSet
     } // end namespace ActorsCP.Actors

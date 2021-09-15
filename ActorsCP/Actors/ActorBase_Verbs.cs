@@ -342,7 +342,8 @@ namespace ActorsCP.Actors
                 }
             try
                 {
-                UnbindAllViewPorts();
+                // !!! UnbindAllViewPorts(); // этот вызов лишний так кака это будет вызвано в SetActorState()
+
                 var bres = await RunCleanupBeforeTerminationAsync(false);
                 return bres;
                 }

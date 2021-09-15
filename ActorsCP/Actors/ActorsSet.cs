@@ -174,6 +174,9 @@ namespace ActorsCP.Actors
         /// <param name="fromDispose">Вызов из Dispose()</param>
         protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
+            //    UnbindAllViewPorts(); // InternalRunCleanupBeforeTerminationAsync
+            ClearViewPortHelper();
+
             var bres = await base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
 
             lock (Locker)
