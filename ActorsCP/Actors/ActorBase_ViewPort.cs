@@ -3,6 +3,7 @@
 #endif // DEBUG
 
 using System;
+
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
@@ -92,7 +93,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public virtual void UnbindAllViewPorts() // оригинальный метод для ActorBase
             {
-            if (_viewPortsContainer.IsEmpty)
+            if (_viewPortsContainer == null || _viewPortsContainer.IsEmpty)
                 {
                 return;
                 }
