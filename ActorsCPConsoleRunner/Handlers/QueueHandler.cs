@@ -49,10 +49,10 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Метод запуска
         /// </summary>
-        protected override async Task<int> InternalRun()
+        protected override Task<int> InternalRun()
             {
             Console.WriteLine($"InternalRun() - {this.ToString()}");
-            return 0;
+            return Task.FromResult(0);
             }
         } // end class QueueOptions
     } // end namespace ActorsCPConsoleRunner.Handlers

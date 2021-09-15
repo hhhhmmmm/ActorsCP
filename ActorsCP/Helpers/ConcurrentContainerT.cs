@@ -68,7 +68,7 @@ namespace ActorsCP.Helpers
         /// Добавить элемент в контейнер
         /// </summary>
         /// <param name="item">Объект</param>
-        public void Add(TTypeparam item)
+        public bool Add(TTypeparam item)
             {
             var bag = Bag;
 
@@ -78,13 +78,14 @@ namespace ActorsCP.Helpers
                 bres = bag.TryAdd(item, DefaultValue);
                 if (bres)
                     {
-                    break;
+                    return true;
                     }
                 }
             if (!bres)
                 {
                 throw new InvalidOperationException("Не удалось добавить элемент в контейнер");
                 }
+            return false;
             }
 
         /// <summary>

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -104,7 +103,6 @@ namespace ActorsCP.Actors
         ///// <summary>
         ///// Список объектов ожидающих выполнения
         ///// </summary>
-        //protected readonly List<ActorBase> _waiting = new List<ActorBase>();
         protected readonly HashSet<ActorBase> _waiting = new HashSet<ActorBase>();
 
         /// <summary>
@@ -133,6 +131,8 @@ namespace ActorsCP.Actors
         private volatile int _completedCount = 0;
 
         #endregion Приватные мемберы
+
+        #region Методы удаления из очередей
 
         /// <summary>
         /// Удалить из списка ожидания
@@ -169,6 +169,59 @@ namespace ActorsCP.Actors
                 }
             }
 
+        #endregion Методы удаления из очередей
+
+        #region Методы добавления в очереди
+
+        /// <summary>
+        /// Добавить в список ожидания
+        /// </summary>
+        /// <param name="actor">Объект</param>
+        private void AddToWaiting(ActorBase actor)
+            {
+            if (_waiting.Add(actor))
+                {
+                Interlocked.Increment(ref _waitingCount);
+                }
+            }
+
+        /// <summary>
+        /// Добавить в список ожидания
+        /// </summary>
+        /// <param name="actor">Объект</param>
+        private void AddToRunning(ActorBase actor)
+            {
+            if (_running.Add(actor))
+                {
+                Interlocked.Increment(ref _runningCount);
+                }
+            }
+
+        /// <summary>
+        /// Добавить в список завершенных
+        /// </summary>
+        /// <param name="actor">Объект</param>
+        private void AddToCompleted(ActorBase actor)
+            {
+            if (CleanupAfterTermination) // если флаг CleanupAfterTermination установлен, то сразу выбрасываем объект
+                {
+                if (actor.State == ActorState.Terminated)
+                    {
+                    Interlocked.Increment(ref _completedCount);
+                    }
+                actor.Dispose(); // Вызываем Dispose() для actor
+                }
+            else
+                {
+                if (_completed.Add(actor))
+                    {
+                    Interlocked.Increment(ref _completedCount);
+                    }
+                }
+            }
+
+        #endregion Методы добавления в очереди
+
         #region Приватные методы
 
         /// <summary>
@@ -195,7 +248,7 @@ namespace ActorsCP.Actors
             var ev = new ActorSetCountChangedEventArgs(_waitingCount, _runningCount, _completedCount, State);
 
 #if DEBUG
-            Debug.WriteLine($"RaiseActorsSetChanged(): Объект:{ actor.State}, очередь: {ev}");
+            //            Debug.WriteLine($"RaiseActorsSetChanged(): Объект:{ actor.State}, очередь: {ev}");
 #endif //
             RaiseActorStateChanged(ev);
             }
@@ -331,7 +384,7 @@ namespace ActorsCP.Actors
                         {
                         if (!_completed.Contains(actor))
                             {
-                            if (!(actor.State == ActorState.Terminated))
+                            if (actor.State != ActorState.Terminated)
                                 {
                                 await actor.TerminateAsync();
                                 }
@@ -368,7 +421,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actor">Объект</param>
         /// <param name="raiseActorsSetChangedEvent">Отправить событие об изменении состояния набора объектов</param>
-        protected void MoveToWaiting(ActorBase actor, bool raiseActorsSetChangedEvent = true)
+        private void MoveToWaiting(ActorBase actor, bool raiseActorsSetChangedEvent = true)
             {
             lock (Locker)
                 {
@@ -402,10 +455,9 @@ namespace ActorsCP.Actors
 
                 CheckActorsSetState();
 
-                Interlocked.Increment(ref _waitingCount);
                 actor.StateChangedEvents += Actor_StateChangedEvents;
-                _waiting.Add(actor);
 
+                AddToWaiting(actor);
                 RemoveFromRunning(actor);
                 RemoveFromCompleted(actor);
 
@@ -421,7 +473,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actor">Объект</param>
         /// <param name="raiseActorsSetChangedEvent">Отправить событие об изменении состояния набора объектов</param>
-        protected void MoveToRunning(ActorBase actor, bool raiseActorsSetChangedEvent = true)
+        private void MoveToRunning(ActorBase actor, bool raiseActorsSetChangedEvent = true)
             {
             lock (Locker)
                 {
@@ -458,10 +510,8 @@ namespace ActorsCP.Actors
 
                 CheckActorsSetState();
 
-                Interlocked.Increment(ref _runningCount);
-                _running.Add(actor);
-
                 RemoveFromWaiting(actor);
+                AddToRunning(actor);
                 RemoveFromCompleted(actor);
 
                 if (raiseActorsSetChangedEvent)
@@ -476,7 +526,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actor">Объект</param>
         /// <param name="raiseActorsSetChangedEvent">Отправить событие об изменении состояния набора объектов</param>
-        protected void MoveToCompleted(ActorBase actor, bool raiseActorsSetChangedEvent = true)
+        private void MoveToCompleted(ActorBase actor, bool raiseActorsSetChangedEvent = true)
             {
             lock (Locker)
                 {
@@ -505,27 +555,14 @@ namespace ActorsCP.Actors
 
                 CheckActorsSetState();
 
-                if (actor.State == ActorState.Terminated)
-                    {
-                    Interlocked.Increment(ref _completedCount);
-                    }
-
                 if (actor.AnErrorOccurred) // выставляем флаг ошибки если произошла хоть одна ошибка
                     {
                     SetAnErrorOccurred();
                     }
 
-                if (CleanupAfterTermination) // если флаг CleanupAfterTermination установлен, то сразу выбрасываем объект
-                    {
-                    actor.Dispose(); // Вызываем Dispose() для actor
-                    }
-                else
-                    {
-                    _completed.Add(actor); // кладем в список завершенных
-                    }
-
                 RemoveFromWaiting(actor);
                 RemoveFromRunning(actor);
+                AddToCompleted(actor);
 
                 if (raiseActorsSetChangedEvent)
                     {
