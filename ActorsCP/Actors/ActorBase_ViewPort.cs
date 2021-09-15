@@ -21,7 +21,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Очистить все связанное с вьюпортами
         /// </summary>
-        public void ClearViewPortHelper()
+        private void ClearViewPortHelper()
             {
             if (_ClearViewPortHelperCalled)
                 {
@@ -112,24 +112,10 @@ namespace ActorsCP.Actors
         /// </summary>
         protected void UnbindAllViewPorts() // оригинальный метод для ActorBase
             {
-            if (_viewPortsContainer == null || _viewPortsContainer.IsEmpty)
+            lock (Locker)
                 {
-                return;
-                }
-
-            var tmpList = _viewPortsContainer.GetCopy();
-
-            foreach (var wr in tmpList)
-                {
-                if (wr.IsAlive)
-                    {
-                    var eh = wr.Target as IActorViewPort;
-                    if (eh != null)
-                        {
-                        UnbindEventsHandlers(eh);
-                        }
-                    } // end IsAlive
-                }
+                _viewPortsContainer?.UnbindAllViewPorts();
+                }  // end lock
             }
 
         #region Методы для привязки дочерних объектов созданных при вызове метода Run()

@@ -175,6 +175,7 @@ namespace ActorsCP.Actors
         protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             UnbindAllViewPorts();
+
             //ClearViewPortHelper(); // в ActorsSet::InternalRunCleanupBeforeTerminationAsync()
 
             var bres = await base.InternalRunCleanupBeforeTerminationAsync(fromDispose);

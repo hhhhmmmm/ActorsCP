@@ -203,6 +203,31 @@ namespace ActorsCP.ViewPorts
 #endif // DEBUG_BIND_UNBIND
             }
 
+        /// <summary>
+        /// Отвязать все вьюпорты от родительского объекта
+        /// </summary>
+        public void UnbindAllViewPorts()
+            {
+            if (IsEmpty)
+                {
+                return;
+                }
+
+            var tmpList = GetCopy();
+
+            foreach (var wr in tmpList)
+                {
+                if (wr.IsAlive)
+                    {
+                    var eh = wr.Target as IActorViewPort;
+                    if (eh != null)
+                        {
+                        _parentActor.UnbindEventsHandlers(eh);
+                        }
+                    } // end IsAlive
+                }
+            }
+
         //        /// <summary>
         //        /// Отвязать от объекта все имеющиеся вьюпорты
         //        /// </summary>
