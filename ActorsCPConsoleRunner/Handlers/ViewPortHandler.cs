@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using CommandLine;
 using CommandLine.Text;
@@ -48,7 +49,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Метод запуска
         /// </summary>
-        protected override int InternalRun()
+        protected override async Task<int> InternalRun()
             {
             Console.WriteLine($"InternalRun() - {this.ToString()}");
             return 0;

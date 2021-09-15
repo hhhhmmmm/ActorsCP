@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
 using ActorsCP.Helpers;
 
@@ -59,7 +60,8 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         public int Run()
             {
-            return InternalRun();
+            var task = InternalRun();
+            return task.Result;
             }
 
         #endregion Методы
@@ -67,10 +69,10 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Метод запуска
         /// </summary>
-        protected virtual int InternalRun()
+        protected virtual Task<int> InternalRun()
             {
             Console.WriteLine($"InternalRun() - {this.ToString()}");
-            return 0;
+            return Task.FromResult(0);
             }
 
         #region Реализация интерфейса IMessageChannel

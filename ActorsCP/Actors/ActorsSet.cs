@@ -26,7 +26,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsSet()
             {
-            SetName("Набор объектов");
+            SetName("Множество объектов");
             }
 
         /// <summary>
