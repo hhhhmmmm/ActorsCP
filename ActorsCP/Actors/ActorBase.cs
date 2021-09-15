@@ -210,7 +210,7 @@ namespace ActorsCP.Actors
                 }
             else
                 {
-                _runCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose);
+                _runCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose).ConfigureAwait(false);
                 _internalRunCleanupBeforeTermination = true;
                 return _runCleanupBeforeTerminationAsyncResult;
                 }
@@ -227,7 +227,7 @@ namespace ActorsCP.Actors
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 }
             }
 
@@ -238,7 +238,7 @@ namespace ActorsCP.Actors
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 }
 
             _externalObjects?.Clear();

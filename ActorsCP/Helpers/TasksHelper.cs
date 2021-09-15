@@ -93,7 +93,7 @@ namespace ActorsCP.Helpers
                     foreach (var item in enumerable)
                         {
                         // Increment the number of currently running tasks and wait if they are more than limit.
-                        await semaphoreSlim.WaitAsync();
+                        await semaphoreSlim.WaitAsync().ConfigureAwait(false);
 
                         tasksWithThrottler.Add(Task.Run(async () =>
                         {
@@ -101,17 +101,17 @@ namespace ActorsCP.Helpers
                             {
                                 // action is completed, so decrement the number of currently running tasks
                                 semaphoreSlim.Release();
-                            });
+                            }).ConfigureAwait(false);
                         }));
                         } // end foreach
 
                     // Wait for all tasks to complete.
-                    await Task.WhenAll(tasksWithThrottler.ToArray());
+                    await Task.WhenAll(tasksWithThrottler.ToArray()).ConfigureAwait(false);
                     }
                 }
             else
                 {
-                await Task.WhenAll(enumerable.Select(item => action(item)));
+                await Task.WhenAll(enumerable.Select(item => action(item))).ConfigureAwait(false);
                 }
             }
 

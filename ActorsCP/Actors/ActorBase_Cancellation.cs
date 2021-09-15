@@ -68,12 +68,12 @@ namespace ActorsCP.Actors
 
             if (IsStarted || IsRunning)
                 {
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
                 }
 
             if (!IsTerminated)
                 {
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 }
             }
 
@@ -100,12 +100,12 @@ namespace ActorsCP.Actors
 
             if (IsStarted || IsRunning)
                 {
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
                 }
 
             if (!IsTerminated)
                 {
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 }
             }
         } // end class ActorBase

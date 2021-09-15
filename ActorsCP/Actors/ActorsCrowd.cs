@@ -60,7 +60,7 @@ namespace ActorsCP.Actors
                 return true;
                 }
 
-            bresult = await RunInParallel(WaitingList);
+            bresult = await RunInParallel(WaitingList).ConfigureAwait(false);
             return bresult;
             }
 
@@ -104,11 +104,11 @@ namespace ActorsCP.Actors
                 actorTime.SetStartDate();
                 if (!MaxDegreeOfParallelism.HasValue)
                     {
-                    return await RunInParallelWithoutLimits(actorsList);
+                    return await RunInParallelWithoutLimits(actorsList).ConfigureAwait(false);
                     }
                 else
                     {
-                    return await RunInParallelWithLimits(actorsList);
+                    return await RunInParallelWithLimits(actorsList).ConfigureAwait(false);
                     }
                 }
             finally

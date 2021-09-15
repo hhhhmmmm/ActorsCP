@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
@@ -63,6 +64,18 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         protected override async Task<int> InternalRun()
             {
+            //HashSet<string> hs = new HashSet<string>();
+            //for (int i = 0; i < 10; i++)
+            //    {
+            //    var s = $"строка{10 - i}";
+            //    hs.Add(s);
+            //    }
+
+            //foreach (var s in hs)
+            //    {
+            //    Debug.WriteLine(s);
+            //    }
+
             ActorTime actorTime = default;
 
             if (nItemsCount <= 0)

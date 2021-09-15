@@ -48,7 +48,7 @@ namespace ActorsCP.Actors
             foreach (var actor in array)
                 {
                 ThrowIfCancellationRequested();
-                bool bres = await actor.RunAsync();
+                bool bres = await actor.RunAsync().ConfigureAwait(false);
                 if (!bres)
                     {
                     bresult = false;

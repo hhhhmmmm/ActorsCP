@@ -279,7 +279,7 @@ namespace ActorsCP.Actors
 
             //ClearViewPortHelper(); // в ActorsSet::InternalRunCleanupBeforeTerminationAsync()
 
-            var bres = await base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
+            var bres = await base.InternalRunCleanupBeforeTerminationAsync(fromDispose).ConfigureAwait(false);
 
             lock (Locker)
                 {
@@ -324,16 +324,16 @@ namespace ActorsCP.Actors
         /// </summary>
         public override async Task CancelAsync()
             {
-            await base.CancelAsync();
+            await base.CancelAsync().ConfigureAwait(false);
 
             foreach (var actor in _waiting)
                 {
-                await actor.CancelAsync();
+                await actor.CancelAsync().ConfigureAwait(false);
                 }
 
             foreach (var actor in _running.Items)
                 {
-                await actor.CancelAsync();
+                await actor.CancelAsync().ConfigureAwait(false);
                 }
             }
 
@@ -397,7 +397,7 @@ namespace ActorsCP.Actors
                             {
                             if (actor.State != ActorState.Terminated)
                                 {
-                                await actor.TerminateAsync();
+                                await actor.TerminateAsync().ConfigureAwait(false);
                                 }
                             else
                                 {
