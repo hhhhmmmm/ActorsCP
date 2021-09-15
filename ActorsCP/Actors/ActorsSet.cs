@@ -1,5 +1,7 @@
-﻿#if DEBUG
-#define DEBUG_TRACK_MOVES
+﻿using System.Text;
+
+#if DEBUG
+// #define DEBUG_TRACK_MOVES
 #endif // DEBUG
 
 using System;
@@ -7,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
 
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
@@ -103,7 +104,8 @@ namespace ActorsCP.Actors
         ///// <summary>
         ///// Список объектов ожидающих выполнения
         ///// </summary>
-        protected readonly List<ActorBase> _waiting = new List<ActorBase>();
+        //protected readonly List<ActorBase> _waiting = new List<ActorBase>();
+        protected readonly HashSet<ActorBase> _waiting = new HashSet<ActorBase>();
 
         /// <summary>
         /// Количество объектов ожидающих выполнения
@@ -131,6 +133,41 @@ namespace ActorsCP.Actors
         private volatile int _completedCount = 0;
 
         #endregion Приватные мемберы
+
+        /// <summary>
+        /// Удалить из списка ожидания
+        /// </summary>
+        /// <param name="actor"></param>
+        private void RemoveFromWaiting(ActorBase actor)
+            {
+            if (_waiting.Remove(actor))
+                {
+                Interlocked.Decrement(ref _waitingCount);
+                }
+            }
+
+        /// <summary>
+        /// Удалить из списка выполнения
+        /// </summary>
+        /// <param name="actor"></param>
+        private void RemoveFromRunning(ActorBase actor)
+            {
+            if (_running.Remove(actor))
+                {
+                Interlocked.Decrement(ref _runningCount);
+                }
+            }
+
+        /// <summary>
+        /// Удалить из списка завершенных
+        /// </summary>
+        private void RemoveFromCompleted(ActorBase actor)
+            {
+            if (_completed.Remove(actor))
+                {
+                Interlocked.Decrement(ref _completedCount);
+                }
+            }
 
         #region Приватные методы
 
@@ -274,26 +311,18 @@ namespace ActorsCP.Actors
                 {
                 case ActorState.Pending:
                     {
-                    if (!_waiting.Contains(actor))
-                        {
-                        MoveToWaiting(actor);
-                        }
+                    MoveToWaiting(actor);
                     break;
                     }
                 case ActorState.Running:
                     {
-                    if (!_running.Contains(actor))
-                        {
-                        MoveToRunning(actor);
-                        }
+                    MoveToRunning(actor);
+
                     break;
                     }
                 case ActorState.Started:
                     {
-                    if (!_running.Contains(actor))
-                        {
-                        MoveToRunning(actor);
-                        }
+                    MoveToRunning(actor);
                     break;
                     }
                 case ActorState.Stopped:
@@ -314,19 +343,13 @@ namespace ActorsCP.Actors
                         }
                     else
                         {
-                        if (!_waiting.Contains(actor))
-                            {
-                            MoveToWaiting(actor);
-                            }
+                        MoveToWaiting(actor);
                         }
                     break;
                     }
                 case ActorState.Terminated:
                     {
-                    if (!_completed.Contains(actor))
-                        {
-                        MoveToCompleted(actor);
-                        }
+                    MoveToCompleted(actor);
                     break;
                     }
                 default:
@@ -368,13 +391,13 @@ namespace ActorsCP.Actors
                 Debug.WriteLine($"MoveToWaiting(): actor = {actor.Name}");
 #endif // DEBUG_TRACK_MOVES
 
-                if (_waiting.Contains(actor))
+                if (_waiting.Contains(actor)) // Contains() очень медленная для списка
                     {
-                    //if (raiseActorsSetChangedEvent)
-                    //    {
-                    //    RaiseActorsSetChanged(actor);
-                    //    }
-                    return;
+                    //    //if (raiseActorsSetChangedEvent)
+                    //    //    {
+                    //    //    RaiseActorsSetChanged(actor);
+                    //    //    }
+                    //    return;
                     }
 
                 CheckActorsSetState();
@@ -383,16 +406,8 @@ namespace ActorsCP.Actors
                 actor.StateChangedEvents += Actor_StateChangedEvents;
                 _waiting.Add(actor);
 
-                if (_running.Contains(actor))
-                    {
-                    _running.Remove(actor);
-                    Interlocked.Decrement(ref _runningCount);
-                    }
-                if (_completed.Contains(actor))
-                    {
-                    _completed.Remove(actor);
-                    Interlocked.Decrement(ref _completedCount);
-                    }
+                RemoveFromRunning(actor);
+                RemoveFromCompleted(actor);
 
                 if (raiseActorsSetChangedEvent)
                     {
@@ -432,7 +447,7 @@ namespace ActorsCP.Actors
                 Debug.WriteLine($"MoveToRunning(): actor = {actor.Name}");
 #endif // DEBUG_TRACK_MOVES
 
-                if (_running.Contains(actor))
+                if (_running.Contains(actor)) // уже есть в списке выполняющихся
                     {
                     //if (raiseActorsSetChangedEvent)
                     //    {
@@ -446,16 +461,8 @@ namespace ActorsCP.Actors
                 Interlocked.Increment(ref _runningCount);
                 _running.Add(actor);
 
-                if (_waiting.Contains(actor))
-                    {
-                    _waiting.Remove(actor);
-                    Interlocked.Decrement(ref _waitingCount);
-                    }
-                if (_completed.Contains(actor))
-                    {
-                    _completed.Remove(actor);
-                    Interlocked.Decrement(ref _completedCount);
-                    }
+                RemoveFromWaiting(actor);
+                RemoveFromCompleted(actor);
 
                 if (raiseActorsSetChangedEvent)
                     {
@@ -517,17 +524,8 @@ namespace ActorsCP.Actors
                     _completed.Add(actor); // кладем в список завершенных
                     }
 
-                if (_waiting.Contains(actor))
-                    {
-                    _waiting.Remove(actor);
-                    Interlocked.Decrement(ref _waitingCount);
-                    }
-
-                if (_running.Contains(actor))
-                    {
-                    _running.Remove(actor);
-                    Interlocked.Decrement(ref _runningCount);
-                    }
+                RemoveFromWaiting(actor);
+                RemoveFromRunning(actor);
 
                 if (raiseActorsSetChangedEvent)
                     {

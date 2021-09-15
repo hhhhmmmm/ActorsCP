@@ -63,6 +63,8 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         protected override async Task<int> InternalRun()
             {
+            ActorTime actorTime = default;
+
             if (nItemsCount <= 0)
                 {
                 RaiseError("count должно быть > 0");
@@ -72,6 +74,8 @@ namespace ActorsCPConsoleRunner.Handlers
                 {
                 nProcessorCount = Environment.ProcessorCount;
                 }
+
+            MessageChannelImplementation mci = MessageChannel as MessageChannelImplementation;
 
             RaiseWarning($"LimitParallelelism = {LimitParallelelism}");
             RaiseWarning($"nProcessorCount = {nProcessorCount}");
@@ -96,7 +100,16 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.Add(actor);
                 }
 
+            mci.RaiseMessages = false;
+            actorTime.SetStartDate();
             await crowd.RunAsync();
+            actorTime.SetEndDate();
+            var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
+
+            mci.RaiseMessages = true;
+
+            RaiseWarning($"nItemsCount = {nItemsCount}");
+            RaiseWarning(result);
             return 0;
             }
 

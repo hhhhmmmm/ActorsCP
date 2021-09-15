@@ -91,10 +91,11 @@ namespace ActorsCP.Helpers
         /// Удалить элемент из контейнера
         /// </summary>
         /// <param name="item">Объект</param>
-        public void Remove(TTypeparam item)
+        public bool Remove(TTypeparam item)
             {
             IDictionary<TTypeparam, byte> id = Bag;
-            id.Remove(item);
+            var bres = id.Remove(item);
+            return bres;
             }
 
         /// <summary>

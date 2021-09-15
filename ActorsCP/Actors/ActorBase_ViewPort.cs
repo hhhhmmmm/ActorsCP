@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-#define DEBUG_BIND_UNBIND
+// #define DEBUG_BIND_UNBIND
 #endif // DEBUG
 
 using System;

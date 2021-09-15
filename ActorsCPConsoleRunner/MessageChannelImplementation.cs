@@ -13,6 +13,12 @@ namespace ActorsCPConsoleRunner
     /// </summary>
     public class MessageChannelImplementation : IMessageChannel
         {
+        public bool RaiseMessages
+            {
+            get;
+            set;
+            } = true;
+
         #region Конструкторы
 
         /// <summary>
@@ -27,28 +33,40 @@ namespace ActorsCPConsoleRunner
         /// <summary>
         /// Вывести сообщение
         /// </summary>
-        /// <param name="MessageText">Текст сообщения</param>
-        public void RaiseMessage(string MessageText)
+        /// <param name="messageText">Текст сообщения</param>
+        public void RaiseMessage(string messageText)
             {
-            MainProgram.RaiseMessage(MessageText);
+            if (!RaiseMessages)
+                {
+                return;
+                }
+            MainProgram.RaiseMessage(messageText);
             }
 
         /// <summary>
         /// Вывести предупреждение
         /// </summary>
-        /// <param name="MessageText">Текст сообщения</param>
-        public void RaiseWarning(string MessageText)
+        /// <param name="warningText">Текст сообщения</param>
+        public void RaiseWarning(string warningText)
             {
-            MainProgram.RaiseWarning(MessageText);
+            if (!RaiseMessages)
+                {
+                return;
+                }
+            MainProgram.RaiseWarning(warningText);
             }
 
         /// <summary>
         /// Вывести сообщение об ошибке
         /// </summary>
-        /// <param name="ErrorText">Текст сообщения об ошибке</param>
-        public void RaiseError(string ErrorText)
+        /// <param name="errorText">Текст сообщения об ошибке</param>
+        public void RaiseError(string errorText)
             {
-            MainProgram.RaiseError(ErrorText);
+            if (!RaiseMessages)
+                {
+                return;
+                }
+            MainProgram.RaiseError(errorText);
             }
 
         /// <summary>
@@ -57,6 +75,10 @@ namespace ActorsCPConsoleRunner
         /// <param name="debugText">Текст отладочного сообщения</param>
         public void RaiseDebug(string debugText)
             {
+            if (!RaiseMessages)
+                {
+                return;
+                }
             MainProgram.RaiseDebug(debugText);
             }
 
@@ -66,6 +88,10 @@ namespace ActorsCPConsoleRunner
         /// <param name="exception">Исключение</param>
         public void RaiseException(Exception exception)
             {
+            if (!RaiseMessages)
+                {
+                return;
+                }
             MainProgram.RaiseException(exception);
             }
 

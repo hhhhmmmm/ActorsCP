@@ -62,7 +62,7 @@ namespace ActorsCP.Actors
 
             //var array = _waiting.ToArray();
             // await TasksHelper.ForEachAsyncConcurrentAutoAsync<ActorBase>(array, (x) => { return x.RunAsync(); });
-            bresult = await RunInParallel(_waiting);
+            bresult = await RunInParallel(_waiting.ToArray<ActorBase>().ToList());
             return bresult;
             }
 

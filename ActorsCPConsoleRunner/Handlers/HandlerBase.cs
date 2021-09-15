@@ -42,6 +42,14 @@ namespace ActorsCPConsoleRunner.Handlers
             get; set;
             }
 
+        protected IMessageChannel MessageChannel
+            {
+            get
+                {
+                return m_IMessageChannel;
+                }
+            }
+
         #endregion Свойства
 
         #region Методы
