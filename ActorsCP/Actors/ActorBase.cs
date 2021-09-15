@@ -57,11 +57,6 @@ namespace ActorsCP.Actors
         /// </summary>
         private ActorTime m_ExecutionTime = default;
 
-        /// <summary>
-        /// Контейнер вьюпортов
-        /// </summary>
-        private ViewPortsContainer _viewPortsContainer;
-
         #endregion Внутренние объекты
 
         #region Конструкторы
@@ -75,7 +70,6 @@ namespace ActorsCP.Actors
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
-            _viewPortsContainer = new ViewPortsContainer(this);
             }
 
         /// <summary>Конструктор</summary>

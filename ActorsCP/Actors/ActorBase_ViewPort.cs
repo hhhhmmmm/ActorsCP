@@ -14,6 +14,13 @@ namespace ActorsCP.Actors
     public partial class ActorBase
         {
         /// <summary>
+        /// Контейнер вьюпортов
+        /// </summary>
+        private ViewPortsContainer _viewPortsContainer;
+
+        #region ClearViewPortHelper
+
+        /// <summary>
         /// Вызов Clear View Port Helper() произведен
         /// </summary>
         private bool _ClearViewPortHelperCalled;
@@ -37,10 +44,23 @@ namespace ActorsCP.Actors
             if (_viewPortsContainer != null)
                 {
                 _viewPortsContainer.Dispose();
-                _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
+                _viewPortsContainer = null;
                 }
 
             _ClearViewPortHelperCalled = true;
+            }
+
+        #endregion ClearViewPortHelper
+
+        /// <summary>
+        /// Создать контейнер если его не существует
+        /// </summary>
+        private void CreateViewPortsContainerIfNotExists()
+            {
+            if (_viewPortsContainer == null)
+                {
+                _viewPortsContainer = new ViewPortsContainer(this);
+                }
             }
 
         #region Подписка/отписка на события
@@ -70,7 +90,11 @@ namespace ActorsCP.Actors
 
             #region Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
 
-            _viewPortsContainer.AddAndNotify(iViewPort);
+            lock (Locker)
+                {
+                CreateViewPortsContainerIfNotExists();
+                _viewPortsContainer.AddAndNotify(iViewPort);
+                }
 
             #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
@@ -100,12 +124,21 @@ namespace ActorsCP.Actors
 
             #region Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
 
-            _viewPortsContainer.RemoveAndNotify(iViewPort);
+#if DEBUG
+            if (_viewPortsContainer == null)
+                {
+                throw new Exception("Попытка отписаться от вьюпорта при отсутствующем контейнере");
+                }
+#endif // DEBUG
+
+            _viewPortsContainer?.RemoveAndNotify(iViewPort);
 
             #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
 
         #endregion Подписка/отписка на события
+
+        #region Методы для привязки/отвязки дочерних объектов созданных при вызове метода Run() и прочее
 
         /// <summary>
         /// Отвязать все вьюпорты от объекта
@@ -118,8 +151,6 @@ namespace ActorsCP.Actors
                 }  // end lock
             }
 
-        #region Методы для привязки дочерних объектов созданных при вызове метода Run()
-
         /// <summary>
         /// Привязка производного объекта, созданного при вызове метода Run()
         /// </summary>
@@ -128,7 +159,7 @@ namespace ActorsCP.Actors
             {
             lock (Locker)
                 {
-                _viewPortsContainer.BindChild(childActor);
+                _viewPortsContainer?.BindChild(childActor);
                 }  // end lock
             }
 
@@ -140,10 +171,10 @@ namespace ActorsCP.Actors
         //    {
         //    lock (Locker)
         //        {
-        //        _viewPortsContainer.UnbindChild(childActor);
+        //        _viewPortsContainer?.UnbindChild(childActor);
         //        }  // end lock
         //    }
 
-        #endregion Методы для привязки дочерних объектов созданных при вызове метода Run()
+        #endregion Методы для привязки/отвязки дочерних объектов созданных при вызове метода Run() и прочее
         } // end class ActorBase
     } // end namespace ActorsCP.Actors

@@ -133,7 +133,7 @@ namespace ActorsCP.ViewPorts
             actorBindEventsHandler?.Actor_EventHandlersUnbound(_parentActor);
 
 #if DEBUG_BIND_UNBIND
-            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {_viewPortsContainer.BindEventsHandlerCounter}");
+            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
 #endif // DEBUG_BIND_UNBIND
 
             #endregion Окончательное уведомление
@@ -158,7 +158,7 @@ namespace ActorsCP.ViewPorts
             actorBindEventsHandler?.Actor_EventHandlersBound(_parentActor);
 
 #if DEBUG_BIND_UNBIND
-            _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindEventsHandlerCounter = {_viewPortsContainer.BindEventsHandlerCounter}");
+            _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
 #endif // DEBUG_BIND_UNBIND
             }
 
@@ -259,7 +259,7 @@ namespace ActorsCP.ViewPorts
         //            Interlocked.Decrement(ref _bindChildCounter);
 
         //#if DEBUG_BIND_UNBIND
-        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
+        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {BindChildCounter}");
         //#endif // DEBUG_BIND_UNBIND
         //            }
 
