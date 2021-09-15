@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
 
@@ -202,40 +203,40 @@ namespace ActorsCP.ViewPorts
 #endif // DEBUG_BIND_UNBIND
             }
 
-        /// <summary>
-        /// Отвязать от объекта все имеющиеся вьюпорты
-        /// </summary>
-        /// <param name="childActor">Объект</param>
-        public void UnbindChild(ActorBase childActor)
-            {
-            if (childActor == null)
-                {
-                throw new ArgumentNullException(nameof(childActor));
-                }
+        //        /// <summary>
+        //        /// Отвязать от объекта все имеющиеся вьюпорты
+        //        /// </summary>
+        //        /// <param name="childActor">Объект</param>
+        //        private void UnbindChild(ActorBase childActor)
+        //            {
+        //            if (childActor == null)
+        //                {
+        //                throw new ArgumentNullException(nameof(childActor));
+        //                }
 
-            if (childActor.Parent != _parentActor)
-                {
-                throw new ArgumentException("Переданный объект не является дочерним");
-                }
+        //            if (childActor.Parent != _parentActor)
+        //                {
+        //                throw new ArgumentException("Переданный объект не является дочерним");
+        //                }
 
-            foreach (var wr in ViewPortsList)
-                {
-                if (wr.IsAlive)
-                    {
-                    var eh = wr.Target as IActorViewPort;
-                    if (eh != null)
-                        {
-                        childActor.UnbindEventsHandlers(eh);
-                        }
-                    } // end IsAlive
-                } // end foreach
+        //            foreach (var wr in ViewPortsList)
+        //                {
+        //                if (wr.IsAlive)
+        //                    {
+        //                    var eh = wr.Target as IActorViewPort;
+        //                    if (eh != null)
+        //                        {
+        //                        childActor.UnbindEventsHandlers(eh);
+        //                        }
+        //                    } // end IsAlive
+        //                } // end foreach
 
-            Interlocked.Decrement(ref _bindChildCounter);
+        //            Interlocked.Decrement(ref _bindChildCounter);
 
-#if DEBUG_BIND_UNBIND
-                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
-#endif // DEBUG_BIND_UNBIND
-            }
+        //#if DEBUG_BIND_UNBIND
+        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {_viewPortsContainer.BindChildCounter}");
+        //#endif // DEBUG_BIND_UNBIND
+        //            }
 
         #region Реализация интерфейса IDisposable
 

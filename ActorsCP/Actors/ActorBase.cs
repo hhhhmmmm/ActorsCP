@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -241,10 +242,15 @@ namespace ActorsCP.Actors
         /// </summary>
         protected override async void DisposeManagedResources()
             {
-            await RunCleanupBeforeTerminationAsync(true);
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync();
+                }
+
+            // await RunCleanupBeforeTerminationAsync(true);
             _externalObjects?.Clear();
             _externalObjects = null;
-            ClearViewPortHelper(); // в DisposeManagedResources()
+            ClearViewPortHelper(); // в ActorBase::DisposeManagedResources()
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
@@ -313,7 +319,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
-                    ClearViewPortHelper(); // SetActorState: UnbindAllViewPorts(); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
+                    ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
                     }
                 default:

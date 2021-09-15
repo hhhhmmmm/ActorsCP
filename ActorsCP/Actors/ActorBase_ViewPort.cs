@@ -16,12 +16,14 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Очистить все связанное с вьюпортами
         /// </summary>
-        private void ClearViewPortHelper()
+        public virtual void ClearViewPortHelper()
             {
-            _viewPortsContainer.Dispose();
-            _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
-
-            UnbindAllViewPorts();
+            UnbindAllViewPorts(); // в  ClearViewPortHelper()
+            if (_viewPortsContainer != null)
+                {
+                _viewPortsContainer.Dispose();
+                _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
+                }
             }
 
         #region Подписка/отписка на события
@@ -91,7 +93,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
-        public virtual void UnbindAllViewPorts() // оригинальный метод для ActorBase
+        private void UnbindAllViewPorts() // оригинальный метод для ActorBase
             {
             if (_viewPortsContainer == null || _viewPortsContainer.IsEmpty)
                 {
@@ -131,13 +133,13 @@ namespace ActorsCP.Actors
         /// Отвязка производного объекта от подписчиков
         /// </summary>
         /// <param name="childActor">Производный объект</param>
-        public void UnbindChild(ActorBase childActor)
-            {
-            lock (Locker)
-                {
-                _viewPortsContainer.UnbindChild(childActor);
-                }  // end lock
-            }
+        //public void UnbindChild(ActorBase childActor)
+        //    {
+        //    lock (Locker)
+        //        {
+        //        _viewPortsContainer.UnbindChild(childActor);
+        //        }  // end lock
+        //    }
 
         #endregion Методы для привязки дочерних объектов созданных при вызове метода Run()
         } // end class ActorBase
