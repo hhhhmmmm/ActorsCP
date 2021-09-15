@@ -264,14 +264,14 @@ namespace ActorsCP.Actors
                             }
                         }
 
-                    m_ExecutionTime.SetStartDate();
+                    _executionTime.SetStartDate();
                     SetActorState(ActorState.Running);
 
                     HasBeenRun = true;
 
                     var runtask = InternalRunAsync();
                     await (runtask);
-                    m_ExecutionTime.SetEndDate();
+                    _executionTime.SetEndDate();
 
                     if (IsStarted || IsRunning)
                         {
@@ -311,7 +311,7 @@ namespace ActorsCP.Actors
                 } // end catch
             catch (AggregateException ae)
                 {
-                m_ExecutionTime.SetEndDate();
+                _executionTime.SetEndDate();
 
                 foreach (Exception e in ae.InnerExceptions)
                     {
@@ -322,7 +322,7 @@ namespace ActorsCP.Actors
                 } // end catch
             catch (Exception e)
                 {
-                m_ExecutionTime.SetEndDate();
+                _executionTime.SetEndDate();
 
                 OnActorThrownAnException(e);
                 await TerminateAsync();

@@ -45,7 +45,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Родительский объект
         /// </summary>
-        private ActorBase m_ParentActor;
+        private ActorBase _parentActor;
 
         /// <summary>
         /// Глобальный объект для синхронизации доступа
@@ -55,7 +55,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Время выполнения Run()
         /// </summary>
-        private ActorTime m_ExecutionTime = default;
+        private ActorTime _executionTime = default;
 
         #endregion Внутренние объекты
 
@@ -90,7 +90,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_ParentActor;
+                return _parentActor;
                 }
             }
 
@@ -128,7 +128,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_ExecutionTime;
+                return _executionTime;
                 }
             }
 
@@ -190,12 +190,12 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Был вызван InternalRunCleanupBeforeTerminationAsync()
         /// </summary>
-        private bool m_InternalRunCleanupBeforeTermination;
+        private bool _internalRunCleanupBeforeTermination;
 
         /// <summary>
         /// Результат выполнения RunCleanupBeforeTerminationAsync()
         /// </summary>
-        private bool m_RunCleanupBeforeTerminationAsyncResult;
+        private bool _runCleanupBeforeTerminationAsyncResult;
 
         /// <summary>
         /// Вызывает InternalRunCleanupBeforeTermination() один раз
@@ -204,15 +204,15 @@ namespace ActorsCP.Actors
         /// <returns></returns>
         private async Task<bool> RunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            if (m_InternalRunCleanupBeforeTermination)
+            if (_internalRunCleanupBeforeTermination)
                 {
-                return m_RunCleanupBeforeTerminationAsyncResult;
+                return _runCleanupBeforeTerminationAsyncResult;
                 }
             else
                 {
-                m_RunCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose);
-                m_InternalRunCleanupBeforeTermination = true;
-                return m_RunCleanupBeforeTerminationAsyncResult;
+                _runCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose);
+                _internalRunCleanupBeforeTermination = true;
+                return _runCleanupBeforeTerminationAsyncResult;
                 }
             }
 
@@ -246,8 +246,8 @@ namespace ActorsCP.Actors
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
-            m_ParentActor = null;
-            m_IMessageChannel = null;
+            _parentActor = null;
+            _iMessageChannel = null;
             base.DisposeManagedResources();
             }
 
@@ -373,16 +373,16 @@ namespace ActorsCP.Actors
         /// <param name="parentActor">Родительский объект</param>
         public virtual void SetParent(ActorBase parentActor)
             {
-            if (m_ParentActor == parentActor)
+            if (_parentActor == parentActor)
                 {
                 return;
                 }
 
-            m_ParentActor = parentActor;
-            if (m_ParentActor != null)
+            _parentActor = parentActor;
+            if (_parentActor != null)
                 {
-                SetIMessageChannel(m_ParentActor);
-                // UnsubscribeFromCancelationEvents(m_ParentActor);
+                SetIMessageChannel(_parentActor);
+                // UnsubscribeFromCancelationEvents(_parentActor);
                 }
 
             //CreateCancellationTokenSource(parentActor);

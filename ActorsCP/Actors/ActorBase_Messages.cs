@@ -15,7 +15,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Канал сообщений
         /// </summary>
-        private IMessageChannel m_IMessageChannel;
+        private IMessageChannel _iMessageChannel;
 
         #region События объекта
 
@@ -85,15 +85,15 @@ namespace ActorsCP.Actors
         /// <param name="iMessageChannel">Канал сообщений</param>
         public void SetIMessageChannel(IMessageChannel iMessageChannel)
             {
-            if (m_IMessageChannel == iMessageChannel)
+            if (_iMessageChannel == iMessageChannel)
                 {
                 return;
                 }
-            if (m_IMessageChannel == this)
+            if (_iMessageChannel == this)
                 {
                 return;
                 }
-            m_IMessageChannel = iMessageChannel;
+            _iMessageChannel = iMessageChannel;
             }
 
         #region IMessageChannel
@@ -106,7 +106,7 @@ namespace ActorsCP.Actors
             {
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseDebug(debugText);
+            _iMessageChannel?.RaiseDebug(debugText);
             }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace ActorsCP.Actors
             {
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseMessage(messageText);
+            _iMessageChannel?.RaiseMessage(messageText);
             }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace ActorsCP.Actors
             {
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseWarning(warningText);
+            _iMessageChannel?.RaiseWarning(warningText);
             }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace ActorsCP.Actors
             {
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseError(errorText);
+            _iMessageChannel?.RaiseError(errorText);
             }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace ActorsCP.Actors
             {
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseException(exception);
+            _iMessageChannel?.RaiseException(exception);
             }
 
         #endregion IMessageChannel

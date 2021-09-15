@@ -199,7 +199,7 @@ namespace ActorsCP.ViewPorts
             Interlocked.Increment(ref _bindChildCounter);
 
 #if DEBUG_BIND_UNBIND
-                _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, m_BindChildCounter = {BindChildCounter}");
+                _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindChildCounter = {BindChildCounter}");
 #endif // DEBUG_BIND_UNBIND
             }
 
