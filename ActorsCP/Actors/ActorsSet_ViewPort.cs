@@ -11,58 +11,6 @@ namespace ActorsCP.Actors
     public partial class ActorsSet
         {
         /// <summary>
-        /// Отвязать все вьюпорты от объекта
-        /// </summary>
-        //public override void UnbindAllViewPorts() // перегруженный метод для ActorsSet
-        //    {
-        //    base.UnbindAllViewPorts(); // в ActorsSet
-
-        //    // по идее на момент вызова все должны быть здесь
-        //    foreach (var actor in _waiting)
-        //        {
-        //        actor.UnbindAllViewPorts(); // в ActorsSet
-        //        }
-
-        //    // смысла мало (список должен быть пустой), но вызовем
-        //    foreach (var actor in _running.Items)
-        //        {
-        //        actor.UnbindAllViewPorts(); // в ActorsSet
-        //        }
-
-        //    // смысла мало (список должен быть пустой), но вызовем
-        //    foreach (var actor in _completed.Items)
-        //        {
-        //        actor.UnbindAllViewPorts(); // в ActorsSet
-        //        }
-        //    }
-
-        /// <summary>
-        /// Очистить все связанное с вьюпортами
-        /// </summary>
-        public override void ClearViewPortHelper()
-            {
-            //// по идее на момент вызова все должны быть здесь
-            //foreach (var actor in _waiting)
-            //    {
-            //    actor.ClearViewPortHelper(); // в ActorsSet
-            //    }
-
-            //// смысла мало (список должен быть пустой), но вызовем
-            //foreach (var actor in _running.Items)
-            //    {
-            //    actor.ClearViewPortHelper(); // в ActorsSet
-            //    }
-
-            //// смысла мало (список должен быть пустой), но вызовем
-            //foreach (var actor in _completed.Items)
-            //    {
-            //    actor.ClearViewPortHelper(); // в ActorsSet
-            //    }
-
-            base.ClearViewPortHelper();
-            }
-
-        /// <summary>
         /// Привязать обработчики события к объекту
         /// </summary>
         /// <param name="iViewPort">Интерфейс который получает уведомление о подписке на события</param>

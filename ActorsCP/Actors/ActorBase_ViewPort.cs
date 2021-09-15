@@ -14,16 +14,33 @@ namespace ActorsCP.Actors
     public partial class ActorBase
         {
         /// <summary>
+        /// Вызов Clear View Port Helper() произведен
+        /// </summary>
+        private bool _ClearViewPortHelperCalled;
+
+        /// <summary>
         /// Очистить все связанное с вьюпортами
         /// </summary>
-        public virtual void ClearViewPortHelper()
+        public void ClearViewPortHelper()
             {
-            UnbindAllViewPorts(); // в  ClearViewPortHelper()
+            if (_ClearViewPortHelperCalled)
+                {
+#if DEBUG
+                if (_ClearViewPortHelperCalled)
+                    {
+                    throw new Exception("Повторный вызов Clear View Port Helper()");
+                    }
+#endif // DEBUG
+                return;
+                }
+
             if (_viewPortsContainer != null)
                 {
                 _viewPortsContainer.Dispose();
                 _viewPortsContainer = null; // new Lazy<ViewPortsContainer>();
                 }
+
+            _ClearViewPortHelperCalled = true;
             }
 
         #region Подписка/отписка на события
@@ -93,7 +110,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отвязать все вьюпорты от объекта
         /// </summary>
-        private void UnbindAllViewPorts() // оригинальный метод для ActorBase
+        protected void UnbindAllViewPorts() // оригинальный метод для ActorBase
             {
             if (_viewPortsContainer == null || _viewPortsContainer.IsEmpty)
                 {
