@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -107,6 +106,10 @@ namespace ActorsCP.Actors
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
             _iMessageChannel?.RaiseDebug(debugText);
+            if (Logger.IsDebugEnabled)
+                {
+                Logger.LogDebug(debugText);
+                }
             }
 
         /// <summary>
@@ -118,6 +121,10 @@ namespace ActorsCP.Actors
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
             _iMessageChannel?.RaiseMessage(messageText);
+            if (Logger.IsInfoEnabled)
+                {
+                Logger.LogInfo(messageText);
+                }
             }
 
         /// <summary>
@@ -129,6 +136,10 @@ namespace ActorsCP.Actors
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
             _iMessageChannel?.RaiseWarning(warningText);
+            if (Logger.IsWarnEnabled)
+                {
+                Logger.LogWarn(warningText);
+                }
             }
 
         /// <summary>
@@ -140,6 +151,10 @@ namespace ActorsCP.Actors
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
             _iMessageChannel?.RaiseError(errorText);
+            if (Logger.IsErrorEnabled)
+                {
+                Logger.LogError(errorText);
+                }
             }
 
         /// <summary>
@@ -151,6 +166,10 @@ namespace ActorsCP.Actors
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
             _iMessageChannel?.RaiseException(exception);
+            if (Logger.IsErrorEnabled)
+                {
+                Logger.LogException(exception);
+                }
             }
 
         #endregion IMessageChannel

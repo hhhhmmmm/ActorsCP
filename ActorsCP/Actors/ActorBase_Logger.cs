@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using ActorsCP.Logger;
 
 namespace ActorsCP.Actors
     {
@@ -10,10 +10,44 @@ namespace ActorsCP.Actors
     public partial class ActorBase
         {
         /// <summary>
+        /// Экземпляр логгера
+        /// </summary>
+        private IActorLogger _actorLogger;
+
+        #region Свойства
+
+        /// <summary>
+        /// Экземпляр логгера
+        /// </summary>
+        protected IActorLogger Logger
+            {
+            get
+                {
+                if (_actorLogger != null)
+                    {
+                    return _actorLogger;
+                    }
+
+                var globalActorLogger = GlobalActorLogger.GetInstance();
+                return globalActorLogger;
+                }
+            }
+
+        #endregion Свойства
+
+        /// <summary>
         /// Частичная реализация - инициализация логгера
         /// </summary>
         private void InitLogger()
             {
+            }
+
+        /// <summary>
+        /// Установить персональный логгер для класса
+        /// </summary>
+        public void SetLogger(IActorLogger actorLogger)
+            {
+            _actorLogger = actorLogger;
             }
         }
     }

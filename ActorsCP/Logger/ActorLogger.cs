@@ -11,24 +11,24 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Уровень подробности логгера
         /// </summary>
-        private LogLevel _logLevel;
+        private ActorLogLevel _actorLogLevel;
 
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ActorLogger() : this(LogLevel.Off)
+        public ActorLogger() : this(ActorLogLevel.Off)
             {
             }
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="logLevel">Уровень подробности логгера</param>
-        public ActorLogger(LogLevel logLevel)
+        /// <param name="actorLogLevel">Уровень подробности логгера</param>
+        public ActorLogger(ActorLogLevel actorLogLevel)
             {
-            SetLogLevel(logLevel);
+            SetLogLevel(actorLogLevel);
             }
 
         #endregion Конструкторы
@@ -38,31 +38,31 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Установить уровень подробности логгера
         /// </summary>
-        /// <param name="logLevel">Уровень подробности логгера</param>
-        public void SetLogLevel(LogLevel logLevel)
+        /// <param name="actorLogLevel">Уровень подробности логгера</param>
+        public void SetLogLevel(ActorLogLevel actorLogLevel)
             {
-            _logLevel = logLevel;
-            if ((Level & LogLevel.Fatal) != 0)
+            _actorLogLevel = actorLogLevel;
+            if ((Level & ActorLogLevel.Fatal) != 0)
                 {
                 IsFatalEnabled = true;
                 }
 
-            if ((Level & LogLevel.Error) != 0)
+            if ((Level & ActorLogLevel.Error) != 0)
                 {
                 IsErrorEnabled = true;
                 }
 
-            if ((Level & LogLevel.Warn) != 0)
+            if ((Level & ActorLogLevel.Warn) != 0)
                 {
                 IsWarnEnabled = true;
                 }
 
-            if ((Level & LogLevel.Info) != 0)
+            if ((Level & ActorLogLevel.Info) != 0)
                 {
                 IsInfoEnabled = true;
                 }
 
-            if ((Level & LogLevel.Debug) != 0)
+            if ((Level & ActorLogLevel.Debug) != 0)
                 {
                 IsDebugEnabled = true;
                 }
@@ -75,11 +75,11 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Уровень подробности логгера
         /// </summary>
-        public LogLevel Level
+        public ActorLogLevel Level
             {
             get
                 {
-                return _logLevel;
+                return _actorLogLevel;
                 }
             }
 
@@ -90,7 +90,7 @@ namespace ActorsCP.Logger
             {
             get
                 {
-                return Level != LogLevel.Off;
+                return Level != ActorLogLevel.Off;
                 }
             }
 

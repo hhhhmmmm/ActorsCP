@@ -9,17 +9,6 @@ namespace ActorsCP.Actors
     /// </summary>
     public partial class ActorBase
         {
-        #region Вспомогательные методы
-
-        /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        protected virtual void InternalInitLogger()
-            {
-            }
-
-        #endregion Вспомогательные методы
-
         #region Набор методов для переопределения глаголов
 
         /// <summary>

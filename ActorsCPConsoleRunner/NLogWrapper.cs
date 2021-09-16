@@ -167,6 +167,11 @@ namespace ActorsCPConsoleRunner
         /// </summary>
         private Logger s_Logger = LogManager.GetCurrentClassLogger();
 
+        public Logger GetLogger()
+            {
+            return s_Logger;
+            }
+
         #endregion Mемберы
 
         #region Mетоды
@@ -261,7 +266,7 @@ namespace ActorsCPConsoleRunner
                         {
                         //if (MessageServerGlobals.DllConfiguration.DumpRequestAndResponse)
                         //	{
-                        //	logLevel = LogLevel.Trace;
+                        //	actorLogLevel = ActorLogLevel.Trace;
                         //	}
                         }
                     }
@@ -294,7 +299,7 @@ namespace ActorsCPConsoleRunner
                 //s_Logger.
                 //NLog.LogManager.GetLogger("aa");
 
-                LogInfo($"LogLevel: {logLevel.ToString() }");
+                LogInfo($"ActorLogLevel: {logLevel.ToString() }");
                 LogInfo($"Версия CLR: {Environment.Version.ToString()}");
                 LogInfo($"Операционная система: {Environment.OSVersion.ToString()}");
                 LogInfo($"Команда запуска: {Environment.CommandLine.ToString()}");

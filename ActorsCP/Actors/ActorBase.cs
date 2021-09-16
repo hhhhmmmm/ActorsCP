@@ -399,14 +399,6 @@ namespace ActorsCP.Actors
                 }
             }
 
-        /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        private void InitLogger()
-            {
-            InternalInitLogger();
-            }
-
         #endregion Защищенные методы
 
         #region Методы

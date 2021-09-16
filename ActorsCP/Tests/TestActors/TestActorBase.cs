@@ -48,15 +48,6 @@ namespace ActorsCP.Tests.TestActors
             }
 
         /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        protected override void InternalInitLogger()
-            {
-            base.InternalInitLogger();
-            InternalInitLogger_Called = true;
-            }
-
-        /// <summary>
         /// Запуск
         /// </summary>
         /// <returns>true если все хорошо</returns>
@@ -107,12 +98,6 @@ namespace ActorsCP.Tests.TestActors
             }
 
         public bool DisposeUnmanagedResources_Called
-            {
-            get;
-            private set;
-            }
-
-        public bool InternalInitLogger_Called
             {
             get;
             private set;

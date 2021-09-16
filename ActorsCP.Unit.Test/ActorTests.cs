@@ -222,7 +222,6 @@ namespace ActorsCP.Unit.Test
                 {
                 actor = a;
                 await a.RunAsync();
-                Assert.IsTrue(a.InternalInitLogger_Called);
                 Assert.IsTrue(a.InternalStartAsync_Called);
                 Assert.IsTrue(a.InternalStopAsync_Called);
                 Assert.IsTrue(a.InternalRunAsync_Called);

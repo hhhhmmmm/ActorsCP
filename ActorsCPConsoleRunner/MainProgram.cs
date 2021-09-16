@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using ActorsCP.Logger;
 using ActorsCP.ViewPorts.ConsoleViewPort;
-
 using ActorsCPConsoleRunner.Handlers;
-
 using CommandLine;
 
 namespace ActorsCPConsoleRunner
@@ -16,9 +14,16 @@ namespace ActorsCPConsoleRunner
         #region Мемберы
 
         /// <summary>
+        /// Экземплятор логгера
+        /// </summary>
+        private static NLogWrapper s_Logger = new NLogWrapper();
+
+        /// <summary>
         /// Результат вызова обработчика handler.Run();
         /// </summary>
         private static int HandlerResult = 0;
+
+        private static ActorLoggerImplementation actorLoggerImplementation;
 
         #endregion Мемберы
 
@@ -30,6 +35,16 @@ namespace ActorsCPConsoleRunner
             {
             try
                 {
+                #region Настройка логгера
+
+                bool bres = s_Logger.InitLog(false, "ConsoleRunner");
+                s_Logger.LogInfo("LogInfo");
+
+                actorLoggerImplementation = new ActorLoggerImplementation();
+                GlobalActorLogger.SetInstance(actorLoggerImplementation);
+
+                #endregion Настройка логгера
+
                 var result = Parser.Default.ParseArguments<QueueHandler, CrowdHandler, DebugHandler, ViewPortHandler>(args);
 
                 if (result.Tag == ParserResultType.NotParsed)

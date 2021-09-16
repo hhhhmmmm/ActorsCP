@@ -13,7 +13,7 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Уровень подробности логгера
         /// </summary>
-        LogLevel Level
+        ActorLogLevel Level
             {
             get;
             }

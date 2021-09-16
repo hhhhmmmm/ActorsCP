@@ -52,40 +52,11 @@ namespace ActorsCP.Actors.Events
         /// <param name="actionEventType">Тип сообщения</param>
         public ActorActionEventArgs(string action, ActorActionEventType actionEventType)
             {
-            this.MessageText = TrimStartWhitespaces(action);
-            this.ActionEventType = actionEventType;
+            MessageText = action?.TrimStart();
+            ActionEventType = actionEventType;
             }
 
         #endregion Конструкторы
-
-        /// <summary>
-        /// Обрезать передние пробелы
-        /// </summary>
-        /// <param name="str">строка</param>
-        /// <returns></returns>
-        private static string TrimStartWhitespaces(string str)
-            {
-            var startIndex = 0;
-
-            //get the starting point of the string without the whitespace
-            while (char.IsWhiteSpace(str[startIndex]))
-                {
-                startIndex += 1;
-                }
-
-            if (startIndex == 0)
-                {
-                return str;
-                }
-
-            var endIndex = str.Length - 1;
-
-            endIndex += 1;
-
-            //remove the whitespace
-            var stringTrimmed = str.Substring(startIndex, (endIndex - startIndex));
-            return stringTrimmed;
-            }
 
         #region Перегружаемые методы
 

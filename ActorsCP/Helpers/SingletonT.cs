@@ -1,4 +1,6 @@
-﻿namespace ActorsCP.Helpers
+﻿using System;
+
+namespace ActorsCP.Helpers
     {
     /// <summary>
     /// Шаблон синглтона
@@ -9,7 +11,7 @@
         /// <summary>
         /// Единственный экзмепляр объекта
         /// </summary>
-        private static T _instance;
+        protected static T _instance;
 
         /// <summary>
         /// Локер
@@ -30,6 +32,19 @@
                     }
                 return _instance;
                 }
+            }
+
+        /// <summary>
+        /// Установить глобальный экземпляр
+        /// </summary>
+        /// <param name="instance">Глобальный экземпляр</param>
+        public static void SetInstance(T instance)
+            {
+            if (_instance != null)
+                {
+                throw new Exception("Глобальный экземпляр уже задан");
+                }
+            _instance = instance;
             }
         }
     }
