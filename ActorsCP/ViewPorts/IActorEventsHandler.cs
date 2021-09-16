@@ -13,15 +13,15 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// События объекта
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Отправитель - объект</param>
+        /// <param name="e">Событие</param>
         void Actor_Event(object sender, ActorEventArgs e);
 
         /// <summary>
         /// События - изменилось состояние объекта
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Отправитель - объект</param>
+        /// <param name="e">Событие</param>
         void Actor_StateChangedEvent(object sender, ActorStateChangedEventArgs e);
         } // end interface IActorEventsHandler
     } // end namespace ActorsCP.ViewPorts

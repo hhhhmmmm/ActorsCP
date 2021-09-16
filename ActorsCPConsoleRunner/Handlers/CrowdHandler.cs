@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using ActorsCP.Actors;
 using ActorsCP.Tests.TestActors;
+using ActorsCP.ViewPorts.ConsoleViewPort;
 
 using CommandLine;
 using CommandLine.Text;
@@ -64,18 +65,6 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         protected override async Task<int> InternalRun()
             {
-            //HashSet<string> hs = new HashSet<string>();
-            //for (int i = 0; i < 10; i++)
-            //    {
-            //    var s = $"строка{10 - i}";
-            //    hs.Add(s);
-            //    }
-
-            //foreach (var s in hs)
-            //    {
-            //    Debug.WriteLine(s);
-            //    }
-
             ActorTime actorTime = default;
 
             if (nItemsCount <= 0)
@@ -88,14 +77,18 @@ namespace ActorsCPConsoleRunner.Handlers
                 nProcessorCount = Environment.ProcessorCount;
                 }
 
-            MessageChannelImplementation mci = MessageChannel as MessageChannelImplementation;
+            var viewPort = new ConsoleActorViewPort();
+            // MessageChannelImplementation mci = MessageChannel as MessageChannelImplementation;
 
             RaiseWarning($"LimitParallelelism = {LimitParallelelism}");
             RaiseWarning($"nProcessorCount = {nProcessorCount}");
 
             var crowd = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
-            crowd.SetIMessageChannel(this);
+
+            crowd.BindViewPort(viewPort);
+
+            // crowd.SetIMessageChannel(this);
 
             if (LimitParallelelism)
                 {
@@ -113,13 +106,15 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.Add(actor);
                 }
 
-            mci.RaiseMessages = false;
+            //viewPort.OutMessages = false;
+            // mci.RaiseMessages = false;
             actorTime.SetStartDate();
             await crowd.RunAsync();
             actorTime.SetEndDate();
             var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
 
-            mci.RaiseMessages = true;
+            //viewPort.OutMessages = true;
+            // mci.RaiseMessages = true;
 
             RaiseWarning($"nItemsCount = {nItemsCount}");
             RaiseWarning(result);

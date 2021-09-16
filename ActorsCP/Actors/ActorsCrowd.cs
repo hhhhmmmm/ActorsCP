@@ -145,8 +145,9 @@ namespace ActorsCP.Actors
                 {
                 actorTime.SetEndDate();
 #if DEBUG
-                var result = actorTime.GetTimeIntervalWithComment(nCount);
-                OnActorAction(result);
+                var time = actorTime.GetTimeIntervalWithComment(nCount);
+                var str = $"{Name} - {time}";
+                OnActorActionDebug(str);
 #endif // DEBUG
                 }
             }

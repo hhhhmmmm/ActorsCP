@@ -11,7 +11,7 @@ namespace ActorsCP.Tests.ViewPorts
     /// <summary>
     /// Базовый тестовый вьюпорт
     /// </summary>
-    public class TestViewPortBase : IActorViewPort, IActorEventsHandler, IActorBindViewPortsHandler
+    public class TestViewPortBase : IActorViewPort, IActorEventsHandler, IActorBindViewPortHandler
         {
         /// <summary>
         /// Канал сообщений
@@ -55,7 +55,7 @@ namespace ActorsCP.Tests.ViewPorts
 
         #endregion Реализация интерфейса IActorEventsHandler
 
-        #region Реализация интерфейса IActorBindEventsHandler
+        #region Реализация интерфейса IActorBindViewPortHandler
 
         /// <summary>
         /// Вызывается, когда объект подписан на события
@@ -95,7 +95,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// </summary>
         public int _Counter_Actor_EventHandlersUnbound;
 
-        #endregion Реализация интерфейса IActorBindEventsHandler
+        #endregion Реализация интерфейса IActorBindViewPortHandler
 
         //
         } // end class TestViewPortBase

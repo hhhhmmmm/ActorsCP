@@ -19,7 +19,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Текст сообщения
         /// </summary>
-        public string Action
+        public string MessageText
             {
             get;
             protected set;
@@ -30,9 +30,9 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="action">Текст сообщения</param>
-        public ActorActionEventArgs(string action)
-            : this(action, ActorActionEventType.Neutral)
+        /// <param name="messageText">Текст сообщения</param>
+        public ActorActionEventArgs(string messageText)
+            : this(messageText, ActorActionEventType.Neutral)
             {
             }
 
@@ -52,7 +52,7 @@ namespace ActorsCP.Actors.Events
         /// <param name="actionEventType">Тип сообщения</param>
         public ActorActionEventArgs(string action, ActorActionEventType actionEventType)
             {
-            this.Action = TrimStartWhitespaces(action);
+            this.MessageText = TrimStartWhitespaces(action);
             this.ActionEventType = actionEventType;
             }
 
@@ -95,7 +95,7 @@ namespace ActorsCP.Actors.Events
         /// <returns></returns>
         public override string ToString()
             {
-            return $"{ActionEventType} '{Action}' ";
+            return $"{ActionEventType} '{MessageText}' ";
             }
 
         #endregion Перегружаемые методы

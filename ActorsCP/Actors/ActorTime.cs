@@ -47,6 +47,24 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
+        /// Время выполнения
+        /// </summary>
+        public TimeSpan ExecutionTimeSpan
+            {
+            get;
+            set;
+            }
+
+        /// <summary>
+        /// Длительность
+        /// </summary>
+        public TimeSpan Duration
+            {
+            get;
+            set;
+            }
+
+        /// <summary>
         /// Установить текущую дату в качестве стартовой
         /// </summary>
         public void SetStartDate()
@@ -62,6 +80,8 @@ namespace ActorsCP.Actors
             {
             HasEndDate = true;
             EndDate = DateTime.Now;
+            ExecutionTimeSpan = EndDate - StartDate;
+            Duration = ExecutionTimeSpan.Duration();
             }
 
         /// <summary>
@@ -84,11 +104,35 @@ namespace ActorsCP.Actors
                 {
                 if (HasStartDate && HasEndDate)
                     {
-                    var ExecutionTimeSpan = EndDate - StartDate;
-                    var TotalMilliseconds = ExecutionTimeSpan.Duration().TotalMilliseconds;
+                    var TotalMilliseconds = Duration.TotalMilliseconds;
                     return TotalMilliseconds;
                     }
                 return 0;
+                }
+            }
+
+        /// <summary>
+        /// Минимально видимый интервал
+        /// </summary>
+        private const int MinimalVisibleInterval = 1;
+
+        /// <summary>
+        /// Нулевое время выполнения
+        /// </summary>
+        private const string EmptyTime = "00:00:00.000";
+
+        /// <summary>
+        /// Время выполнения - нулевое
+        /// </summary>
+        public bool IsEmptyTime
+            {
+            get
+                {
+                if (HasStartDate && HasEndDate)
+                    {
+                    return Duration.TotalMilliseconds < 1;
+                    }
+                return false;
                 }
             }
 
@@ -101,8 +145,6 @@ namespace ActorsCP.Actors
                 {
                 if (HasStartDate && HasEndDate)
                     {
-                    var ExecutionTimeSpan = EndDate - StartDate;
-                    var Duration = ExecutionTimeSpan.Duration();
                     var DurationTime = Duration.ToString();
                     return DurationTime;
                     }
@@ -117,11 +159,14 @@ namespace ActorsCP.Actors
             {
             get
                 {
+                if (IsEmptyTime)
+                    {
+                    return EmptyTime;
+                    }
+
                 if (HasStartDate && HasEndDate)
                     {
-                    var ExecutionTimeSpan = EndDate - StartDate;
-                    var Duration = ExecutionTimeSpan.Duration();
-                    var DurationTime = Duration.ToString("hh\\:mm\\:ss\\.f");
+                    var DurationTime = Duration.ToString("hh\\:mm\\:ss\\.fff");
                     return DurationTime;
                     }
                 return string.Empty;
@@ -135,7 +180,12 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                var str = $"(время выполнения - {TimeInterval})";
+                if (IsEmptyTime)
+                    {
+                    return string.Empty;
+                    }
+
+                var str = $" (время выполнения - {ShortTimeInterval})";
                 return str;
                 }
             }
@@ -149,11 +199,10 @@ namespace ActorsCP.Actors
             string str = null;
             if (nCount <= 1 || (!(HasStartDate && HasEndDate)))
                 {
-                str = $"(время выполнения - {TimeInterval})";
+                str = $"(время выполнения - {ShortTimeInterval})";
                 }
             else
                 {
-                var ExecutionTimeSpan = EndDate - StartDate;
                 var avg = new TimeSpan(ExecutionTimeSpan.Ticks / nCount);
                 var avgTime = avg.ToString();
 
@@ -168,12 +217,12 @@ namespace ActorsCP.Actors
 
                 if (TotalSeconds == 0)
                     {
-                    str = $"(время выполнения - {TimeInterval}, avg = {avgTime})";
+                    str = $"(время выполнения - {ShortTimeInterval}, avg = {avgTime})";
                     }
                 else
                 if (TotalSeconds > 0)
                     {
-                    str = $"(время выполнения - {TimeInterval}, avg = {avgTime} , avgSpeed = {avgSpeed} в секунду)";
+                    str = $"(время выполнения - {ShortTimeInterval}, avg = {avgTime} , avgSpeed = {avgSpeed} в секунду)";
                     }
                 }
             return str;

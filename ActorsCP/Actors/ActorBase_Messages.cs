@@ -184,7 +184,7 @@ namespace ActorsCP.Actors
         /// <param name="action">Текст сообщения</param>
         protected void OnActorActionDebug(string action)
             {
-            OnActorAction(action, ActorActionEventType.Debug);
+            OnActorAction("DEBUG: " + action, ActorActionEventType.Debug);
             }
 
         /// <summary>

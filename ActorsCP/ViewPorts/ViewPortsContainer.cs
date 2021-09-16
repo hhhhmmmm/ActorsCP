@@ -142,7 +142,7 @@ namespace ActorsCP.ViewPorts
             {
             #region Окончательное уведомление
 
-            var actorBindEventsHandler = iViewPort as IActorBindViewPortsHandler;
+            var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             DecrementBoundViewPortsCounter();
             actorBindEventsHandler?.Actor_ViewPortUnbound(_parentActor);
 
@@ -167,7 +167,7 @@ namespace ActorsCP.ViewPorts
             {
             _iViewPortList.Add(new WeakReference(iViewPort, false));
 
-            var actorBindEventsHandler = iViewPort as IActorBindViewPortsHandler;
+            var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             IncrementBoundViewPortsCounter();
             actorBindEventsHandler?.Actor_ViewPortBound(_parentActor);
 

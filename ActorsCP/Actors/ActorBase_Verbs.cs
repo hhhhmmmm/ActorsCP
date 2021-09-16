@@ -204,7 +204,7 @@ namespace ActorsCP.Actors
                 var bres = await InternalStopAsync().ConfigureAwait(false);
                 if (bres)
                     {
-                    OnActorAction($"{Name} остановлен");
+                    OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
                     SetActorState(ActorState.Stopped);
                     return true;
                     }
