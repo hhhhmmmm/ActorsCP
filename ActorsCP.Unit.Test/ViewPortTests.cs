@@ -25,7 +25,7 @@ namespace ActorsCP.Unit.Test
             {
             var actor = base.TestActorsBuilder.NewSimpleActor;
             var viewport = TestActorsBuilder.CreateViewPort();
-            actor.BindEventsHandlers(viewport);
+            actor.BindViewPort(viewport);
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -42,7 +42,7 @@ namespace ActorsCP.Unit.Test
             {
             var actor = base.TestActorsBuilder.NewSimpleActor;
             var viewport = TestActorsBuilder.CreateViewPort();
-            actor.BindEventsHandlers(viewport);
+            actor.BindViewPort(viewport);
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -60,7 +60,7 @@ namespace ActorsCP.Unit.Test
             {
             var actor = base.TestActorsBuilder.NewSimpleActor;
             var viewport = TestActorsBuilder.CreateViewPort();
-            actor.BindEventsHandlers(viewport);
+            actor.BindViewPort(viewport);
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -82,7 +82,7 @@ namespace ActorsCP.Unit.Test
             var actors = base.TestActorsBuilder.CreateListOfActors('S', nActorCount);
             queue.Add(actors);
             var viewport = TestActorsBuilder.CreateViewPort();
-            queue.BindEventsHandlers(viewport);
+            queue.BindViewPort(viewport);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -107,7 +107,7 @@ namespace ActorsCP.Unit.Test
             var actors = base.TestActorsBuilder.CreateListOfActors('S', nActorCount);
             queue.Add(actors);
             var viewport = TestActorsBuilder.CreateViewPort();
-            queue.BindEventsHandlers(viewport);
+            queue.BindViewPort(viewport);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -132,7 +132,7 @@ namespace ActorsCP.Unit.Test
             var actors = base.TestActorsBuilder.CreateListOfActors('S', nActorCount);
             crowd.Add(actors);
             var viewport = TestActorsBuilder.CreateViewPort();
-            crowd.BindEventsHandlers(viewport);
+            crowd.BindViewPort(viewport);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 
@@ -157,7 +157,7 @@ namespace ActorsCP.Unit.Test
             var actors = base.TestActorsBuilder.CreateListOfActors('S', nActorCount);
             crowd.Add(actors);
             var viewport = TestActorsBuilder.CreateViewPort();
-            crowd.BindEventsHandlers(viewport);
+            crowd.BindViewPort(viewport);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(0, viewport._Counter_Actor_EventHandlersUnbound);
 

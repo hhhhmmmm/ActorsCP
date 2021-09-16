@@ -22,20 +22,20 @@ namespace ActorsCP.ViewPorts
 
         /// <summary>
         /// Список внешних объектов (реализующих интерфейс IActorViewPort) которые вызвали
-        /// метод BindChild() Нужен для того, чтобы привязать объекты, созданные при вызове
-        /// метода Run() Список дополняется в методе BindChild() и освобождается в методе UnbindChild()
+        /// метод BindViewPortsToChildActor() Нужен для того, чтобы привязать объекты, созданные при вызове
+        /// метода Run() Список дополняется в методе BindViewPortsToChildActor() и освобождается в методе UnbindChild()
         /// </summary>
         private readonly List<WeakReference> _iViewPortList = new List<WeakReference>();
 
         /// <summary>
-        /// Счетчик вызовов BindChild()
+        /// Счетчик вызовов BindViewPortsToChildActor()
         /// </summary>
-        private int _bindChildCounter;
+        private int _bindViewPortsToChildActorCounter;
 
         /// <summary>
-        /// Счетчик вызовов BindChild()/UnbindChild()
+        /// Счетчик вызовов BindViewPort()/UnbindViewPort()
         /// </summary>
-        private int _bindEventsHandlerCounter;
+        private int _boundViewPortsCounter;
 
         #endregion Приватные мемберы
 
@@ -70,24 +70,24 @@ namespace ActorsCP.ViewPorts
             }
 
         /// <summary>
-        /// Счетчик вызовов BindChild()
+        /// Счетчик вызовов BindViewPortsToChildActor()
         /// </summary>
-        public int BindChildCounter
+        public int BindViewPortsToChildActorCounter
             {
             get
                 {
-                return _bindChildCounter;
+                return _bindViewPortsToChildActorCounter;
                 }
             }
 
         /// <summary>
-        /// Счетчик вызовов BindChild()/UnbindChild()
+        /// Счетчик вызовов BindViewPortsToChildActor()/UnbindViewPortsToChildActor()
         /// </summary>
-        public int BindEventsHandlerCounter
+        public int BoundViewPortsCounter
             {
             get
                 {
-                return _bindEventsHandlerCounter;
+                return _boundViewPortsCounter;
                 }
             }
 
@@ -104,33 +104,47 @@ namespace ActorsCP.ViewPorts
 
         #endregion Свойства
 
+        #region Приватные методы
+
         /// <summary>
-        /// Увеличить счетчик вызовов BindChild()/UnbindChild()
+        ///
         /// </summary>
-        public void IncrementBindEventsHandlerCounter()
+        /// <returns></returns>
+        private List<WeakReference> GetCopy()
             {
-            Interlocked.Increment(ref _bindEventsHandlerCounter);
+            var l = new List<WeakReference>(ViewPortsList);
+            return l;
             }
 
         /// <summary>
-        /// Уменьшить счетчик вызовов BindChild()/UnbindChild()
+        /// Увеличить счетчик вызовов BindViewPort()/UnbindViewPort()
         /// </summary>
-        public void DecrementBindEventsHandlerCounter()
+        private void IncrementBoundViewPortsCounter()
             {
-            Interlocked.Decrement(ref _bindEventsHandlerCounter);
+            Interlocked.Increment(ref _boundViewPortsCounter);
             }
+
+        /// <summary>
+        /// Уменьшить счетчик вызовов BindViewPort()/UnbindViewPort()
+        /// </summary>
+        private void DecrementBoundViewPortsCounter()
+            {
+            Interlocked.Decrement(ref _boundViewPortsCounter);
+            }
+
+        #endregion Приватные методы
 
         /// <summary>
         /// Удалить вьюпорт из списка
         /// </summary>
         /// <param name="iViewPort">вьюпорт</param>
-        public void RemoveAndNotify(IActorViewPort iViewPort)
+        public void UnbindViewPortAndNotify(IActorViewPort iViewPort)
             {
             #region Окончательное уведомление
 
-            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
-            DecrementBindEventsHandlerCounter();
-            actorBindEventsHandler?.Actor_EventHandlersUnbound(_parentActor);
+            var actorBindEventsHandler = iViewPort as IActorBindViewPortsHandler;
+            DecrementBoundViewPortsCounter();
+            actorBindEventsHandler?.Actor_ViewPortUnbound(_parentActor);
 
 #if DEBUG_BIND_UNBIND
             _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
@@ -149,30 +163,24 @@ namespace ActorsCP.ViewPorts
         /// Добавить вьюпорт в список
         /// </summary>
         /// <param name="iViewPort">вьюпорт</param>
-        public void AddAndNotify(IActorViewPort iViewPort)
+        public void BindViewPortAndNotify(IActorViewPort iViewPort)
             {
             _iViewPortList.Add(new WeakReference(iViewPort, false));
 
-            var actorBindEventsHandler = iViewPort as IActorBindEventsHandler;
-            IncrementBindEventsHandlerCounter();
-            actorBindEventsHandler?.Actor_EventHandlersBound(_parentActor);
+            var actorBindEventsHandler = iViewPort as IActorBindViewPortsHandler;
+            IncrementBoundViewPortsCounter();
+            actorBindEventsHandler?.Actor_ViewPortBound(_parentActor);
 
 #if DEBUG_BIND_UNBIND
-            _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
+            _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortAndNotify, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
 #endif // DEBUG_BIND_UNBIND
-            }
-
-        public List<WeakReference> GetCopy()
-            {
-            var l = new List<WeakReference>(ViewPortsList);
-            return l;
             }
 
         /// <summary>
         /// Привязать к объекту все имеющиеся вьюпорты
         /// </summary>
         /// <param name="childActor">Объект</param>
-        public void BindChild(ActorBase childActor)
+        public void BindViewPortsToChildActor(ActorBase childActor)
             {
             if (childActor == null)
                 {
@@ -191,15 +199,15 @@ namespace ActorsCP.ViewPorts
                     var eh = wr.Target as IActorViewPort;
                     if (eh != null)
                         {
-                        childActor.BindEventsHandlers(eh);
+                        childActor.BindViewPort(eh);
                         }
                     } // end IsAlive
                 } // end foreach
 
-            Interlocked.Increment(ref _bindChildCounter);
+            Interlocked.Increment(ref _bindViewPortsToChildActorCounter);
 
 #if DEBUG_BIND_UNBIND
-                _parentActor.RaiseOnActorActionDebug($"Вызван BindChild, _bindChildCounter = {BindChildCounter}");
+                _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortsToChildActor, BindViewPortsToChildActorCounter = {BindViewPortsToChildActorCounter}");
 #endif // DEBUG_BIND_UNBIND
             }
 
@@ -222,7 +230,7 @@ namespace ActorsCP.ViewPorts
                     var eh = wr.Target as IActorViewPort;
                     if (eh != null)
                         {
-                        _parentActor.UnbindEventsHandlers(eh);
+                        _parentActor.UnbindViewPort(eh);
                         }
                     } // end IsAlive
                 }
@@ -232,7 +240,7 @@ namespace ActorsCP.ViewPorts
         //        /// Отвязать от объекта все имеющиеся вьюпорты
         //        /// </summary>
         //        /// <param name="childActor">Объект</param>
-        //        private void UnbindChild(ActorBase childActor)
+        //        private void UnbindViewPortsFromChildActor(ActorBase childActor)
         //            {
         //            if (childActor == null)
         //                {
@@ -251,15 +259,15 @@ namespace ActorsCP.ViewPorts
         //                    var eh = wr.Target as IActorViewPort;
         //                    if (eh != null)
         //                        {
-        //                        childActor.UnbindEventsHandlers(eh);
+        //                        childActor.UnbindViewPort(eh);
         //                        }
         //                    } // end IsAlive
         //                } // end foreach
 
-        //            Interlocked.Decrement(ref _bindChildCounter);
+        //            Interlocked.Decrement(ref _bindViewPortsToChildActorCounter);
 
         //#if DEBUG_BIND_UNBIND
-        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, BindChildCounter = {BindChildCounter}");
+        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindViewPortsFromChildActor, BindViewPortsToChildActorCounter = {BindViewPortsToChildActorCounter}");
         //#endif // DEBUG_BIND_UNBIND
         //            }
 

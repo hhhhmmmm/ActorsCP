@@ -11,7 +11,7 @@ namespace ActorsCP.Tests.ViewPorts
     /// <summary>
     /// Базовый тестовый вьюпорт
     /// </summary>
-    public class TestViewPortBase : IActorViewPort, IActorEventsHandler, IActorBindEventsHandler
+    public class TestViewPortBase : IActorViewPort, IActorEventsHandler, IActorBindViewPortsHandler
         {
         /// <summary>
         /// Канал сообщений
@@ -38,7 +38,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Actor_Events(object sender, ActorEventArgs e)
+        public void Actor_Event(object sender, ActorEventArgs e)
             {
             _Counter_Actor_Events++;
             }
@@ -48,7 +48,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Actor_StateChangedEvents(object sender, ActorStateChangedEventArgs e)
+        public void Actor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
             _Counter_Actor_StateChangedEvents++;
             }
@@ -61,7 +61,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// Вызывается, когда объект подписан на события
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_EventHandlersBound(ActorBase actor)
+        public void Actor_ViewPortBound(ActorBase actor)
             {
             _Counter_Actor_EventHandlersBound++;
             }
@@ -70,23 +70,23 @@ namespace ActorsCP.Tests.ViewPorts
         /// Вызывается, когда объект отписан от событий
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_EventHandlersUnbound(ActorBase actor)
+        public void Actor_ViewPortUnbound(ActorBase actor)
             {
             _Counter_Actor_EventHandlersUnbound++;
             }
 
         /// <summary>
-        /// Счетчик событий  Actor_Events()
+        /// Счетчик событий  Actor_Event()
         /// </summary>
         public int _Counter_Actor_Events;
 
         /// <summary>
-        /// Счетчик событий  Actor_StateChangedEvents()
+        /// Счетчик событий  Actor_StateChangedEvent()
         /// </summary>
         public int _Counter_Actor_StateChangedEvents;
 
         /// <summary>
-        /// Счетчик событий  Actor_EventHandlersBound
+        /// Счетчик событий  Actor_ViewPortBound
         /// </summary>
         public int _Counter_Actor_EventHandlersBound;
 

@@ -66,10 +66,10 @@ namespace ActorsCP.Actors
         #region Подписка/отписка на события
 
         /// <summary>
-        /// Привязать обработчики события к объекту
+        /// Привязать обработчики события (вьюпорт) к объекту
         /// </summary>
         /// <param name="iViewPort">Интерфейс который получает уведомление о подписке на события</param>
-        public virtual void BindEventsHandlers(IActorViewPort iViewPort)
+        public virtual void BindViewPort(IActorViewPort iViewPort)
             {
             if (iViewPort == null)
                 {
@@ -82,8 +82,8 @@ namespace ActorsCP.Actors
 
             if (actorEventsHandler != null)
                 {
-                Events += actorEventsHandler.Actor_Events;
-                StateChangedEvents += actorEventsHandler.Actor_StateChangedEvents;
+                Events += actorEventsHandler.Actor_Event;
+                StateChangedEvents += actorEventsHandler.Actor_StateChangedEvent;
                 }
 
             #endregion Привязываем события объекта к их получателю
@@ -93,17 +93,17 @@ namespace ActorsCP.Actors
             lock (Locker)
                 {
                 CreateViewPortsContainerIfNotExists();
-                _viewPortsContainer.AddAndNotify(iViewPort);
+                _viewPortsContainer.BindViewPortAndNotify(iViewPort);
                 }
 
             #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
 
         /// <summary>
-        /// Отвязать обработчики события от объекта
+        /// Отвязать обработчики события (вьюпорт) от объекта
         /// </summary>
         /// <param name="iViewPort">Объект который получает уведомление об отписке от событий</param>
-        public virtual void UnbindEventsHandlers(IActorViewPort iViewPort)
+        public virtual void UnbindViewPort(IActorViewPort iViewPort)
             {
             if (iViewPort == null)
                 {
@@ -116,8 +116,8 @@ namespace ActorsCP.Actors
 
             if (actorEventsHandler != null)
                 {
-                Events -= actorEventsHandler.Actor_Events;
-                StateChangedEvents -= actorEventsHandler.Actor_StateChangedEvents;
+                Events -= actorEventsHandler.Actor_Event;
+                StateChangedEvents -= actorEventsHandler.Actor_StateChangedEvent;
                 }
 
             #endregion Отвязываем события объекта от их получателя
@@ -131,7 +131,7 @@ namespace ActorsCP.Actors
                 }
 #endif // DEBUG
 
-            _viewPortsContainer?.RemoveAndNotify(iViewPort);
+            _viewPortsContainer?.UnbindViewPortAndNotify(iViewPort);
 
             #endregion Окончательное уведомление - должно вызываться последней, иначе последнее событие не будет отправлено
             }
@@ -152,14 +152,14 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
-        /// Привязка производного объекта, созданного при вызове метода Run()
+        /// Привязка вьюпортов к производному объекту, созданного при вызове метода Run()
         /// </summary>
         /// <param name="childActor">Производный объект</param>
-        public void BindChild(ActorBase childActor)
+        public void BindViewPortsToChildActor(ActorBase childActor)
             {
             lock (Locker)
                 {
-                _viewPortsContainer?.BindChild(childActor);
+                _viewPortsContainer?.BindViewPortsToChildActor(childActor);
                 }  // end lock
             }
 

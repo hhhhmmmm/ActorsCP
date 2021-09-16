@@ -14,26 +14,26 @@ namespace ActorsCP.Actors
         /// Привязать обработчики события к объекту
         /// </summary>
         /// <param name="iViewPort">Интерфейс который получает уведомление о подписке на события</param>
-        public override void BindEventsHandlers(IActorViewPort iViewPort)
+        public override void BindViewPort(IActorViewPort iViewPort)
             {
-            base.BindEventsHandlers(iViewPort);
+            base.BindViewPort(iViewPort);
 
             // по идее на момент вызова все должны быть здесь
             foreach (var actor in _waiting)
                 {
-                actor.BindEventsHandlers(iViewPort);
+                actor.BindViewPort(iViewPort);
                 }
 
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _running.Items)
                 {
-                actor.BindEventsHandlers(iViewPort);
+                actor.BindViewPort(iViewPort);
                 }
 
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _completed.Items)
                 {
-                actor.BindEventsHandlers(iViewPort);
+                actor.BindViewPort(iViewPort);
                 }
             }
 
@@ -41,27 +41,27 @@ namespace ActorsCP.Actors
         /// Отвязать обработчики события от объекта
         /// </summary>
         /// <param name="iViewPort">Объект который получает уведомление об отписке от событий</param>
-        public override void UnbindEventsHandlers(IActorViewPort iViewPort)
+        public override void UnbindViewPort(IActorViewPort iViewPort)
             {
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _waiting)
                 {
-                actor.UnbindEventsHandlers(iViewPort);
+                actor.UnbindViewPort(iViewPort);
                 }
 
             // смысла мало (список должен быть пустой), но вызовем
             foreach (var actor in _running.Items)
                 {
-                actor.UnbindEventsHandlers(iViewPort);
+                actor.UnbindViewPort(iViewPort);
                 }
 
             // по идее на момент вызова все должны быть здесь
             foreach (var actor in _completed.Items)
                 {
-                actor.UnbindEventsHandlers(iViewPort);
+                actor.UnbindViewPort(iViewPort);
                 }
 
-            base.UnbindEventsHandlers(iViewPort);
+            base.UnbindViewPort(iViewPort);
             }
         } // end class ActorsSet
     } // end namespace ActorsCP.Actors
