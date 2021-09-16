@@ -22,18 +22,47 @@ namespace ActorsCP.Actors
         #region Конструкторы
 
         /// <summary>
+        /// Генератор имени
+        /// </summary>
+        private string _NameGenerator
+            {
+            get
+                {
+                return $"Множество объектов {N} (ActorUid = {ActorUid})";
+                }
+            }
+
+        /// <summary>
         /// Конструктор
         /// </summary>
         public ActorsSet()
             {
-            SetName($"Множество объектов {N} (ActorUid = {ActorUid})");
+            SetName(_NameGenerator);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsSet(ActorBase parentActor) : this(null, parentActor)
+            {
+            SetName(_NameGenerator);
             }
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="name">Название объекта</param>
-        public ActorsSet(string name) : base(name)
+        public ActorsSet(string name) : this(name, null)
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsSet(string name, ActorBase parentActor) : base(name, parentActor)
             {
             }
 

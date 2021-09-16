@@ -13,18 +13,47 @@ namespace ActorsCP.Actors
         #region Конструкторы
 
         /// <summary>
-        /// Конструктор
+        /// Генератор имени
         /// </summary>
-        public ActorsQueue()
+        private string _NameGenerator
             {
-            SetName($"Очередь объектов {N} (ActorUid = {ActorUid})");
+            get
+                {
+                return $"Очередь объектов {N} (ActorUid = {ActorUid})";
+                }
             }
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="name">Название очереди объектов</param>
-        public ActorsQueue(string name) : base(name)
+        public ActorsQueue()
+            {
+            SetName(_NameGenerator);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsQueue(ActorBase parentActor) : this(null, parentActor)
+            {
+            SetName(_NameGenerator);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        public ActorsQueue(string name) : this(name, null)
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsQueue(string name, ActorBase parentActor) : base(name, parentActor)
             {
             }
 

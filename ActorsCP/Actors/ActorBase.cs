@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
-using ActorsCP.ViewPorts;
 
 namespace ActorsCP.Actors
     {
@@ -89,11 +88,37 @@ namespace ActorsCP.Actors
             SetRunOnlyOnce(true);
             }
 
-        /// <summary>Конструктор</summary>
+        /// <summary>
+        /// Конструктор
+        /// </summary>
         /// <param name="name">Название объекта</param>
-        protected ActorBase(string name) : this()
+        public ActorBase(string name) : this(name, null)
             {
-            SetName(name);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorBase(ActorBase parentActor) : this(null, parentActor)
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorBase(string name, ActorBase parentActor) : this()
+            {
+            if (!string.IsNullOrEmpty(name))
+                {
+                SetName(name);
+                }
+            if (parentActor != null)
+                {
+                SetParent(parentActor);
+                }
             }
 
         #endregion Конструкторы

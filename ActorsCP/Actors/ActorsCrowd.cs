@@ -28,20 +28,50 @@ namespace ActorsCP.Actors
         #region Конструкторы
 
         /// <summary>
+        /// Генератор имени
+        /// </summary>
+        private string _NameGenerator
+            {
+            get
+                {
+                return $"Толпа объектов {N} (ActorUid = {ActorUid})";
+                }
+            }
+
+        /// <summary>
         /// Конструктор
         /// </summary>
         public ActorsCrowd()
             {
-            SetName($"Толпа объектов {N} (ActorUid = {ActorUid})");
+            SetName(_NameGenerator);
             SetMaxDegreeOfParallelism(Environment.ProcessorCount);
             }
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="name">Название очереди объектов</param>
-        public ActorsCrowd(string name) : base(name)
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsCrowd(ActorBase parentActor) : this(null, parentActor)
             {
+            SetName(_NameGenerator);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        public ActorsCrowd(string name) : this(name, null)
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorsCrowd(string name, ActorBase parentActor) : base(name, parentActor)
+            {
+            SetMaxDegreeOfParallelism(Environment.ProcessorCount);
             }
 
         #endregion Конструкторы
