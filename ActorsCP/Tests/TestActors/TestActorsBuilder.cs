@@ -125,7 +125,6 @@ namespace ActorsCP.Tests.TestActors
                         throw new Exception($"Непонятный тип актора - '{type}'");
                         }
                     }
-                actor.SetName($"Объект {i}");
                 list.Add(actor);
                 }
             return list;
@@ -179,7 +178,6 @@ namespace ActorsCP.Tests.TestActors
                         throw new Exception($"Непонятный тип актора - '{type}'");
                         }
                     }
-                actor.SetName($"Объект {i}");
                 list.Add(actor);
                 }
 

@@ -91,6 +91,7 @@ namespace ActorsCP.Unit.Test
         private void ConfigureActor(ActorBase actor)
             {
             actor.SetIMessageChannel(this);
+            Assert.IsTrue(actor.N > 0);
             }
 
         #region Генераторы объекта

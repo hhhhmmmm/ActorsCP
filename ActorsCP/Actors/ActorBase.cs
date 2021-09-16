@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors.Events;
@@ -40,7 +41,21 @@ namespace ActorsCP.Actors
 
         #endregion Константы для задач
 
+        #region Глобальные внутренние объекты
+
+        /// <summary>
+        /// Генератор последовательных номеров объектов
+        /// </summary>
+        private static int s_N_global = 0;
+
+        #endregion Глобальные внутренние объекты
+
         #region Внутренние объекты
+
+        /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        private int _N = 0;
 
         /// <summary>
         /// Родительский объект
@@ -66,7 +81,9 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorBase()
             {
-            SetName($"Безымянный объект ActorUid = {ActorUid}");
+            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
+
+            SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
@@ -82,6 +99,17 @@ namespace ActorsCP.Actors
         #endregion Конструкторы
 
         #region Свойства
+
+        /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        public int N
+            {
+            get
+                {
+                return _N;
+                }
+            }
 
         /// <summary>
         /// Родительский объект
@@ -389,8 +417,6 @@ namespace ActorsCP.Actors
             //SubscribeToCancelationEvents(parentActor);
             }
 
-        #endregion Методы
-
         /// <summary>
         /// Установить персональные опции объекта
         /// </summary>
@@ -412,5 +438,16 @@ namespace ActorsCP.Actors
                 }
             return "Безымянный объект";
             }
+
+        /// <summary>
+        /// Хэш
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            {
+            return N;
+            }
+
+        #endregion Методы
         } // end class Actor
     } // end namespace ActorsCP.Actors

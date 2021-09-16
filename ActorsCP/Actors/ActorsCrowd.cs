@@ -32,7 +32,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsCrowd()
             {
-            SetName("Толпа объектов");
+            SetName($"Толпа объектов {N} (ActorUid = {ActorUid})");
             SetMaxDegreeOfParallelism(Environment.ProcessorCount);
             }
 

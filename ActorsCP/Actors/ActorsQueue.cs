@@ -17,7 +17,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsQueue()
             {
-            SetName("Очередь объектов");
+            SetName($"Очередь объектов {N} (ActorUid = {ActorUid})");
             }
 
         /// <summary>

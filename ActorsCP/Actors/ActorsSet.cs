@@ -26,7 +26,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsSet()
             {
-            SetName("Множество объектов");
+            SetName($"Множество объектов {N} (ActorUid = {ActorUid})");
             }
 
         /// <summary>
