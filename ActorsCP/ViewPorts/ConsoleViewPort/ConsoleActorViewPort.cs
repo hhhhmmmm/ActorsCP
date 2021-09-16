@@ -2,23 +2,19 @@
 using System.Threading.Tasks;
 
 using ActorsCP.Actors.Events;
+using ActorsCP.Helpers;
 
 namespace ActorsCP.ViewPorts.ConsoleViewPort
     {
     /// <summary>
     /// Консольный вьюпорт для актора
     /// </summary>
-    public class ConsoleActorViewPort : ActorViewPortBase
+    public partial class ConsoleActorViewPort : ActorViewPortBase, IMessageChannel
         {
         /// <summary>
         /// Локер
         /// </summary>
         protected static readonly object Locker = new object();
-
-        /// <summary>
-        /// Хандлер Ctrl-C
-        /// </summary>
-        // private static EventHandler m_Control_C_handler;
 
         #region Конструкторы
 
@@ -44,6 +40,17 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         #endregion Публичные методы
 
         #region Публичные статические методы
+
+        /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        public void Init(string additionalText = null)
+            {
+#if NET461 || NET47 || NETFRAMEWORK
+            InitDotNetFramework(additionalText);
+#endif // NET461 || NET47
+            }
 
         /// <summary>
         /// Восстановить цвета консоли
@@ -134,69 +141,23 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
                 } // end Locker
             }
 
-        #endregion Публичные статические методы
-
-        #region Свойства
-
         /// <summary>
-        /// Цвет сообщений консоли для отладочных сообщений
-        /// </summary>
-        public ConsoleColor DebugColor
-            {
-            get;
-            set;
-            } = ConsoleColor.White;
-
-        /// <summary>
-        /// Цвет сообщений консоли для сообщений
-        /// </summary>
-        public ConsoleColor MessageColor
-            {
-            get;
-            set;
-            } = ConsoleColor.Green;
-
-        /// <summary>
-        /// Цвет сообщений консоли для предупреждений
-        /// </summary>
-        public ConsoleColor WarningColor
-            {
-            get;
-            set;
-            } = ConsoleColor.Yellow;
-
-        /// <summary>
-        /// Цвет сообщений консоли для ошибок
-        /// </summary>
-        public ConsoleColor ErrorColor
-            {
-            get;
-            set;
-            } = ConsoleColor.Red;
-
-        /// <summary>
-        /// Цвет сообщений консоли для исключений
-        /// </summary>
-        public ConsoleColor ExceptionColor
-            {
-            get;
-            set;
-            } = ConsoleColor.Red;
-
-        #endregion Свойства
-
-        /// <summary>
-        ///
+        /// Отформатировать текст сообщения
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private string FormatMessageText(ActorActionEventArgs action)
+        public static string FormatMessageText(ActorActionEventArgs action)
             {
             var str = action.EventDateAsString + " " + action.MessageText;
             return str;
             }
 
-        private ConsoleMessage CreateMessage(ActorActionEventArgs action)
+        /// <summary>
+        /// Создать сообщение для вывода
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateMessageFromEventArgs(ActorActionEventArgs action)
             {
             ConsoleMessage message = null;
             var messageText = FormatMessageText(action);
@@ -231,6 +192,117 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             return message;
             }
 
+        /// <summary>
+        /// Создать отладочное сообщение
+        /// </summary>
+        /// <param name="debugText">Текст отладочного сообщения</param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateDebugMessage(string debugText)
+            {
+            var actorActionEventArgs = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
+            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            return message;
+            }
+
+        /// <summary>
+        /// Создать сообщение
+        /// </summary>
+        /// <param name="messageText">Текст сообщения</param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateMessage(string messageText)
+            {
+            var actorActionEventArgs = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
+            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            return message;
+            }
+
+        /// <summary>
+        /// Создать предупреждение
+        /// </summary>
+        /// <param name="warningText">Текст сообщения</param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateWarningMessage(string warningText)
+            {
+            var actorActionEventArgs = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
+            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            return message;
+            }
+
+        /// <summary>
+        /// Создать предупреждение
+        /// </summary>
+        /// <param name="errorText">Текст ошибки</param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateErrorMessage(string errorText)
+            {
+            var actorActionEventArgs = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
+            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            return message;
+            }
+
+        /// <summary>
+        /// Создать сообщение об исключении
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        /// <returns></returns>
+        public static ConsoleMessage CreateExceptionMessage(Exception exception)
+            {
+            var actorActionEventArgs = new ActorExceptionEventArgs(exception);
+            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            return message;
+            }
+
+        #endregion Публичные статические методы
+
+        #region Статические свойства
+
+        /// <summary>
+        /// Цвет сообщений консоли для отладочных сообщений
+        /// </summary>
+        public static ConsoleColor DebugColor
+            {
+            get;
+            set;
+            } = ConsoleColor.White;
+
+        /// <summary>
+        /// Цвет сообщений консоли для сообщений
+        /// </summary>
+        public static ConsoleColor MessageColor
+            {
+            get;
+            set;
+            } = ConsoleColor.Green;
+
+        /// <summary>
+        /// Цвет сообщений консоли для предупреждений
+        /// </summary>
+        public static ConsoleColor WarningColor
+            {
+            get;
+            set;
+            } = ConsoleColor.Yellow;
+
+        /// <summary>
+        /// Цвет сообщений консоли для ошибок
+        /// </summary>
+        public static ConsoleColor ErrorColor
+            {
+            get;
+            set;
+            } = ConsoleColor.Red;
+
+        /// <summary>
+        /// Цвет сообщений консоли для исключений
+        /// </summary>
+        public static ConsoleColor ExceptionColor
+            {
+            get;
+            set;
+            } = ConsoleColor.Red;
+
+        #endregion Статические свойства
+
         #region Перегружаемые методы IActorEventsHandler
 
         /// <summary>
@@ -242,7 +314,7 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             {
             if (e is ActorActionEventArgs action)
                 {
-                var message = CreateMessage(action);
+                var message = CreateMessageFromEventArgs(action);
                 WriteLineToConsole(message);
                 }
             }
@@ -257,5 +329,79 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             }
 
         #endregion Перегружаемые методы IActorEventsHandler
+
+        #region Реализация интерфейса IMessageChannel
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="debugText">Текст отладочного сообщения</param>
+        public void RaiseDebug(string debugText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var message = CreateDebugMessage(debugText);
+            WriteLineToConsole(message);
+            }
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="messageText">Текст сообщения</param>
+        public void RaiseMessage(string messageText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var message = CreateMessage(messageText);
+            WriteLineToConsole(message);
+            }
+
+        /// <summary>
+        /// Вывести предупреждение
+        /// </summary>
+        /// <param name="warningText">Текст сообщения</param>
+        public void RaiseWarning(string warningText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var message = CreateWarningMessage(warningText);
+            WriteLineToConsole(message);
+            }
+
+        /// <summary>
+        /// Вывести сообщение об ошибке
+        /// </summary>
+        /// <param name="errorText">Текст сообщения об ошибке</param>
+        public void RaiseError(string errorText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var message = CreateErrorMessage(errorText);
+            WriteLineToConsole(message);
+            }
+
+        /// <summary>
+        /// Вывести сообщение об исключении
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        public void RaiseException(Exception exception)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var message = CreateExceptionMessage(exception);
+            WriteLineToConsole(message);
+            }
+
+        #endregion Реализация интерфейса IMessageChannel
         } // end class ConsoleActorViewPort
     } // end namespace ActorsCP.ViewPorts.Console

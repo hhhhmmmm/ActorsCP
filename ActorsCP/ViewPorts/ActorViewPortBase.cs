@@ -47,13 +47,13 @@ namespace ActorsCP.ViewPorts
             }
 
         /// <summary>
-        /// Выводить сообщения
+        /// Не выводить сообщения
         /// </summary>
-        public bool OutMessages
+        public bool NoOutMessages
             {
             get;
             set;
-            } = true;
+            } = false;
 
         #endregion Свойства
 
@@ -121,7 +121,7 @@ namespace ActorsCP.ViewPorts
                 Interlocked.Increment(ref _сurrentExecutionStatistics.Errors);
                 }
 
-            if (!OutMessages)
+            if (NoOutMessages)
                 {
                 return;
                 }

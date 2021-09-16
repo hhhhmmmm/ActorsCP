@@ -44,12 +44,22 @@ namespace ActorsCP.Actors.Events
                 {
                 if (_stringEventDate == null)
                     {
-                    _stringEventDate = string.Intern(EventDate.ToString("HH\\:mm\\:ss\\.ff"));
+                    _stringEventDate = FormatEventDate(EventDate);
                     }
                 return _stringEventDate;
                 }
             }
 
         #endregion Свойства
+
+        /// <summary>
+        /// Отформатировать время
+        /// </summary>
+        /// <param name="eventDate"></param>
+        public static string FormatEventDate(DateTime eventDate)
+            {
+            var _stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
+            return _stringEventDate;
+            }
         }
     }

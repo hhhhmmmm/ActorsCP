@@ -2,7 +2,9 @@
 using System.Text;
 using System.Threading.Tasks;
 
+using ActorsCP.Actors;
 using ActorsCP.Helpers;
+using ActorsCP.ViewPorts.ConsoleViewPort;
 
 using CommandLine;
 
@@ -13,22 +15,13 @@ namespace ActorsCPConsoleRunner.Handlers
     /// </summary>
     public class HandlerBase : IMessageChannel
         {
-        #region Переменные
-
-        /// <summary>
-        /// Канал сообщений
-        /// </summary>
-        private IMessageChannel m_IMessageChannel;
-
-        #endregion Переменные
-
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="parameter"></param>
-        public HandlerBase() // (object parameter) : base(parameter)
+        public HandlerBase()
             {
             }
 
@@ -36,18 +29,23 @@ namespace ActorsCPConsoleRunner.Handlers
 
         #region Свойства
 
-        [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
-        public bool Verbose
+        /// <summary>
+        /// Вьюпорт по умолчанию
+        /// </summary>
+        public ConsoleActorViewPort DefaultViewPort
             {
-            get; set;
+            get;
+            private set;
             }
 
-        protected IMessageChannel MessageChannel
+        /// <summary>
+        ///
+        /// </summary>
+        [Option('n', "nomessages", Required = false, HelpText = "Не выдавать сообщения вьюпорта на экран")]
+        public bool NoOutMessagesDefault
             {
-            get
-                {
-                return m_IMessageChannel;
-                }
+            get;
+            set;
             }
 
         #endregion Свойства
@@ -55,21 +53,26 @@ namespace ActorsCPConsoleRunner.Handlers
         #region Методы
 
         /// <summary>
-        /// Установить указатель на канал сообщений
-        /// </summary>
-        /// <param name="imc">Канал сообщений</param>
-        public void SetIMessageChannel(IMessageChannel imc)
-            {
-            m_IMessageChannel = imc;
-            }
-
-        /// <summary>
         /// Метод запуска
         /// </summary>
         public int Run()
             {
+            DefaultViewPort = new ConsoleActorViewPort();
+            DefaultViewPort.Init();
+            DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
+
+            ActorTime actorTime = default;
+            actorTime.SetStartDate();
             var task = InternalRun();
-            return task.Result;
+            int result = task.Result;
+            actorTime.SetEndDate();
+
+            DefaultViewPort.NoOutMessages = false;
+
+            var time = actorTime.ShortTimeInterval;
+            var str = $"Полное время обработчика: {time}";
+            DefaultViewPort?.RaiseWarning(str);
+            return result;
             }
 
         #endregion Методы
@@ -91,7 +94,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <param name="MessageText">Текст сообщения</param>
         public void RaiseMessage(string MessageText)
             {
-            m_IMessageChannel?.RaiseMessage(MessageText);
+            DefaultViewPort?.RaiseMessage(MessageText);
             }
 
         /// <summary>
@@ -100,7 +103,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <param name="MessageText">Текст сообщения</param>
         public void RaiseWarning(string MessageText)
             {
-            m_IMessageChannel?.RaiseWarning(MessageText);
+            DefaultViewPort?.RaiseWarning(MessageText);
             }
 
         /// <summary>
@@ -109,17 +112,17 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <param name="ErrorText">Текст сообщения об ошибке</param>
         public void RaiseError(string ErrorText)
             {
-            m_IMessageChannel?.RaiseError(ErrorText);
+            DefaultViewPort?.RaiseError(ErrorText);
             }
 
         public void RaiseDebug(string debugText)
             {
-            m_IMessageChannel?.RaiseDebug(debugText);
+            DefaultViewPort?.RaiseDebug(debugText);
             }
 
         public void RaiseException(Exception exception)
             {
-            m_IMessageChannel?.RaiseException(exception);
+            DefaultViewPort?.RaiseException(exception);
             }
 
         #endregion Реализация интерфейса IMessageChannel

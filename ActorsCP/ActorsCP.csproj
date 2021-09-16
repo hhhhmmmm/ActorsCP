@@ -34,6 +34,7 @@
         <Reference Include="System.Net" />
         <Reference Include="System.Threading.Tasks" />
         <Reference Include="System" />
+        <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 
     <!-- Conditionally obtain references for the .NET Framework 4.7 target -->
@@ -43,6 +44,7 @@
         <Reference Include="System.Net" />
         <Reference Include="System.Threading.Tasks" />
         <Reference Include="System" />
+        <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 
     <!-- Conditionally obtain references for target NetStandart 2.1 -->

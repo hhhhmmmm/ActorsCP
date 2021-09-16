@@ -77,18 +77,14 @@ namespace ActorsCPConsoleRunner.Handlers
                 nProcessorCount = Environment.ProcessorCount;
                 }
 
-            var viewPort = new ConsoleActorViewPort();
-            // MessageChannelImplementation mci = MessageChannel as MessageChannelImplementation;
-
             RaiseWarning($"LimitParallelelism = {LimitParallelelism}");
             RaiseWarning($"nProcessorCount = {nProcessorCount}");
 
             var crowd = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
 
-            crowd.BindViewPort(viewPort);
-
-            // crowd.SetIMessageChannel(this);
+            crowd.BindViewPort(DefaultViewPort);
+            // crowd.SetIMessageChannel(DefaultViewPort);
 
             if (LimitParallelelism)
                 {
