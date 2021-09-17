@@ -135,14 +135,23 @@ namespace ActorsCP.ViewPorts
         /// <param name="e">Событие</param>
         public void Actor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
-            if (e.State == ActorState.Running)
+            if (e is ActorSetCountChangedEventArgs) // изменилось состояние запущенной очереди или толпы
+                {
+                return;
+                }
+
+            if (e.State == ActorState.Started)
                 {
                 Interlocked.Increment(ref _сurrentExecutionStatistics.RunningObjects);
                 }
+            if (e.State == ActorState.Stopped)
+                {
+                Interlocked.Decrement(ref _сurrentExecutionStatistics.RunningObjects);
+                }
+
             if (e.State == ActorState.Terminated)
                 {
                 Interlocked.Increment(ref _сurrentExecutionStatistics.TerminatedObjects);
-                Interlocked.Decrement(ref _сurrentExecutionStatistics.RunningObjects);
                 }
 
             InternalActor_StateChangedEvent(sender, e);

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Linq;
 
 #if DEBUG
 // #define DEBUG_TRACK_MOVES
@@ -298,13 +299,56 @@ namespace ActorsCP.Actors
         #region Перегруженные методы
 
         /// <summary>
+        /// Полная и окончательная остановка
+        /// </summary>
+        /// <returns></returns>
+        public override async Task<bool> TerminateAsync()
+            {
+            if (State == ActorState.Terminated)
+                {
+                return true;
+                }
+
+            // TODO TODO TODO
+
+            try
+                {
+                if (_waiting.Count > 0)
+                    {
+                    ActorBase[] tmpWaiting = new ActorBase[_waiting.Count];
+                    _waiting.CopyTo(tmpWaiting, 0);
+                    foreach (var actor in tmpWaiting)
+                        {
+                        await actor.TerminateAsync();
+                        }
+                    }
+
+                if (_running.Count > 0)
+                    {
+                    var tmpRunning = _running.Items.ToArray();
+                    foreach (var actor in tmpRunning)
+                        {
+                        await actor.TerminateAsync();
+                        }
+                    }
+                } // end try
+            catch (Exception ex)
+                {
+                OnActorThrownAnException(ex);
+                return false;
+                }
+
+            return await base.TerminateAsync();
+            }
+
+        /// <summary>
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
         /// <param name="fromDispose">Вызов из Dispose()</param>
         protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            UnbindAllViewPorts();
+            // UnbindAllViewPorts(); // здесь нельзя так как возикает зацикливание
 
             //ClearViewPortHelper(); // в ActorsSet::InternalRunCleanupBeforeTerminationAsync()
 
