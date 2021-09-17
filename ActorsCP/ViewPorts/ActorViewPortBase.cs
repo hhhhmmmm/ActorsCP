@@ -142,10 +142,12 @@ namespace ActorsCP.ViewPorts
 
             if (e.State == ActorState.Started)
                 {
+                Interlocked.Increment(ref _сurrentExecutionStatistics.StartedObjects);
                 Interlocked.Increment(ref _сurrentExecutionStatistics.RunningObjects);
                 }
             if (e.State == ActorState.Stopped)
                 {
+                Interlocked.Increment(ref _сurrentExecutionStatistics.StoppedObjects);
                 Interlocked.Decrement(ref _сurrentExecutionStatistics.RunningObjects);
                 }
 
@@ -180,5 +182,13 @@ namespace ActorsCP.ViewPorts
             }
 
         #endregion Перегружаемые методы IActorEventsHandler
+
+        /// <summary>
+        /// Проверить корректность собранных значений счетчиков
+        /// </summary>
+        public void ValidateStatistics()
+            {
+            СurrentExecutionStatistics.ValidateStatistics();
+            }
         } // end class ViewPortBase
     } // end namespace ActorsCP.ViewPorts

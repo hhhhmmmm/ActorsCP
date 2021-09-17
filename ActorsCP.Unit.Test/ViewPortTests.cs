@@ -34,6 +34,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersUnbound);
 
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
 
         [Test]
@@ -51,6 +52,8 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
+
             return Task.CompletedTask;
             }
 
@@ -70,6 +73,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
 
         [Test]
@@ -95,6 +99,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
 
         [Test]
@@ -120,6 +125,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
 
         [Test]
@@ -145,6 +151,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
 
         [Test]
@@ -170,6 +177,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersBound);
             Assert.AreEqual(nActorCount + 1, viewport._Counter_Actor_EventHandlersUnbound);
             Assert.AreEqual(viewport._Counter_Actor_EventHandlersBound, viewport._Counter_Actor_EventHandlersBound);
+            viewport.ValidateStatistics();
             }
         } // end class ViewPortTests
     } // end namespace ActorsCP.Unit.Test

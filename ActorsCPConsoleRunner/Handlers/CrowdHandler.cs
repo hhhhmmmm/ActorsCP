@@ -14,7 +14,7 @@ namespace ActorsCPConsoleRunner.Handlers
     ///
     /// </summary>
     [Verb("crowd", HelpText = "Работа с толпами")]
-    public class CrowdHandler : HandlerBase
+    public sealed class CrowdHandler : HandlerBase
         {
         #region Опции командной строки
 
@@ -79,6 +79,7 @@ namespace ActorsCPConsoleRunner.Handlers
             RaiseWarning($"nProcessorCount = {nProcessorCount}");
 
             var crowd = new ActorsCrowd();
+            var crowd2 = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
 
             crowd.BindViewPort(DefaultViewPort);
@@ -100,6 +101,15 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.Add(actor);
                 }
 
+            for (int i = 0; i < nItemsCount; i++)
+                {
+                string name = string.Format(" ВЛ-ОБЪЕКТ-{0}", i + 1);
+                var actor = new SimpleActor(name);
+                crowd2.Add(actor);
+                }
+
+            crowd.Add(crowd2);
+
             //viewPort.OutMessages = false;
             // mci.RaiseMessages = false;
             actorTime.SetStartDate();
@@ -114,6 +124,8 @@ namespace ActorsCPConsoleRunner.Handlers
             RaiseWarning(result);
             var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
             RaiseWarning(stat);
+
+            DefaultViewPort.ValidateStatistics();
             return 0;
             }
 

@@ -31,6 +31,16 @@ namespace ActorsCP.ViewPorts
         public volatile int TerminatedObjects;
 
         /// <summary>
+        /// Запущенных объектов
+        /// </summary>
+        public volatile int StartedObjects;
+
+        /// <summary>
+        /// Остановленных объектов
+        /// </summary>
+        public volatile int StoppedObjects;
+
+        /// <summary>
         /// Работающих объектов
         /// </summary>
         public volatile int RunningObjects;
@@ -101,9 +111,19 @@ namespace ActorsCP.ViewPorts
             {
             get
                 {
-                string result;
-                result = $"Рабочих объектов: привязано - {TotalBoundObjects}, работают - {RunningObjects}, завершено - {TerminatedObjects}, исключений - {Exceptions}, ошибок - {Errors},отвязано - {TotalUnboundObjects}";
-                return result;
+                var nl = Environment.NewLine;
+                var sb = new StringBuilder();
+                sb.Append($"Рабочих объектов:" + nl);
+                sb.Append($"привязано - {TotalBoundObjects}, " + nl);
+                sb.Append($"работают - {RunningObjects}, " + nl);
+                sb.Append($"завершено - {TerminatedObjects}, " + nl);
+                sb.Append($"исключений - {Exceptions}, " + nl);
+                sb.Append($"ошибок - {Errors}, " + nl);
+                sb.Append($"отвязано - {TotalUnboundObjects}, " + nl);
+                sb.Append($"запущено - {StartedObjects}, " + nl);
+                sb.Append($"остановлено - {StoppedObjects}" + nl);
+
+                return sb.ToString();
                 }
             }
 
@@ -180,5 +200,39 @@ namespace ActorsCP.ViewPorts
             }
 
         #endregion Операторы
+
+        /// <summary>
+        /// Проверить корректность собранных значений счетчиков
+        /// </summary>
+        public void ValidateStatistics()
+            {
+            if (!AllEventCollected)
+                {
+                throw new Exception("Не все события собраны - AllEventCollected = false");
+                }
+
+            if (TotalBoundObjects != TotalUnboundObjects)
+                {
+                var str = $"TotalBoundObjects!= TotalUnboundObjects({ TotalBoundObjects } != {TotalUnboundObjects})";
+                throw new Exception(str);
+                }
+
+            if (TotalBoundObjects != TotalUnboundObjects)
+                {
+                var str = $"TotalBoundObjects!= TotalUnboundObjects({ TotalBoundObjects } != {TotalUnboundObjects})";
+                throw new Exception(str);
+                }
+
+            if (StartedObjects != StoppedObjects)
+                {
+                var str = $"StartedObjects!= StoppedObjects({ StartedObjects } != {StoppedObjects})";
+                throw new Exception(str);
+                }
+
+            if (RunningObjects != 0)
+                {
+                throw new Exception($"Не все объекты остановлены - RunningObjects = {RunningObjects}");
+                }
+            }
         } // end struct ExecutionStatistics
     } // end namespace ActorsCP.ViewPorts

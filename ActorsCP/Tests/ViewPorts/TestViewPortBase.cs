@@ -11,7 +11,7 @@ namespace ActorsCP.Tests.ViewPorts
     /// <summary>
     /// Базовый тестовый вьюпорт
     /// </summary>
-    public class TestViewPortBase : IActorViewPort, IActorEventsHandler, IActorBindViewPortHandler
+    public class TestViewPortBase : ActorViewPortBase
         {
         /// <summary>
         /// Канал сообщений
@@ -38,7 +38,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Actor_Event(object sender, ActorEventArgs e)
+        protected override void InternalActor_Event(object sender, ActorEventArgs e)
             {
             _Counter_Actor_Events++;
             }
@@ -48,7 +48,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Actor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
+        protected override void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
             _Counter_Actor_StateChangedEvents++;
             }
@@ -61,7 +61,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// Вызывается, когда объект подписан на события
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_ViewPortBound(ActorBase actor)
+        protected override void InternalActor_ViewPortBound(ActorBase actor)
             {
             _Counter_Actor_EventHandlersBound++;
             }
@@ -70,7 +70,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// Вызывается, когда объект отписан от событий
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_ViewPortUnbound(ActorBase actor)
+        protected override void InternalActor_ViewPortUnbound(ActorBase actor)
             {
             _Counter_Actor_EventHandlersUnbound++;
             }
@@ -97,6 +97,8 @@ namespace ActorsCP.Tests.ViewPorts
 
         #endregion Реализация интерфейса IActorBindViewPortHandler
 
-        //
+        public void Validate()
+            {
+            }
         } // end class TestViewPortBase
     } // end namespace ActorsCP.Tests.ViewPorts
