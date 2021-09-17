@@ -20,7 +20,7 @@ namespace ActorsCP.Logger
         Fatal = 1,
 
         /// <summary>
-        /// Ошибки
+        /// Ошибки и исключения
         /// </summary>
         Error = 2 + 1,
 

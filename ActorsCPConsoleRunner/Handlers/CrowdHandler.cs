@@ -84,7 +84,7 @@ namespace ActorsCPConsoleRunner.Handlers
             crowd.SetCleanupAfterTermination(true);
 
             crowd.BindViewPort(DefaultViewPort);
-            // crowd.SetIMessageChannel(DefaultViewPort);
+            crowd.SetIMessageChannel(DefaultViewPort);
 
             if (LimitParallelelism)
                 {

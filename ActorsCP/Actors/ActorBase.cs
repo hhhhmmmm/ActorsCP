@@ -426,7 +426,7 @@ namespace ActorsCP.Actors
             _parentActor = parentActor;
             if (_parentActor != null)
                 {
-                SetIMessageChannel(_parentActor);
+                SetIMessageChannel(_parentActor.MessageChannel);
                 // UnsubscribeFromCancelationEvents(_parentActor);
                 }
 

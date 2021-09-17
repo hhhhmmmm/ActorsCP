@@ -1,150 +1,173 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Diagnostics;
+
 using ActorsCP.Logger;
+
 using NLog;
-using NLog.Fluent;
 
 namespace ActorsCPConsoleRunner
     {
     /// <summary>
-    ///
+    /// Реализация логгера
     /// </summary>
-    public class ActorLoggerImplementation : ActorLogger
+    public partial class ActorLoggerImplementation : ActorLogger
         {
-        private Logger _logger;
+        #region Приватные мемберы
 
         /// <summary>
-        /// Reconfigures the NLog logging level.
+        /// Экземпляр класса логгера
         /// </summary>
-        /// <param name="level">The <see cref="ActorLogLevel" /> to be set.</param>
-        private static void SetNlogLogLevel(LogLevel level)
+        private Logger _logger;
+
+        #endregion Приватные мемберы
+
+        #region Синглтон
+
+        /// <summary>
+        /// Единственный экзмепляр объекта
+        /// </summary>
+        protected static ActorLoggerImplementation _instance;
+
+        /// <summary>
+        /// Локер
+        /// </summary>
+        private static readonly object _locker = new object();
+
+        /// <summary>
+        /// Получить экземпляр объекта
+        /// </summary>
+        /// <returns>единственный экземпляр</returns>
+        public static ActorLoggerImplementation GetInstance()
             {
-            // Uncomment these to enable NLog logging. NLog exceptions are swallowed by default.
-            ////NLog.Common.InternalLogger.LogFile = @"C:\Temp\nlog.debug.log";
-            ////NLog.Common.InternalLogger.ActorLogLevel = ActorLogLevel.Debug;
-
-            if (level == LogLevel.Off)
+            lock (_locker)
                 {
-                LogManager.DisableLogging();
-                }
-            else
-                {
-                if (!LogManager.IsLoggingEnabled())
+                if (_instance == null)
                     {
-                    LogManager.EnableLogging();
+                    _instance = new ActorLoggerImplementation();
                     }
-
-                foreach (var rule in LogManager.Configuration.LoggingRules)
-                    {
-                    // Iterate over all levels up to and including the target, (re)enabling them.
-                    for (int i = level.Ordinal; i <= 5; i++)
-                        {
-                        rule.EnableLoggingForLevel(LogLevel.FromOrdinal(i));
-                        }
-                    }
+                return _instance;
                 }
-
-            LogManager.ReconfigExistingLoggers();
             }
 
+        #endregion Синглтон
+
+        #region Конструкторы
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
         public ActorLoggerImplementation()
             {
-            var i = NLogWrapper.GetInstance();
-            _logger = i.GetLogger();
-
-            SetLogLevel(ActorLogLevel.Info);
-
-            #region Настройка
-
-            if (!IsEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Off);
-                return;
-                }
-
-            if (IsDebugEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Debug);
-                }
-            if (IsInfoEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Info);
-                }
-            if (IsWarnEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Warn);
-                }
-            if (IsErrorEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Error);
-                }
-            if (IsFatalEnabled)
-                {
-                SetNlogLogLevel(LogLevel.Fatal);
-                }
-
-            #endregion Настройка
             }
 
-        #region Методы логгера
+        #endregion Конструкторы
+
+        #region Перегружаемые методы
 
         /// <summary>
         /// Фатальная ошибка
         /// </summary>
         /// <param name="fatalText">Текст фатальной ошибки</param>
-        public override void LogFatal(string fatalText)
+        protected override void InternalLogFatal(string fatalText)
             {
-            _logger.Fatal(fatalText);
+            if (_logger != null)
+                {
+                _logger.Fatal(fatalText);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogFatal(fatalText);
+                }
             }
 
         /// <summary>
         /// Исключение
         /// </summary>
         /// <param name="exception">Исключение</param>
-        public override void LogException(Exception exception)
+        public override void InternalLogException(Exception exception)
             {
-            _logger.Error(exception);
+            if (_logger != null)
+                {
+                _logger.Error(exception);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogException(exception);
+                }
             }
 
         /// <summary>
         /// Ошибка
         /// </summary>
         /// <param name="errorText">Текст ошибки</param>
-        public override void LogError(string errorText)
+        public override void InternalLogError(string errorText)
             {
-            _logger.Error(errorText);
+            if (_logger != null)
+                {
+                _logger.Error(errorText);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogError(errorText);
+                }
             }
 
         /// <summary>
         /// Предупреждение
         /// </summary>
         /// <param name="warnText">Текст предупреждения</param>
-        public override void LogWarn(string warnText)
+        public override void InternalLogWarn(string warnText)
             {
-            _logger.Warn(warnText);
+            if (_logger != null)
+                {
+                _logger.Warn(warnText);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogWarn(warnText);
+                }
             }
 
         /// <summary>
         /// Информация
         /// </summary>
         /// <param name="infoText">Текст информации</param>
-        public override void LogInfo(string infoText)
+        public override void InternalLogInfo(string infoText)
             {
-            _logger.Info(infoText);
+            Debug.WriteLine(infoText);
+            if (_logger != null)
+                {
+                _logger.Info(infoText);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogInfo(infoText);
+                }
             }
 
         /// <summary>
         /// Отладка
         /// </summary>
         /// <param name="debugText">Текст отладки</param>
-        public override void LogDebug(string debugText)
+        public override void InternalLogDebug(string debugText)
             {
-            _logger.Debug(debugText);
+            if (_logger != null)
+                {
+                _logger.Debug(debugText);
+                }
+            else
+                {
+                var gobalLogger = GetInstance();
+                gobalLogger.LogDebug(debugText);
+                }
             }
 
-        #endregion Методы логгера
+        #endregion Перегружаемые методы
         }
     }

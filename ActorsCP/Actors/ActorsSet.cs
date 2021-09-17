@@ -349,6 +349,28 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
+        /// Установить указатель на канал сообщений
+        /// </summary>
+        /// <param name="iMessageChannel">Канал сообщений</param>
+        public override void SetIMessageChannel(IMessageChannel iMessageChannel)
+            {
+            lock (Locker)
+                {
+                base.SetIMessageChannel(iMessageChannel);
+
+                foreach (var actor in _waiting)
+                    {
+                    actor.SetIMessageChannel(iMessageChannel);
+                    }
+
+                foreach (var actor in _running.Items)
+                    {
+                    actor.SetIMessageChannel(iMessageChannel);
+                    }
+                }
+            }
+
+        /// <summary>
         /// Отменяет выполнение списка объектов
         /// </summary>
         public override async Task CancelAsync()
@@ -627,6 +649,7 @@ namespace ActorsCP.Actors
                 }
 
             actor.SetParent(this);
+            BindViewPortsToChildActor(actor);
 
             switch (actor.State)
                 {

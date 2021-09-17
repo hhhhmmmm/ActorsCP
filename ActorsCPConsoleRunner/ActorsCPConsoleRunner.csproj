@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.7.11\lib\net45\NLog.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -72,13 +73,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActorLoggerImplementation.cs" />
+    <Compile Include="ActorLoggerImplementation_nLogPart.cs" />
     <Compile Include="MainProgram.cs" />
     <Compile Include="Handlers\CrowdHandler.cs" />
     <Compile Include="Handlers\DebugHandler.cs" />
     <Compile Include="Handlers\HandlerBase.cs" />
     <Compile Include="Handlers\QueueHandler.cs" />
     <Compile Include="Handlers\ViewPortHandler.cs" />
-    <Compile Include="NLogWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

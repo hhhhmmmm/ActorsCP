@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using ActorsCP.Logger;
 using ActorsCP.ViewPorts.ConsoleViewPort;
+
 using ActorsCPConsoleRunner.Handlers;
+
 using CommandLine;
 
 namespace ActorsCPConsoleRunner
@@ -14,18 +17,28 @@ namespace ActorsCPConsoleRunner
         #region Мемберы
 
         /// <summary>
-        /// Экземплятор логгера
-        /// </summary>
-        private static NLogWrapper s_Logger = new NLogWrapper();
-
-        /// <summary>
         /// Результат вызова обработчика handler.Run();
         /// </summary>
         private static int HandlerResult = 0;
 
-        private static ActorLoggerImplementation actorLoggerImplementation;
+        /// <summary>
+        /// Уровень логгирования
+        /// </summary>
+        private static ActorLogLevel s_ActorLogLevel;
 
         #endregion Мемберы
+
+        /// <summary>
+        /// Фабрика логгеров
+        /// </summary>
+        /// <returns></returns>
+        private static IActorLogger CreateLoggerInstance()
+            {
+            //var i = new ActorLoggerImplementation();
+            //i.SetLogLevel(s_ActorLogLevel);
+            //return i;
+            return null;
+            }
 
         /// <summary>
         /// Основная программа
@@ -37,11 +50,21 @@ namespace ActorsCPConsoleRunner
                 {
                 #region Настройка логгера
 
-                bool bres = s_Logger.InitLog(false, "ConsoleRunner");
-                s_Logger.LogInfo("LogInfo");
+#if DEBUG
+                s_ActorLogLevel = ActorLogLevel.Debug;
+#else
+            s_ActorLogLevel = ActorLogLevel.Info;
+#endif
 
-                actorLoggerImplementation = new ActorLoggerImplementation();
-                GlobalActorLogger.SetInstance(actorLoggerImplementation);
+                var logger = ActorLoggerImplementation.GetInstance();
+                bool bres = logger.InitLog("ConsoleRunner");
+                logger.SetLogLevel(s_ActorLogLevel);
+                ActorLoggerImplementation.ConfigureNLogGlobally(logger);
+
+                GlobalActorLogger.SetGlobalLoggerInstance(logger);
+                // GlobalActorLogger.SetGlobalLoggerFactory(CreateLoggerInstance);
+
+                logger.LogInfo("Настройка логгера завершена");
 
                 #endregion Настройка логгера
 

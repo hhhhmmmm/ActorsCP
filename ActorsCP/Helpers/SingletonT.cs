@@ -33,18 +33,5 @@ namespace ActorsCP.Helpers
                 return _instance;
                 }
             }
-
-        /// <summary>
-        /// Установить глобальный экземпляр
-        /// </summary>
-        /// <param name="instance">Глобальный экземпляр</param>
-        public static void SetInstance(T instance)
-            {
-            if (_instance != null)
-                {
-                throw new Exception("Глобальный экземпляр уже задан");
-                }
-            _instance = instance;
-            }
         }
     }

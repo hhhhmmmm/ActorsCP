@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -78,11 +79,24 @@ namespace ActorsCP.Actors
 
         #endregion События объекта
 
+        #region Обслуживание IMessageChannel
+
+        /// <summary>
+        /// Канал сообщений
+        /// </summary>
+        public IMessageChannel MessageChannel
+            {
+            get
+                {
+                return _iMessageChannel;
+                }
+            }
+
         /// <summary>
         /// Установить указатель на канал сообщений
         /// </summary>
         /// <param name="iMessageChannel">Канал сообщений</param>
-        public void SetIMessageChannel(IMessageChannel iMessageChannel)
+        public virtual void SetIMessageChannel(IMessageChannel iMessageChannel)
             {
             if (_iMessageChannel == iMessageChannel)
                 {
@@ -95,6 +109,8 @@ namespace ActorsCP.Actors
             _iMessageChannel = iMessageChannel;
             }
 
+        #endregion Обслуживание IMessageChannel
+
         #region IMessageChannel
 
         /// <summary>
@@ -103,9 +119,9 @@ namespace ActorsCP.Actors
         /// <param name="debugText">Текст отладочного сообщения</param>
         public void RaiseDebug(string debugText)
             {
+            _iMessageChannel?.RaiseDebug(debugText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
-            _iMessageChannel?.RaiseDebug(debugText);
             if (Logger.IsDebugEnabled)
                 {
                 Logger.LogDebug(debugText);
@@ -118,9 +134,9 @@ namespace ActorsCP.Actors
         /// <param name="messageText">Текст сообщения</param>
         public void RaiseMessage(string messageText)
             {
+            _iMessageChannel?.RaiseMessage(messageText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
-            _iMessageChannel?.RaiseMessage(messageText);
             if (Logger.IsInfoEnabled)
                 {
                 Logger.LogInfo(messageText);
@@ -133,9 +149,9 @@ namespace ActorsCP.Actors
         /// <param name="warningText">Текст сообщения c предупреждением</param>
         public void RaiseWarning(string warningText)
             {
+            _iMessageChannel?.RaiseWarning(warningText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
-            _iMessageChannel?.RaiseWarning(warningText);
             if (Logger.IsWarnEnabled)
                 {
                 Logger.LogWarn(warningText);
@@ -148,9 +164,9 @@ namespace ActorsCP.Actors
         /// <param name="errorText">Текст сообщения об ошибке</param>
         public void RaiseError(string errorText)
             {
+            _iMessageChannel?.RaiseError(errorText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
-            _iMessageChannel?.RaiseError(errorText);
             if (Logger.IsErrorEnabled)
                 {
                 Logger.LogError(errorText);
@@ -163,9 +179,9 @@ namespace ActorsCP.Actors
         /// <param name="exception">Исключение</param>
         public void RaiseException(Exception exception)
             {
+            _iMessageChannel?.RaiseException(exception); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
-            _iMessageChannel?.RaiseException(exception);
             if (Logger.IsErrorEnabled)
                 {
                 Logger.LogException(exception);

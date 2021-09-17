@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Text;
 
+using ActorsCP.Helpers;
+
 namespace ActorsCP.Logger
     {
     /// <summary>
-    ///
+    /// Базовый класс логгера
     /// </summary>
-    public class ActorLogger : IActorLogger
+    public class ActorLogger : DisposableImplementation<ActorLogger>, IActorLogger
         {
         /// <summary>
         /// Уровень подробности логгера
@@ -141,13 +143,13 @@ namespace ActorsCP.Logger
 
         #endregion Свойства
 
-        #region Методы логгера
+        #region Перегружаемые методы
 
         /// <summary>
         /// Фатальная ошибка
         /// </summary>
         /// <param name="fatalText">Текст фатальной ошибки</param>
-        public virtual void LogFatal(string fatalText)
+        protected virtual void InternalLogFatal(string fatalText)
             {
             }
 
@@ -155,16 +157,15 @@ namespace ActorsCP.Logger
         /// Исключение
         /// </summary>
         /// <param name="exception">Исключение</param>
-        public virtual void LogException(Exception exception)
+        public virtual void InternalLogException(Exception exception)
             {
-            LogError(exception?.ToString());
             }
 
         /// <summary>
         /// Ошибка
         /// </summary>
         /// <param name="errorText">Текст ошибки</param>
-        public virtual void LogError(string errorText)
+        public virtual void InternalLogError(string errorText)
             {
             }
 
@@ -172,7 +173,7 @@ namespace ActorsCP.Logger
         /// Предупреждение
         /// </summary>
         /// <param name="warnText">Текст предупреждения</param>
-        public virtual void LogWarn(string warnText)
+        public virtual void InternalLogWarn(string warnText)
             {
             }
 
@@ -180,7 +181,7 @@ namespace ActorsCP.Logger
         /// Информация
         /// </summary>
         /// <param name="infoText">Текст информации</param>
-        public virtual void LogInfo(string infoText)
+        public virtual void InternalLogInfo(string infoText)
             {
             }
 
@@ -188,8 +189,112 @@ namespace ActorsCP.Logger
         /// Отладка
         /// </summary>
         /// <param name="debugText">Текст отладки</param>
-        public virtual void LogDebug(string debugText)
+        public virtual void InternalLogDebug(string debugText)
             {
+            }
+
+        #endregion Перегружаемые методы
+
+        #region Методы логгера
+
+        /// <summary>
+        /// Фатальная ошибка
+        /// </summary>
+        /// <param name="fatalText">Текст фатальной ошибки</param>
+        public void LogFatal(string fatalText)
+            {
+            if (IsFatalEnabled)
+                {
+                InternalLogFatal(fatalText);
+                }
+            }
+
+        /// <summary>
+        /// Исключение
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        public void LogException(Exception exception)
+            {
+            if (IsErrorEnabled)
+                {
+                InternalLogException(exception);
+                }
+            }
+
+        /// <summary>
+        /// Ошибка
+        /// </summary>
+        /// <param name="errorText">Текст ошибки</param>
+        public void LogError(string errorText)
+            {
+            if (IsErrorEnabled)
+                {
+                try
+                    {
+                    InternalLogError(errorText);
+                    }
+                catch (Exception exception)
+                    {
+                    LogException(exception);
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Предупреждение
+        /// </summary>
+        /// <param name="warnText">Текст предупреждения</param>
+        public void LogWarn(string warnText)
+            {
+            if (IsWarnEnabled)
+                {
+                try
+                    {
+                    InternalLogWarn(warnText);
+                    }
+                catch (Exception exception)
+                    {
+                    LogException(exception);
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Информация
+        /// </summary>
+        /// <param name="infoText">Текст информации</param>
+        public void LogInfo(string infoText)
+            {
+            if (IsInfoEnabled)
+                {
+                try
+                    {
+                    InternalLogInfo(infoText);
+                    }
+                catch (Exception exception)
+                    {
+                    LogException(exception);
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Отладка
+        /// </summary>
+        /// <param name="debugText">Текст отладки</param>
+        public void LogDebug(string debugText)
+            {
+            if (IsDebugEnabled)
+                {
+                try
+                    {
+                    InternalLogDebug(debugText);
+                    }
+                catch (Exception exception)
+                    {
+                    LogException(exception);
+                    }
+                }
             }
 
         #endregion Методы логгера
