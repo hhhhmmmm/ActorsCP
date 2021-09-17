@@ -1,4 +1,6 @@
-﻿namespace ActorsCP.Helpers
+﻿using System;
+
+namespace ActorsCP.Helpers
     {
     /// <summary>
     /// Шаблон синглтона
@@ -9,7 +11,7 @@
         /// <summary>
         /// Единственный экзмепляр объекта
         /// </summary>
-        private static T _instance;
+        protected static T _instance;
 
         /// <summary>
         /// Локер

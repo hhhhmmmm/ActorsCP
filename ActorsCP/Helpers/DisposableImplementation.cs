@@ -13,7 +13,7 @@ namespace ActorsCP.Helpers
         #region Реализация интерфейса IDisposable
 
         /// <summary>
-        /// Свойство для флага m_Disposed
+        /// Свойство для флага _disposed
         /// </summary>
         protected bool Disposed
             {
@@ -24,7 +24,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Функция которая вызывается первой перед вызовом DisposeManagedResources();
         /// </summary>
-        private Action m_PreDisposeHandler;
+        private Action _preDisposeHandler;
 
         /// <summary>
         /// Установить функцию которую нужно вызвать при вызове Dispose() первой
@@ -32,11 +32,11 @@ namespace ActorsCP.Helpers
         /// <param name="PreDisposeHandler"></param>
         protected void SetPreDisposeHandler(Action PreDisposeHandler)
             {
-            if (m_PreDisposeHandler != null)
+            if (_preDisposeHandler != null)
                 {
                 throw new InvalidOperationException("Повторный вызов SetPreDisposeHandler()");
                 }
-            m_PreDisposeHandler = PreDisposeHandler;
+            _preDisposeHandler = PreDisposeHandler;
             }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace ActorsCP.Helpers
                 return;
                 }
 
-            m_PreDisposeHandler?.Invoke();
+            _preDisposeHandler?.Invoke();
 
             // Если disposing=true, то освобождаем все (управляемые и неуправляемые) ресурсы
             if (disposing)

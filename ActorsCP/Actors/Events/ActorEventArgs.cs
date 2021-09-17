@@ -3,10 +3,15 @@
 namespace ActorsCP.Actors.Events
     {
     /// <summary>
-    /// Базовый класс сообщений актора
+    /// Базовый класс сообщений объекта
     /// </summary>
     public class ActorEventArgs : EventArgs
         {
+        /// <summary>
+        /// Дата события в виде строки
+        /// </summary>
+        private string _stringEventDate;
+
         #region Конструкторы
 
         /// <summary>
@@ -30,6 +35,31 @@ namespace ActorsCP.Actors.Events
             private set;
             }
 
+        /// <summary>
+        /// Дата события в виде строки
+        /// </summary>
+        public string EventDateAsString
+            {
+            get
+                {
+                if (_stringEventDate == null)
+                    {
+                    _stringEventDate = FormatEventDate(EventDate);
+                    }
+                return _stringEventDate;
+                }
+            }
+
         #endregion Свойства
+
+        /// <summary>
+        /// Отформатировать время
+        /// </summary>
+        /// <param name="eventDate"></param>
+        public static string FormatEventDate(DateTime eventDate)
+            {
+            var _stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
+            return _stringEventDate;
+            }
         }
     }

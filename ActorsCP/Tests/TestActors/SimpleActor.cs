@@ -4,7 +4,7 @@ using System.Text;
 
 using ActorsCP.Actors;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
     ///
@@ -18,6 +18,14 @@ namespace ActorsCP.TestActors
         /// </summary>
         /// <param name="parameter"></param>
         public SimpleActor()
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">name</param>
+        public SimpleActor(string name) : base(name)
             {
             }
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors;
 
-namespace ActorsCP.TestActors
+namespace ActorsCP.Tests.TestActors
     {
     /// <summary>
-    /// Базовый класс тестового актора
+    /// Базовый класс тестового объекта
     /// </summary>
     public class TestActorBase : ActorBase
         {
@@ -47,15 +48,6 @@ namespace ActorsCP.TestActors
             }
 
         /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        protected override void InternalInitLogger()
-            {
-            base.InternalInitLogger();
-            InternalInitLogger_Called = true;
-            }
-
-        /// <summary>
         /// Запуск
         /// </summary>
         /// <returns>true если все хорошо</returns>
@@ -89,10 +81,10 @@ namespace ActorsCP.TestActors
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        protected override Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             InternalRunCleanupBeforeTerminationAsync_Called = true;
-            return base.InternalRunCleanupBeforeTerminationAsync();
+            return base.InternalRunCleanupBeforeTerminationAsync(fromDispose);
             }
 
         #endregion Перегрузки
@@ -106,12 +98,6 @@ namespace ActorsCP.TestActors
             }
 
         public bool DisposeUnmanagedResources_Called
-            {
-            get;
-            private set;
-            }
-
-        public bool InternalInitLogger_Called
             {
             get;
             private set;

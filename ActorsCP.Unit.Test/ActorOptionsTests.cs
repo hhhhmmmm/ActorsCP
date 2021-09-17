@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace ActorsCP.Unit.Test
     {
     [TestFixture]
-    [Category("Тесты опций актора ActorOptions")]
+    [Category("Тесты опций объекта ActorOptions")]
     public sealed class ActorOptionsTests : TestBase
         {
         private const string sKey = "_sKey_";

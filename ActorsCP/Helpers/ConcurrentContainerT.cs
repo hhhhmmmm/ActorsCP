@@ -49,6 +49,17 @@ namespace ActorsCP.Helpers
                 }
             }
 
+        /// <summary>
+        /// Ключи
+        /// </summary>
+        public ICollection<TTypeparam> Items
+            {
+            get
+                {
+                return Bag.Keys;
+                }
+            }
+
         #endregion Свойства
 
         #region Методы
@@ -57,7 +68,7 @@ namespace ActorsCP.Helpers
         /// Добавить элемент в контейнер
         /// </summary>
         /// <param name="item">Объект</param>
-        public void Add(TTypeparam item)
+        public bool Add(TTypeparam item)
             {
             var bag = Bag;
 
@@ -67,23 +78,25 @@ namespace ActorsCP.Helpers
                 bres = bag.TryAdd(item, DefaultValue);
                 if (bres)
                     {
-                    break;
+                    return true;
                     }
                 }
             if (!bres)
                 {
                 throw new InvalidOperationException("Не удалось добавить элемент в контейнер");
                 }
+            return false;
             }
 
         /// <summary>
         /// Удалить элемент из контейнера
         /// </summary>
         /// <param name="item">Объект</param>
-        public void Remove(TTypeparam item)
+        public bool Remove(TTypeparam item)
             {
             IDictionary<TTypeparam, byte> id = Bag;
-            id.Remove(item);
+            var bres = id.Remove(item);
+            return bres;
             }
 
         /// <summary>

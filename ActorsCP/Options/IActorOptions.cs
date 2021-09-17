@@ -5,7 +5,7 @@ using System.Text;
 namespace ActorsCP.Options
     {
     /// <summary>
-    /// Интерфейс опций актора
+    /// Интерфейс опций объекта
     /// </summary>
     public interface IActorOptions
         {

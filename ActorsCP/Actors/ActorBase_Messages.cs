@@ -15,7 +15,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Канал сообщений
         /// </summary>
-        private IMessageChannel m_IMessageChannel;
+        private IMessageChannel _iMessageChannel;
 
         #region События объекта
 
@@ -79,22 +79,37 @@ namespace ActorsCP.Actors
 
         #endregion События объекта
 
+        #region Обслуживание IMessageChannel
+
+        /// <summary>
+        /// Канал сообщений
+        /// </summary>
+        public IMessageChannel MessageChannel
+            {
+            get
+                {
+                return _iMessageChannel;
+                }
+            }
+
         /// <summary>
         /// Установить указатель на канал сообщений
         /// </summary>
         /// <param name="iMessageChannel">Канал сообщений</param>
-        public void SetIMessageChannel(IMessageChannel iMessageChannel)
+        public virtual void SetIMessageChannel(IMessageChannel iMessageChannel)
             {
-            if (m_IMessageChannel == iMessageChannel)
+            if (_iMessageChannel == iMessageChannel)
                 {
                 return;
                 }
-            if (m_IMessageChannel == this)
+            if (_iMessageChannel == this)
                 {
                 return;
                 }
-            m_IMessageChannel = iMessageChannel;
+            _iMessageChannel = iMessageChannel;
             }
+
+        #endregion Обслуживание IMessageChannel
 
         #region IMessageChannel
 
@@ -104,9 +119,13 @@ namespace ActorsCP.Actors
         /// <param name="debugText">Текст отладочного сообщения</param>
         public void RaiseDebug(string debugText)
             {
+            _iMessageChannel?.RaiseDebug(debugText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseDebug(debugText);
+            if (Logger.IsDebugEnabled)
+                {
+                Logger.LogDebug(debugText);
+                }
             }
 
         /// <summary>
@@ -115,9 +134,13 @@ namespace ActorsCP.Actors
         /// <param name="messageText">Текст сообщения</param>
         public void RaiseMessage(string messageText)
             {
+            _iMessageChannel?.RaiseMessage(messageText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseMessage(messageText);
+            if (Logger.IsInfoEnabled)
+                {
+                Logger.LogInfo(messageText);
+                }
             }
 
         /// <summary>
@@ -126,9 +149,13 @@ namespace ActorsCP.Actors
         /// <param name="warningText">Текст сообщения c предупреждением</param>
         public void RaiseWarning(string warningText)
             {
+            _iMessageChannel?.RaiseWarning(warningText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseWarning(warningText);
+            if (Logger.IsWarnEnabled)
+                {
+                Logger.LogWarn(warningText);
+                }
             }
 
         /// <summary>
@@ -137,9 +164,13 @@ namespace ActorsCP.Actors
         /// <param name="errorText">Текст сообщения об ошибке</param>
         public void RaiseError(string errorText)
             {
+            _iMessageChannel?.RaiseError(errorText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseError(errorText);
+            if (Logger.IsErrorEnabled)
+                {
+                Logger.LogError(errorText);
+                }
             }
 
         /// <summary>
@@ -148,9 +179,13 @@ namespace ActorsCP.Actors
         /// <param name="exception">Исключение</param>
         public void RaiseException(Exception exception)
             {
+            _iMessageChannel?.RaiseException(exception); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
-            m_IMessageChannel?.RaiseException(exception);
+            if (Logger.IsErrorEnabled)
+                {
+                Logger.LogException(exception);
+                }
             }
 
         #endregion IMessageChannel
@@ -184,7 +219,7 @@ namespace ActorsCP.Actors
         /// <param name="action">Текст сообщения</param>
         protected void OnActorActionDebug(string action)
             {
-            OnActorAction(action, ActorActionEventType.Debug);
+            OnActorAction("DEBUG: " + action, ActorActionEventType.Debug);
             }
 
         /// <summary>

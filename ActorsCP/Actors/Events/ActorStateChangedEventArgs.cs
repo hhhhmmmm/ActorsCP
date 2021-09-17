@@ -14,7 +14,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="state">Состояние актора</param>
+        /// <param name="state">Состояние объекта</param>
         public ActorStateChangedEventArgs(ActorState state)
             {
             State = state;
@@ -25,7 +25,7 @@ namespace ActorsCP.Actors.Events
         #region Свойства
 
         /// <summary>
-        /// Состояние актора
+        /// Состояние объекта
         /// </summary>
         public ActorState State
             {

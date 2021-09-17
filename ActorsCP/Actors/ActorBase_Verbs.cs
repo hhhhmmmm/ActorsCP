@@ -2,6 +2,8 @@
 using System.Text;
 using System.Threading.Tasks;
 
+using ActorsCP.Actors.Events;
+
 namespace ActorsCP.Actors
     {
     /// <summary>
@@ -9,17 +11,6 @@ namespace ActorsCP.Actors
     /// </summary>
     public partial class ActorBase
         {
-        #region Вспомогательные методы
-
-        /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        protected virtual void InternalInitLogger()
-            {
-            }
-
-        #endregion Вспомогательные методы
-
         #region Набор методов для переопределения глаголов
 
         /// <summary>
@@ -53,7 +44,8 @@ namespace ActorsCP.Actors
         /// Метод вызывается до отправки сигнала OnActorTerminated и предназначен для очистки объекта
         /// от хранимых в нем временных данных. Также вызывается из Dispose()
         /// </summary>
-        protected virtual Task<bool> InternalRunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        protected virtual Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
             return CompletedTaskBoolTrue;
             }
@@ -157,7 +149,7 @@ namespace ActorsCP.Actors
                     return true;
                     }
                 OnActorAction($"Запуск {Name}...");
-                var bres = await InternalStartAsync();
+                var bres = await InternalStartAsync().ConfigureAwait(false);
                 if (bres)
                     {
                     SetActorState(ActorState.Started);
@@ -170,7 +162,7 @@ namespace ActorsCP.Actors
             catch (Exception e)
                 {
                 OnActorThrownAnException(e);
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 return false;
                 }
             }
@@ -200,10 +192,10 @@ namespace ActorsCP.Actors
                     }
 
                 OnActorAction($"Остановка {Name}...");
-                var bres = await InternalStopAsync();
+                var bres = await InternalStopAsync().ConfigureAwait(false);
                 if (bres)
                     {
-                    OnActorAction($"{Name} остановлен");
+                    OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
                     SetActorState(ActorState.Stopped);
                     return true;
                     }
@@ -212,7 +204,7 @@ namespace ActorsCP.Actors
             catch (Exception e)
                 {
                 OnActorThrownAnException(e);
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 return false;
                 }
             }
@@ -256,30 +248,30 @@ namespace ActorsCP.Actors
                     {
                     if (!IsStarted)
                         {
-                        bres = await StartAsync();
+                        bres = await StartAsync().ConfigureAwait(false);
                         if (!bres)
                             {
                             return false;
                             }
                         }
 
-                    m_ExecutionTime.SetStartDate();
+                    _executionTime.SetStartDate();
                     SetActorState(ActorState.Running);
 
                     HasBeenRun = true;
 
                     var runtask = InternalRunAsync();
-                    await (runtask);
-                    m_ExecutionTime.SetEndDate();
+                    await runtask.ConfigureAwait(false);
+                    _executionTime.SetEndDate();
 
                     if (IsStarted || IsRunning)
                         {
                         if (RunOnlyOnce)
                             {
-                            bres = await StopAsync();
+                            bres = await StopAsync().ConfigureAwait(false);
                             if (!bres)
                                 {
-                                await TerminateAsync();
+                                await TerminateAsync().ConfigureAwait(false);
                                 return false;
                                 }
                             }
@@ -291,7 +283,7 @@ namespace ActorsCP.Actors
 
                     if (RunOnlyOnce)
                         {
-                        bres = await TerminateAsync();
+                        bres = await TerminateAsync().ConfigureAwait(false);
                         if (!bres)
                             {
                             return false;
@@ -299,7 +291,7 @@ namespace ActorsCP.Actors
                         }
 
                     return runtask.Result;
-                    }
+                    } // end using
 
                 #endregion Выполнение
                 } // end try
@@ -310,21 +302,21 @@ namespace ActorsCP.Actors
                 } // end catch
             catch (AggregateException ae)
                 {
-                m_ExecutionTime.SetEndDate();
+                _executionTime.SetEndDate();
 
                 foreach (Exception e in ae.InnerExceptions)
                     {
                     OnActorThrownAnException(e);
                     }
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 return false;
                 } // end catch
             catch (Exception e)
                 {
-                m_ExecutionTime.SetEndDate();
+                _executionTime.SetEndDate();
 
                 OnActorThrownAnException(e);
-                await TerminateAsync();
+                await TerminateAsync().ConfigureAwait(false);
                 return false;
                 } // end catch
             }
@@ -333,7 +325,7 @@ namespace ActorsCP.Actors
         /// Полная и окончательная остановка
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> TerminateAsync()
+        public virtual async Task<bool> TerminateAsync()
             {
             if (State == ActorState.Terminated)
                 {
@@ -341,7 +333,9 @@ namespace ActorsCP.Actors
                 }
             try
                 {
-                var bres = await RunCleanupBeforeTerminationAsync();
+                // RaiseActorEvent(ActorStates.Terminated);
+                // RaiseActorStateChanged(ActorStates.Terminated);
+                var bres = await RunCleanupBeforeTerminationAsync(false).ConfigureAwait(false);
                 return bres;
                 }
             catch (Exception ex)

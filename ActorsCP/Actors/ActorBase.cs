@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
-using ActorsCP.Options;
 
 namespace ActorsCP.Actors
     {
@@ -39,12 +38,26 @@ namespace ActorsCP.Actors
 
         #endregion Константы для задач
 
+        #region Глобальные внутренние объекты
+
+        /// <summary>
+        /// Генератор последовательных номеров объектов
+        /// </summary>
+        private static int s_N_global = 0;
+
+        #endregion Глобальные внутренние объекты
+
         #region Внутренние объекты
+
+        /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        private int _N = 0;
 
         /// <summary>
         /// Родительский объект
         /// </summary>
-        private ActorBase m_ParentActor;
+        private ActorBase _parentActor;
 
         /// <summary>
         /// Глобальный объект для синхронизации доступа
@@ -54,7 +67,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Время выполнения Run()
         /// </summary>
-        private ActorTime m_ExecutionTime = default(ActorTime);
+        private ActorTime _executionTime = default;
 
         #endregion Внутренние объекты
 
@@ -65,22 +78,61 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorBase()
             {
-            SetName($"Безымянный объект ActorUid = {ActorUid}");
+            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
+
+            SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
             InitLogger();
             SetRunOnlyOnce(true);
             }
 
-        /// <summary>Конструктор</summary>
+        /// <summary>
+        /// Конструктор
+        /// </summary>
         /// <param name="name">Название объекта</param>
-        protected ActorBase(string name) : this()
+        public ActorBase(string name) : this(name, null)
             {
-            SetName(name);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorBase(ActorBase parentActor) : this(null, parentActor)
+            {
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <param name="parentActor">Родительский объект</param>
+        public ActorBase(string name, ActorBase parentActor) : this()
+            {
+            if (!string.IsNullOrEmpty(name))
+                {
+                SetName(name);
+                }
+            if (parentActor != null)
+                {
+                SetParent(parentActor);
+                }
             }
 
         #endregion Конструкторы
 
         #region Свойства
+
+        /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        public int N
+            {
+            get
+                {
+                return _N;
+                }
+            }
 
         /// <summary>
         /// Родительский объект
@@ -89,7 +141,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_ParentActor;
+                return _parentActor;
                 }
             }
 
@@ -112,7 +164,7 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
-        /// Состояние актора
+        /// Состояние объекта
         /// </summary>
         public ActorState State
             {
@@ -127,38 +179,8 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_ExecutionTime;
+                return _executionTime;
                 }
-            }
-
-        #region Опции актора
-
-        private IActorOptions _actorOptions = null;
-
-        /// <summary>
-        /// Опции актора
-        /// </summary>
-        public IActorOptions Options
-            {
-            get
-                {
-                lock (Locker)
-                    {
-                    if (_actorOptions == null)
-                        {
-                        _actorOptions = new ActorOptions();
-                        }
-                    return _actorOptions;
-                    }
-                }
-            }
-
-        #endregion Опции актора
-
-        private static IActorOptions ff()
-            {
-            var o = new ActorOptions();
-            return o;
             }
 
         /// <summary>
@@ -195,27 +217,29 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Был вызван InternalRunCleanupBeforeTerminationAsync()
         /// </summary>
-        private bool m_InternalRunCleanupBeforeTermination;
+        private bool _internalRunCleanupBeforeTermination;
 
         /// <summary>
         /// Результат выполнения RunCleanupBeforeTerminationAsync()
         /// </summary>
-        private bool m_RunCleanupBeforeTerminationAsyncResult;
+        private bool _runCleanupBeforeTerminationAsyncResult;
 
         /// <summary>
         /// Вызывает InternalRunCleanupBeforeTermination() один раз
         /// </summary>
-        private async Task<bool> RunCleanupBeforeTerminationAsync()
+        /// <param name="fromDispose">Вызов из Dispose()</param>
+        /// <returns></returns>
+        private async Task<bool> RunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            if (m_InternalRunCleanupBeforeTermination)
+            if (_internalRunCleanupBeforeTermination)
                 {
-                return m_RunCleanupBeforeTerminationAsyncResult;
+                return _runCleanupBeforeTerminationAsyncResult;
                 }
             else
                 {
-                m_RunCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync();
-                m_InternalRunCleanupBeforeTermination = true;
-                return m_RunCleanupBeforeTerminationAsyncResult;
+                _runCleanupBeforeTerminationAsyncResult = await InternalRunCleanupBeforeTerminationAsync(fromDispose).ConfigureAwait(false);
+                _internalRunCleanupBeforeTermination = true;
+                return _runCleanupBeforeTerminationAsyncResult;
                 }
             }
 
@@ -223,16 +247,34 @@ namespace ActorsCP.Actors
 
         #region Реализация интерфейса IDisposable
 
-        /// <summary>Метод вызывается перед началом Dispose</summary>
+        /// <summary>
+        /// Метод вызывается перед началом Dispose
+        /// </summary>
         private async void PreDisposeHandler()
             {
-            await TerminateAsync();
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync().ConfigureAwait(false);
+                }
             }
 
-        /// <summary>Освободить управляемые ресурсы</summary>
-        protected override void DisposeManagedResources()
+        /// <summary>
+        /// Освободить управляемые ресурсы
+        /// </summary>
+        protected override async void DisposeManagedResources()
             {
-            m_CancellationTokenSource?.Dispose();
+            if (State != ActorState.Terminated)
+                {
+                await TerminateAsync().ConfigureAwait(false);
+                }
+
+            _externalObjects?.Clear();
+            _externalObjects = null;
+
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+            _parentActor = null;
+            _iMessageChannel = null;
             base.DisposeManagedResources();
             }
 
@@ -241,7 +283,7 @@ namespace ActorsCP.Actors
         #region Защищенные методы
 
         /// <summary>
-        /// Установит флаг AnErrorOccurred
+        /// Установить флаг AnErrorOccurred
         /// </summary>
         protected void SetAnErrorOccurred()
             {
@@ -249,19 +291,10 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
-        /// Внутренняя очистка
-        /// </summary>
-        private void CleanUp()
-            {
-            m_ParentActor = null;
-            m_IMessageChannel = null;
-            }
-
-        /// <summary>
         /// Установить новое состояние объекта
         /// </summary>
-        /// <param name="newState">новое состояние актора</param>
-        private void SetActorState(ActorState newState)
+        /// <param name="newState">новое состояние объекта</param>
+        protected void SetActorState(ActorState newState)
             {
             if (State == newState)
                 {
@@ -305,7 +338,8 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Terminated);
                     RaiseActorStateChanged(ActorStates.Terminated);
-                    CleanUp();
+                    UnbindAllViewPorts();
+                    ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
                     }
                 default:
@@ -319,7 +353,7 @@ namespace ActorsCP.Actors
         /// Установить название объекта
         /// </summary>
         /// <param name="name">Название объекта</param>
-        protected void SetName(string name)
+        public void SetName(string name)
             {
             if (string.IsNullOrEmpty(name))
                 {
@@ -339,14 +373,6 @@ namespace ActorsCP.Actors
                 }
             }
 
-        /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        private void InitLogger()
-            {
-            InternalInitLogger();
-            }
-
         #endregion Защищенные методы
 
         #region Методы
@@ -355,7 +381,7 @@ namespace ActorsCP.Actors
         /// Установить флаг разрешения запуска только один раз
         /// </summary>
         /// <param name="runOnlyOnce"></param>
-        public void SetRunOnlyOnce(bool runOnlyOnce)
+        public void SetRunOnlyOnce(bool runOnlyOnce = true)
             {
             RunOnlyOnce = runOnlyOnce;
             }
@@ -364,33 +390,22 @@ namespace ActorsCP.Actors
         /// Установить родительский объект
         /// </summary>
         /// <param name="parentActor">Родительский объект</param>
-        public void SetParent(ActorBase parentActor)
+        public virtual void SetParent(ActorBase parentActor)
             {
-            if (m_ParentActor == parentActor)
+            if (_parentActor == parentActor)
                 {
                 return;
                 }
 
-            m_ParentActor = parentActor;
-            if (m_ParentActor != null)
+            _parentActor = parentActor;
+            if (_parentActor != null)
                 {
-                SetIMessageChannel(m_ParentActor);
-                // UnsubscribeFromCancelationEvents(m_ParentActor);
+                SetIMessageChannel(_parentActor.MessageChannel);
+                // UnsubscribeFromCancelationEvents(_parentActor);
                 }
 
             //CreateCancellationTokenSource(parentActor);
             //SubscribeToCancelationEvents(parentActor);
-            }
-
-        #endregion Методы
-
-        /// <summary>
-        /// Установить персональные опции актора
-        /// </summary>
-        /// <param name="actorOptions">Опции актора</param>
-        private void SetActorOptions(IActorOptions actorOptions)
-            {
-            _actorOptions = actorOptions;
             }
 
         /// <summary>
@@ -405,5 +420,16 @@ namespace ActorsCP.Actors
                 }
             return "Безымянный объект";
             }
+
+        /// <summary>
+        /// Хэш
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            {
+            return N;
+            }
+
+        #endregion Методы
         } // end class Actor
     } // end namespace ActorsCP.Actors

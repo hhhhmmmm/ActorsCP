@@ -23,7 +23,7 @@ namespace ActorsCP.Actors.Events
         public ActorExceptionEventArgs(Exception exception) : base(ActorActionEventType.Exception)
             {
             this.Exception = exception;
-            base.Action = exception.ToString();
+            base.MessageText = exception.ToString();
             }
         }
     }

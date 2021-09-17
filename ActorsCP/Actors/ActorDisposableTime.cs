@@ -12,17 +12,17 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Название счетчика
         /// </summary>
-        private readonly string m_CounterName;
+        private readonly string _counterName;
 
         /// <summary>
         /// Счетчик
         /// </summary>
-        private ActorTime m_ActorTime = default(ActorTime);
+        private ActorTime _actorTime = default(ActorTime);
 
         /// <summary>
         /// Делегат который будет вызван по завершении жизни
         /// </summary>
-        private readonly Action<string> m_Delegate;
+        private readonly Action<string> _delegate;
 
         #region Свойства
 
@@ -33,7 +33,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return m_ActorTime;
+                return _actorTime;
                 }
             }
 
@@ -58,11 +58,11 @@ namespace ActorsCP.Actors
                 throw new ArgumentNullException(nameof(Delegate), "Delegate не может быть null");
                 }
 
-            m_CounterName = counterName;
-            m_Delegate = _delegate;
-            m_ActorTime.SetStartDate();
+            _counterName = counterName;
+            this._delegate = _delegate;
+            _actorTime.SetStartDate();
 
-            m_Delegate($"Начало {m_CounterName}");
+            this._delegate($"Начало {_counterName}");
             }
 
         #endregion Конструкторы
@@ -72,7 +72,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Флаг для отслеживания того, что Dispose уже вызывался
         /// </summary>
-        private bool m_Disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Реализация Dispose()
@@ -89,7 +89,7 @@ namespace ActorsCP.Actors
         private void Dispose(bool disposing)
             {
             // Проверка что Dispose(bool) уже вызывался
-            if (this.m_Disposed)
+            if (this._disposed)
                 {
                 return;
                 }
@@ -98,16 +98,16 @@ namespace ActorsCP.Actors
             if (disposing)
                 {
                 // Освобождаем управляемые ресурсы
-                if (m_Delegate != null)
+                if (_delegate != null)
                     {
-                    m_ActorTime.SetEndDate();
-                    var str = string.Format("Конец {0} {1}", m_CounterName, m_ActorTime.TimeIntervalWithComment);
-                    m_Delegate(str);
+                    _actorTime.SetEndDate();
+                    var str = string.Format("Конец {0} {1}", _counterName, _actorTime.TimeIntervalWithComment);
+                    _delegate(str);
                     }
                 }
 
             // Ставим флаг завершения
-            m_Disposed = true;
+            _disposed = true;
             }
 
         #endregion Реализация интерфейса IDisposable

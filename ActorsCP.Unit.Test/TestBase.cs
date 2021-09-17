@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
-using ActorsCP.TestActors;
+using ActorsCP.Tests.TestActors;
+
 using NUnit.Framework;
 
 namespace ActorsCP.Unit.Test
@@ -15,6 +17,7 @@ namespace ActorsCP.Unit.Test
     public class TestBase : IMessageChannel
         {
         private bool _isInitialized;
+        private TestActorsBuilder _testActorsBuilder;
 
         /// <summary>
         /// Инициализация
@@ -66,11 +69,20 @@ namespace ActorsCP.Unit.Test
         /// </summary>
         public TestBase()
             {
+            _testActorsBuilder = new TestActorsBuilder(this);
             }
 
         #endregion Конструкторы
 
         #region Свойства
+
+        public TestActorsBuilder TestActorsBuilder
+            {
+            get
+                {
+                return _testActorsBuilder;
+                }
+            }
 
         /// <summary>
         ///
@@ -79,37 +91,34 @@ namespace ActorsCP.Unit.Test
         private void ConfigureActor(ActorBase actor)
             {
             actor.SetIMessageChannel(this);
+            Assert.IsTrue(actor.N > 0);
             }
 
-        #region Генераторы акторов
+        #region Генераторы объекта
 
         /// <summary>
-        /// Новый пустой актор
+        /// Новый пустой объект
         /// </summary>
         public ActorBase NewPendingActor
             {
             get
                 {
-                var actor = new SimpleActor();
-                ConfigureActor(actor);
-                return actor;
+                return TestActorsBuilder.NewSimpleActor;
                 }
             }
 
         /// <summary>
-        /// Новый актор ExceptionActor
+        /// Новый объект ExceptionActor
         /// </summary>
         public ExceptionActor NewExceptionActor
             {
             get
                 {
-                var actor = new ExceptionActor();
-                ConfigureActor(actor);
-                return actor;
+                return TestActorsBuilder.NewExceptionActor;
                 }
             }
 
-        #endregion Генераторы акторов
+        #endregion Генераторы объекта
 
         #endregion Свойства
         } // end class TestBase
