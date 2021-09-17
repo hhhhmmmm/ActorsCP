@@ -304,7 +304,7 @@ namespace ActorsCP.Actors
         /// <param name="fromDispose">Вызов из Dispose()</param>
         protected override async Task<bool> InternalRunCleanupBeforeTerminationAsync(bool fromDispose)
             {
-            UnbindAllViewPorts();
+            // UnbindAllViewPorts(); // здесь нельзя так как возикает зацикливание
 
             //ClearViewPortHelper(); // в ActorsSet::InternalRunCleanupBeforeTerminationAsync()
 

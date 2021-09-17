@@ -2,6 +2,8 @@
 using System.Text;
 using System.Threading.Tasks;
 
+using ActorsCP.Actors.Events;
+
 namespace ActorsCP.Actors
     {
     /// <summary>
@@ -331,6 +333,8 @@ namespace ActorsCP.Actors
                 }
             try
                 {
+                // RaiseActorEvent(ActorStates.Terminated);
+                // RaiseActorStateChanged(ActorStates.Terminated);
                 var bres = await RunCleanupBeforeTerminationAsync(false).ConfigureAwait(false);
                 return bres;
                 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
 using ActorsCP.Tests.TestActors;
-using ActorsCP.ViewPorts.ConsoleViewPort;
 
 using CommandLine;
 using CommandLine.Text;
@@ -84,7 +82,7 @@ namespace ActorsCPConsoleRunner.Handlers
             crowd.SetCleanupAfterTermination(true);
 
             crowd.BindViewPort(DefaultViewPort);
-            crowd.SetIMessageChannel(DefaultViewPort);
+            // crowd.SetIMessageChannel(DefaultViewPort);
 
             if (LimitParallelelism)
                 {
@@ -97,7 +95,7 @@ namespace ActorsCPConsoleRunner.Handlers
 
             for (int i = 0; i < nItemsCount; i++)
                 {
-                string name = string.Format("Объект {0}", i + 1);
+                string name = string.Format(" ПРОСТОЙ-ОБЪЕКТ-{0}", i + 1);
                 var actor = new SimpleActor(name);
                 crowd.Add(actor);
                 }
@@ -107,13 +105,15 @@ namespace ActorsCPConsoleRunner.Handlers
             actorTime.SetStartDate();
             await crowd.RunAsync();
             actorTime.SetEndDate();
-            var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
 
             //viewPort.OutMessages = true;
             // mci.RaiseMessages = true;
 
             RaiseWarning($"nItemsCount = {nItemsCount}");
+            var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
             RaiseWarning(result);
+            var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
+            RaiseWarning(stat);
             return 0;
             }
 
