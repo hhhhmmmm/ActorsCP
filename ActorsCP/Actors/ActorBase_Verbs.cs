@@ -325,7 +325,7 @@ namespace ActorsCP.Actors
         /// Полная и окончательная остановка
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> TerminateAsync()
+        public virtual async Task<bool> TerminateAsync()
             {
             if (State == ActorState.Terminated)
                 {

@@ -320,7 +320,7 @@ namespace ActorsCP.Actors
         /// Установить новое состояние объекта
         /// </summary>
         /// <param name="newState">новое состояние объекта</param>
-        private void SetActorState(ActorState newState)
+        protected void SetActorState(ActorState newState)
             {
             if (State == newState)
                 {
