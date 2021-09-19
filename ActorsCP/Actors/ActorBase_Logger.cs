@@ -14,7 +14,35 @@ namespace ActorsCP.Actors
         /// </summary>
         private IActorLogger _actorLogger;
 
+        private ActorLoggerOptions _actorLoggerOptions;
+
         #region Свойства
+
+        /// <summary>
+        /// Уровень подробности логгера
+        /// </summary>
+        public ActorLoggerOptions LoggerOptions
+            {
+            get
+                {
+                if (_actorLoggerOptions != null)
+                    {
+                    return _actorLoggerOptions;
+                    }
+
+                if (_actorLogger != null)
+                    {
+                    var options = _actorLogger.LoggerOptions;
+                    if (options != null)
+                        {
+                        return options;
+                        }
+                    }
+
+                var globalActorLogger = GlobalActorLogger.GetInstance();
+                return globalActorLogger.LoggerOptions;
+                }
+            }
 
         /// <summary>
         /// Экземпляр логгера
@@ -41,6 +69,14 @@ namespace ActorsCP.Actors
         public void SetLogger(IActorLogger actorLogger)
             {
             _actorLogger = actorLogger;
+            }
+
+        /// <summary>
+        /// Установить уровень подробности логгера
+        /// </summary>
+        public void SetLoggerOptions(ActorLoggerOptions actorLoggerOptions)
+            {
+            _actorLoggerOptions = actorLoggerOptions;
             }
         }
     }

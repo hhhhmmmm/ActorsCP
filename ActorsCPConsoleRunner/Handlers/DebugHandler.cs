@@ -10,7 +10,7 @@ namespace ActorsCPConsoleRunner.Handlers
     /// <summary>
     /// Отладочный класс
     /// </summary>
-    [Verb("debug", HelpText = "Опции опладки")]
+    [Verb("debug", HelpText = "Опции отладки")]
     public class DebugHandler : HandlerBase
         {
         #region Опции командной строки

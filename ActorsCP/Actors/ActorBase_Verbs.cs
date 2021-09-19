@@ -83,7 +83,19 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return !IsStarted;
+                switch (State)
+                    {
+                    case ActorState.Pending:
+                    case ActorState.Started:
+                    case ActorState.Running:
+                        {
+                        return false;
+                        }
+                    default:
+                        {
+                        return true;
+                        }
+                    }
                 }
             }
 

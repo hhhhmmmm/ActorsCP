@@ -171,29 +171,29 @@ namespace ActorsCPConsoleRunner
         /// <param name="iActorLogger">Настройки созданного логгера</param>
         public static void ConfigureNLogGlobally(IActorLogger iActorLogger)
             {
-            if (!iActorLogger.IsEnabled)
+            if (!iActorLogger.LoggerOptions.IsEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Off);
                 return;
                 }
 
-            if (iActorLogger.IsDebugEnabled)
+            if (iActorLogger.LoggerOptions.IsDebugEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Debug);
                 }
-            if (iActorLogger.IsInfoEnabled)
+            if (iActorLogger.LoggerOptions.IsInfoEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Info);
                 }
-            if (iActorLogger.IsWarnEnabled)
+            if (iActorLogger.LoggerOptions.IsWarnEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Warn);
                 }
-            if (iActorLogger.IsErrorEnabled)
+            if (iActorLogger.LoggerOptions.IsErrorEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Error);
                 }
-            if (iActorLogger.IsFatalEnabled)
+            if (iActorLogger.LoggerOptions.IsFatalEnabled)
                 {
                 SetNlogLogLevel(LogLevel.Fatal);
                 }

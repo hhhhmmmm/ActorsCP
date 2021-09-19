@@ -85,10 +85,10 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Логгер уровня Ошибки и выше
         /// </summary>
-        public static IActorLogger ErrorLogger
+        public static ActorLoggerOptions ErrorLoggerOptions
             {
             get;
-            } = new ActorLogger(ActorLogLevel.Error);
+            } = new ActorLoggerOptions(ActorLogLevel.Error);
 
         /// <summary>
         /// Уровень подробности логгера

@@ -35,11 +35,11 @@ namespace ActorsCPConsoleRunner.Handlers
             var bres = await InternalRunForSet();
             actorTime.SetEndDate();
             DefaultViewPort.NoOutMessages = false;
-            RaiseWarning($"nItemsCount = {nItemsCount}");
+            RaiseError($"nItemsCount = {nItemsCount}");
             var str = actorTime.GetTimeIntervalWithComment(nItemsCount);
-            RaiseWarning(str);
+            RaiseError(str);
             var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
-            RaiseWarning(stat);
+            RaiseError(stat);
             DefaultViewPort.ValidateStatistics();
             return bres;
             }

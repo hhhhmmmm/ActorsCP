@@ -122,7 +122,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseDebug(debugText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
-            if (Logger.IsDebugEnabled)
+            if (LoggerOptions.IsDebugEnabled)
                 {
                 Logger.LogDebug(debugText);
                 }
@@ -137,7 +137,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseMessage(messageText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
-            if (Logger.IsInfoEnabled)
+            if (LoggerOptions.IsInfoEnabled)
                 {
                 Logger.LogInfo(messageText);
                 }
@@ -152,7 +152,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseWarning(warningText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
-            if (Logger.IsWarnEnabled)
+            if (LoggerOptions.IsWarnEnabled)
                 {
                 Logger.LogWarn(warningText);
                 }
@@ -167,7 +167,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseError(errorText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
-            if (Logger.IsErrorEnabled)
+            if (LoggerOptions.IsErrorEnabled)
                 {
                 Logger.LogError(errorText);
                 }
@@ -182,7 +182,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseException(exception); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
-            if (Logger.IsErrorEnabled)
+            if (LoggerOptions.IsErrorEnabled)
                 {
                 Logger.LogException(exception);
                 }

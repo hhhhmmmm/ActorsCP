@@ -65,8 +65,8 @@ namespace ActorsCPConsoleRunner.Handlers
                 nProcessorCount = Environment.ProcessorCount;
                 }
 
-            RaiseWarning($"Withoutlimits = {Withoutlimits}");
-            RaiseWarning($"nProcessorCount = {nProcessorCount}");
+            RaiseError($"Withoutlimits = {Withoutlimits}");
+            RaiseError($"nProcessorCount = {nProcessorCount}");
 
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
 
@@ -85,16 +85,16 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.SetMaxDegreeOfParallelism(nProcessorCount);
                 }
 
-            // var logger = new ActorLogger();
-            // logger.SetLogLevel(ActorLogLevel.Info);
+            var loggerOptions = new ActorLoggerOptions();
+            loggerOptions.SetLogLevel(ActorLogLevel.Error);
 
-            var loggerg = ActorLogger.ErrorLogger;
+            //var loggerg = ActorLogger.ErrorLogger;
 
             for (int i = 0; i < nItemsCount; i++)
                 {
-                var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ-{0}", i + 1);
+                var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
                 var actor = new SimpleActor(name);
-                actor.SetLogger(loggerg);
+                actor.SetLoggerOptions(loggerOptions);
                 crowd.Add(actor);
                 }
 

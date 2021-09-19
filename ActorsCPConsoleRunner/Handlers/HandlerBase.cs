@@ -104,7 +104,7 @@ namespace ActorsCPConsoleRunner.Handlers
                 GlobalActorLogger.SetGlobalLoggerInstance(logger);
                 // GlobalActorLogger.SetGlobalLoggerFactory(CreateLoggerInstance);
 
-                logger.LogInfo("Настройка логгера завершена");
+                logger.LogFatal("Настройка логгера завершена");
                 } // end WriteLog
 
             #endregion Настройка логгера
