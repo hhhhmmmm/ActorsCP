@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
-
+using System.IO;
+using System.Threading.Tasks;
 using ActorsCP.Logger;
-
 using NLog;
 
 namespace ActorsCPConsoleRunner
@@ -73,7 +72,11 @@ namespace ActorsCPConsoleRunner
             {
             if (_logger != null)
                 {
-                _logger.Fatal(fatalText);
+                Task.Run(() =>
+                {
+                    _logger.Fatal(fatalText);
+                }
+                );
                 }
             else
                 {
@@ -90,7 +93,11 @@ namespace ActorsCPConsoleRunner
             {
             if (_logger != null)
                 {
-                _logger.Error(exception);
+                Task.Run(() =>
+                {
+                    _logger.Error(exception);
+                }
+                );
                 }
             else
                 {
@@ -107,7 +114,11 @@ namespace ActorsCPConsoleRunner
             {
             if (_logger != null)
                 {
-                _logger.Error(errorText);
+                Task.Run(() =>
+                {
+                    _logger.Error(errorText);
+                }
+                );
                 }
             else
                 {
@@ -124,7 +135,11 @@ namespace ActorsCPConsoleRunner
             {
             if (_logger != null)
                 {
-                _logger.Warn(warnText);
+                Task.Run(() =>
+                {
+                    _logger.Warn(warnText);
+                }
+                );
                 }
             else
                 {
@@ -139,10 +154,13 @@ namespace ActorsCPConsoleRunner
         /// <param name="infoText">Текст информации</param>
         public override void InternalLogInfo(string infoText)
             {
-            Debug.WriteLine(infoText);
             if (_logger != null)
                 {
-                _logger.Info(infoText);
+                Task.Run(() =>
+                {
+                    _logger.Info(infoText);
+                }
+                );
                 }
             else
                 {
@@ -159,7 +177,11 @@ namespace ActorsCPConsoleRunner
             {
             if (_logger != null)
                 {
-                _logger.Debug(debugText);
+                Task.Run(() =>
+                {
+                    _logger.Debug(debugText);
+                }
+                );
                 }
             else
                 {
