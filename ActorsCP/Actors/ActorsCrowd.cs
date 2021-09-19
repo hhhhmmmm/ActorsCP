@@ -165,7 +165,6 @@ namespace ActorsCP.Actors
 
             // var runningTasks = new List<Task<bool>>(nCount);
             var runningTasks = new ConcurrentQueue<Task<bool>>();
-
             var localActorsList = new List<ActorBase>(nCount);
 
             localActorsList.AddRange(actorsList);

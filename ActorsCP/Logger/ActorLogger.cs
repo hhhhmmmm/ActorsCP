@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-
 using ActorsCP.Helpers;
 
 namespace ActorsCP.Logger
@@ -51,21 +50,31 @@ namespace ActorsCP.Logger
 
             if ((Level & ActorLogLevel.Error) != 0)
                 {
+                IsFatalEnabled = true;
                 IsErrorEnabled = true;
                 }
 
             if ((Level & ActorLogLevel.Warn) != 0)
                 {
+                IsFatalEnabled = true;
+                IsErrorEnabled = true;
                 IsWarnEnabled = true;
                 }
 
             if ((Level & ActorLogLevel.Info) != 0)
                 {
+                IsFatalEnabled = true;
+                IsErrorEnabled = true;
+                IsWarnEnabled = true;
                 IsInfoEnabled = true;
                 }
 
             if ((Level & ActorLogLevel.Debug) != 0)
                 {
+                IsFatalEnabled = true;
+                IsErrorEnabled = true;
+                IsWarnEnabled = true;
+                IsInfoEnabled = true;
                 IsDebugEnabled = true;
                 }
             }
@@ -73,6 +82,14 @@ namespace ActorsCP.Logger
         #endregion Методы
 
         #region Свойства
+
+        /// <summary>
+        /// Логгер уровня Ошибки и выше
+        /// </summary>
+        public static IActorLogger ErrorLogger
+            {
+            get;
+            } = new ActorLogger(ActorLogLevel.Error);
 
         /// <summary>
         /// Уровень подробности логгера

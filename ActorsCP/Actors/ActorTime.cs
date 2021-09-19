@@ -217,12 +217,12 @@ namespace ActorsCP.Actors
 
                 if (TotalSeconds == 0)
                     {
-                    str = $"(время выполнения - {ShortTimeInterval}, avg = {avgTime})";
+                    str = $"(время выполнения ({nCount}) - {ShortTimeInterval}, avg = {avgTime})";
                     }
                 else
                 if (TotalSeconds > 0)
                     {
-                    str = $"(время выполнения - {ShortTimeInterval}, avg = {avgTime} , avgSpeed = {avgSpeed} в секунду)";
+                    str = $"(время выполнения ({nCount}) - {ShortTimeInterval}, avg = {avgTime} , avgSpeed = {avgSpeed} в секунду)";
                     }
                 }
             return str;

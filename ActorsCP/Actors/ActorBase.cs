@@ -82,7 +82,6 @@ namespace ActorsCP.Actors
 
             SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
-            InitLogger();
             SetRunOnlyOnce(true);
             }
 

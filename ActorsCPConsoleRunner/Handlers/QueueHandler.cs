@@ -11,7 +11,7 @@ namespace ActorsCPConsoleRunner.Handlers
     ///
     /// </summary>
     [Verb("queue", HelpText = "Работа с очередями")]
-    public class QueueHandler : HandlerBase
+    public class QueueHandler : SetHandler
         {
         #region Опции командной строки
 
@@ -49,7 +49,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Метод запуска
         /// </summary>
-        protected override Task<int> InternalRun()
+        protected override Task<int> InternalRunForSet()
             {
             Console.WriteLine($"InternalRun() - {this.ToString()}");
             return Task.FromResult(0);

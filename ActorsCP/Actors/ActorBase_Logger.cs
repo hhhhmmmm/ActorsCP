@@ -36,13 +36,6 @@ namespace ActorsCP.Actors
         #endregion Свойства
 
         /// <summary>
-        /// Частичная реализация - инициализация логгера
-        /// </summary>
-        private void InitLogger()
-            {
-            }
-
-        /// <summary>
         /// Установить персональный логгер для класса
         /// </summary>
         public void SetLogger(IActorLogger actorLogger)

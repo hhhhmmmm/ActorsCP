@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
+using ActorsCP.Logger;
 using ActorsCP.ViewPorts.ConsoleViewPort;
-
 using CommandLine;
 
 namespace ActorsCPConsoleRunner.Handlers
@@ -39,13 +38,31 @@ namespace ActorsCPConsoleRunner.Handlers
             }
 
         /// <summary>
-        ///
+        ///Выдавать сообщения вьюпорта на экран
         /// </summary>
-        [Option('n', "nomessages", Required = false, HelpText = "Не выдавать сообщения вьюпорта на экран")]
-        public bool NoOutMessagesDefault
+        [Option('m', "messages", Required = false, Default = false, HelpText = "Выдавать сообщения вьюпорта на экран")]
+        public bool OutMessagesDefault
             {
             get;
             set;
+            }
+
+        /// <summary>
+        ///Выдавать сообщения вьюпорта на экран
+        /// </summary>
+        [Option('l', "log", Required = false, Default = false, HelpText = "Писать лог в файл лога")]
+        public bool WriteLog
+            {
+            get;
+            set;
+            }
+
+        public bool NoOutMessagesDefault
+            {
+            get
+                {
+                return !OutMessagesDefault;
+                }
             }
 
         #endregion Свойства
@@ -53,10 +70,45 @@ namespace ActorsCPConsoleRunner.Handlers
         #region Методы
 
         /// <summary>
+        /// Фабрика логгеров
+        /// </summary>
+        /// <returns></returns>
+        private static IActorLogger CreateLoggerInstance()
+            {
+            //var i = new ActorLoggerImplementation();
+            //i.SetLogLevel(s_ActorLogLevel);
+            //return i;
+            return null;
+            }
+
+        /// <summary>
         /// Метод запуска
         /// </summary>
         public int Run()
             {
+            #region Настройка логгера
+
+            //#if DEBUG
+            MainProgram.ActorLogLevel = ActorLogLevel.Debug;
+            //#else
+            //           MainProgram.ActorLogLevel = ActorLogLevel.Info;
+            //#endif
+
+            if (WriteLog)
+                {
+                var logger = ActorLoggerImplementation.GetInstance();
+                bool bres = logger.InitLog("ConsoleRunner");
+                logger.SetLogLevel(MainProgram.ActorLogLevel);
+                ActorLoggerImplementation.ConfigureNLogGlobally(logger);
+
+                GlobalActorLogger.SetGlobalLoggerInstance(logger);
+                // GlobalActorLogger.SetGlobalLoggerFactory(CreateLoggerInstance);
+
+                logger.LogInfo("Настройка логгера завершена");
+                } // end WriteLog
+
+            #endregion Настройка логгера
+
             DefaultViewPort = new ConsoleActorViewPort();
             DefaultViewPort.Init();
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
