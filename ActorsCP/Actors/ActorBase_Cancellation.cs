@@ -60,6 +60,15 @@ namespace ActorsCP.Actors
         #endregion Свойства
 
         /// <summary>
+        /// Отменяет выполнение производного объекта
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Task InternalCancelAsync()
+            {
+            return Task.CompletedTask;
+            }
+
+        /// <summary>
         /// Отменяет выполнение объекта
         /// и безусловно завершает его работу
         /// </summary>
@@ -81,8 +90,8 @@ namespace ActorsCP.Actors
                 }
 
             _cancellationTokenSource?.Cancel();
-
             _IsCanceled = true;
+            await InternalCancelAsync();
 
             OnActorActionWarning(_сanceledMessageText);
 

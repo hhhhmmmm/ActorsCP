@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
+using ActorsCP.Executors;
 using ActorsCP.Logger;
 using ActorsCP.Tests.TestActors;
 
@@ -72,10 +73,6 @@ namespace ActorsCPConsoleRunner.Handlers
 
             var crowd = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
-
-            crowd.BindViewPort(DefaultViewPort);
-            // crowd.SetIMessageChannel(DefaultViewPort);
-
             if (Withoutlimits)
                 {
                 crowd.SetMaxDegreeOfParallelism(null);
@@ -98,6 +95,13 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.Add(actor);
                 }
 
+            using (var executor = new Executor(crowd, DefaultViewPort))
+                {
+                // crowd.BindViewPort(DefaultViewPort);
+                // crowd.SetIMessageChannel(DefaultViewPort);
+                await executor.RunAsync();
+                } // end using
+
             //var crowd2 = new ActorsCrowd();
             //for (int i = 0; i < nItemsCount; i++)
             //    {
@@ -111,7 +115,7 @@ namespace ActorsCPConsoleRunner.Handlers
             //viewPort.OutMessages = false;
             // mci.RaiseMessages = false;
             //actorTime.SetStartDate();
-            await crowd.RunAsync();
+            // await crowd.RunAsync();
             //actorTime.SetEndDate();
 
             //viewPort.OutMessages = true;
