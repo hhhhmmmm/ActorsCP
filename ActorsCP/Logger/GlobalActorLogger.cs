@@ -6,8 +6,10 @@ namespace ActorsCP.Logger
     /// <summary>
     /// Глобальный экземпляр логгера - синглтон
     /// </summary>
-    public class GlobalActorLogger : ActorLogger
+    public sealed class GlobalActorLogger : ActorLogger
         {
+        #region Приватные мемберы
+
         /// <summary>
         /// Единственный экзмепляр объекта
         /// </summary>
@@ -23,19 +25,21 @@ namespace ActorsCP.Logger
         /// </summary>
         private static Func<IActorLogger> _loggerFactory;
 
+        #endregion Приватные мемберы
+
         /// <summary>
         /// Получить экземпляр объекта
         /// </summary>
         /// <returns>единственный экземпляр</returns>
         public static IActorLogger GetInstance()
             {
+            if (_loggerFactory != null)
+                {
+                return _loggerFactory();
+                }
+
             lock (_locker)
                 {
-                if (_loggerFactory != null)
-                    {
-                    return _loggerFactory();
-                    }
-
                 if (_instance == null)
                     {
                     _instance = new GlobalActorLogger();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-
 using ActorsCP.Helpers;
 
 namespace ActorsCP.Logger
@@ -13,7 +12,7 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Уровень подробности логгера
         /// </summary>
-        private ActorLogLevel _actorLogLevel;
+        private readonly ActorLoggerOptions _actorLoggerOptions = new ActorLoggerOptions();
 
         #region Конструкторы
 
@@ -43,31 +42,7 @@ namespace ActorsCP.Logger
         /// <param name="actorLogLevel">Уровень подробности логгера</param>
         public void SetLogLevel(ActorLogLevel actorLogLevel)
             {
-            _actorLogLevel = actorLogLevel;
-            if ((Level & ActorLogLevel.Fatal) != 0)
-                {
-                IsFatalEnabled = true;
-                }
-
-            if ((Level & ActorLogLevel.Error) != 0)
-                {
-                IsErrorEnabled = true;
-                }
-
-            if ((Level & ActorLogLevel.Warn) != 0)
-                {
-                IsWarnEnabled = true;
-                }
-
-            if ((Level & ActorLogLevel.Info) != 0)
-                {
-                IsInfoEnabled = true;
-                }
-
-            if ((Level & ActorLogLevel.Debug) != 0)
-                {
-                IsDebugEnabled = true;
-                }
+            _actorLoggerOptions.SetLogLevel(actorLogLevel);
             }
 
         #endregion Методы
@@ -77,68 +52,12 @@ namespace ActorsCP.Logger
         /// <summary>
         /// Уровень подробности логгера
         /// </summary>
-        public ActorLogLevel Level
+        public ActorLoggerOptions LoggerOptions
             {
             get
                 {
-                return _actorLogLevel;
+                return _actorLoggerOptions;
                 }
-            }
-
-        /// <summary>
-        /// Логгер включен
-        /// </summary>
-        public bool IsEnabled
-            {
-            get
-                {
-                return Level != ActorLogLevel.Off;
-                }
-            }
-
-        /// <summary>
-        /// Фатальные ошибки включены
-        /// </summary>
-        public bool IsFatalEnabled
-            {
-            get;
-            private set;
-            }
-
-        /// <summary>
-        /// Ошибки включены
-        /// </summary>
-        public bool IsErrorEnabled
-            {
-            get;
-            private set;
-            }
-
-        /// <summary>
-        /// Предупреждения включены
-        /// </summary>
-        public bool IsWarnEnabled
-            {
-            get;
-            private set;
-            }
-
-        /// <summary>
-        /// Информация включена
-        /// </summary>
-        public bool IsInfoEnabled
-            {
-            get;
-            private set;
-            }
-
-        /// <summary>
-        /// Уровень отладки включен
-        /// </summary>
-        public bool IsDebugEnabled
-            {
-            get;
-            private set;
             }
 
         #endregion Свойства
@@ -203,7 +122,7 @@ namespace ActorsCP.Logger
         /// <param name="fatalText">Текст фатальной ошибки</param>
         public void LogFatal(string fatalText)
             {
-            if (IsFatalEnabled)
+            if (LoggerOptions.IsFatalEnabled)
                 {
                 InternalLogFatal(fatalText);
                 }
@@ -215,7 +134,7 @@ namespace ActorsCP.Logger
         /// <param name="exception">Исключение</param>
         public void LogException(Exception exception)
             {
-            if (IsErrorEnabled)
+            if (LoggerOptions.IsErrorEnabled)
                 {
                 InternalLogException(exception);
                 }
@@ -227,7 +146,7 @@ namespace ActorsCP.Logger
         /// <param name="errorText">Текст ошибки</param>
         public void LogError(string errorText)
             {
-            if (IsErrorEnabled)
+            if (LoggerOptions.IsErrorEnabled)
                 {
                 try
                     {
@@ -246,7 +165,7 @@ namespace ActorsCP.Logger
         /// <param name="warnText">Текст предупреждения</param>
         public void LogWarn(string warnText)
             {
-            if (IsWarnEnabled)
+            if (LoggerOptions.IsWarnEnabled)
                 {
                 try
                     {
@@ -265,7 +184,7 @@ namespace ActorsCP.Logger
         /// <param name="infoText">Текст информации</param>
         public void LogInfo(string infoText)
             {
-            if (IsInfoEnabled)
+            if (LoggerOptions.IsInfoEnabled)
                 {
                 try
                     {
@@ -284,7 +203,7 @@ namespace ActorsCP.Logger
         /// <param name="debugText">Текст отладки</param>
         public void LogDebug(string debugText)
             {
-            if (IsDebugEnabled)
+            if (LoggerOptions.IsDebugEnabled)
                 {
                 try
                     {

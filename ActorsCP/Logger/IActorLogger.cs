@@ -11,57 +11,9 @@ namespace ActorsCP.Logger
         #region Свойства
 
         /// <summary>
-        /// Уровень подробности логгера
+        /// Опции логгера
         /// </summary>
-        ActorLogLevel Level
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Логгер включен
-        /// </summary>
-        bool IsEnabled
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Фатальные ошибки включены
-        /// </summary>
-        bool IsFatalEnabled
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Ошибки включены
-        /// </summary>
-        bool IsErrorEnabled
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Предупреждения включены
-        /// </summary>
-        bool IsWarnEnabled
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Информация включена
-        /// </summary>
-        bool IsInfoEnabled
-            {
-            get;
-            }
-
-        /// <summary>
-        /// Уровень отладки включен
-        /// </summary>
-        bool IsDebugEnabled
+        ActorLoggerOptions LoggerOptions
             {
             get;
             }

@@ -266,6 +266,29 @@ namespace ActorsCP.Actors
         #region Приватные методы
 
         /// <summary>
+        /// Получить копию массива
+        /// </summary>
+        /// <param name="actors">Входящий массив вида HashSet<ActorBase></param>
+        /// <returns></returns>
+        protected ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
+            {
+            var tmp = new ActorBase[actors.Count];
+            actors.CopyTo(tmp, 0);
+            return tmp;
+            }
+
+        /// <summary>
+        /// Получить копию массива
+        /// </summary>
+        /// <param name="actors">Входящий массив вида ConcurrentContainerT<ActorBase></param>
+        /// <returns></returns>
+        protected ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
+            {
+            var tmp = actors.Items.ToArray();
+            return tmp;
+            }
+
+        /// <summary>
         /// Проверить состояние набора объектов
         /// </summary>
         private void CheckActorsSetState()
@@ -315,8 +338,8 @@ namespace ActorsCP.Actors
                 {
                 if (_waiting.Count > 0)
                     {
-                    ActorBase[] tmpWaiting = new ActorBase[_waiting.Count];
-                    _waiting.CopyTo(tmpWaiting, 0);
+                    var tmpWaiting = GetCopyOf(_waiting);
+
                     foreach (var actor in tmpWaiting)
                         {
                         await actor.TerminateAsync();
@@ -325,7 +348,7 @@ namespace ActorsCP.Actors
 
                 if (_running.Count > 0)
                     {
-                    var tmpRunning = _running.Items.ToArray();
+                    var tmpRunning = GetCopyOf(_running);
                     foreach (var actor in tmpRunning)
                         {
                         await actor.TerminateAsync();
@@ -419,16 +442,37 @@ namespace ActorsCP.Actors
         /// </summary>
         public override async Task CancelAsync()
             {
-            await base.CancelAsync().ConfigureAwait(false);
-
-            foreach (var actor in _waiting)
+            var tmpWaiting = GetCopyOf(_waiting);
+            foreach (var actor in tmpWaiting)
                 {
                 await actor.CancelAsync().ConfigureAwait(false);
                 }
 
-            foreach (var actor in _running.Items)
+            var tmpRunning = GetCopyOf(_running);
+            foreach (var actor in tmpRunning)
                 {
                 await actor.CancelAsync().ConfigureAwait(false);
+                }
+
+            await base.CancelAsync().ConfigureAwait(false);
+            }
+
+        /// <summary>
+        /// Установить новый токен отмены
+        /// </summary>
+        /// <param name="token">Новый токен отмены</param>
+        public override void SetCancellationToken(CancellationToken token)
+            {
+            base.SetCancellationToken(token);
+
+            foreach (var actor in _waiting)
+                {
+                actor.SetCancellationToken(token);
+                }
+
+            foreach (var actor in _running.Items)
+                {
+                actor.SetCancellationToken(token);
                 }
             }
 
@@ -693,6 +737,7 @@ namespace ActorsCP.Actors
                 }
 
             actor.SetParent(this);
+            actor.SetCancellationToken(CancellationTokenSource);
             BindViewPortsToChildActor(actor);
 
             switch (actor.State)

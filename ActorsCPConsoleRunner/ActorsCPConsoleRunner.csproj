@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="ActorLoggerImplementation.cs" />
     <Compile Include="ActorLoggerImplementation_nLogPart.cs" />
+    <Compile Include="Handlers\SetHandler.cs" />
     <Compile Include="MainProgram.cs" />
     <Compile Include="Handlers\CrowdHandler.cs" />
     <Compile Include="Handlers\DebugHandler.cs" />

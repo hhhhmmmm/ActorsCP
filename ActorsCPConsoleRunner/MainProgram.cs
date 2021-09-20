@@ -24,21 +24,13 @@ namespace ActorsCPConsoleRunner
         /// <summary>
         /// Уровень логгирования
         /// </summary>
-        private static ActorLogLevel s_ActorLogLevel;
+        public static ActorLogLevel ActorLogLevel
+            {
+            get;
+            set;
+            }
 
         #endregion Мемберы
-
-        /// <summary>
-        /// Фабрика логгеров
-        /// </summary>
-        /// <returns></returns>
-        private static IActorLogger CreateLoggerInstance()
-            {
-            //var i = new ActorLoggerImplementation();
-            //i.SetLogLevel(s_ActorLogLevel);
-            //return i;
-            return null;
-            }
 
         /// <summary>
         /// Основная программа
@@ -48,26 +40,6 @@ namespace ActorsCPConsoleRunner
             {
             try
                 {
-                #region Настройка логгера
-
-#if DEBUG
-                s_ActorLogLevel = ActorLogLevel.Debug;
-#else
-            s_ActorLogLevel = ActorLogLevel.Info;
-#endif
-
-                var logger = ActorLoggerImplementation.GetInstance();
-                bool bres = logger.InitLog("ConsoleRunner");
-                logger.SetLogLevel(s_ActorLogLevel);
-                ActorLoggerImplementation.ConfigureNLogGlobally(logger);
-
-                GlobalActorLogger.SetGlobalLoggerInstance(logger);
-                // GlobalActorLogger.SetGlobalLoggerFactory(CreateLoggerInstance);
-
-                logger.LogInfo("Настройка логгера завершена");
-
-                #endregion Настройка логгера
-
                 var result = Parser.Default.ParseArguments<QueueHandler, CrowdHandler, DebugHandler, ViewPortHandler>(args);
 
                 if (result.Tag == ParserResultType.NotParsed)

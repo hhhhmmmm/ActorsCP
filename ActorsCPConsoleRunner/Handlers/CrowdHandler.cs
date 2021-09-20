@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
+using ActorsCP.Logger;
 using ActorsCP.Tests.TestActors;
 
 using CommandLine;
@@ -14,19 +15,12 @@ namespace ActorsCPConsoleRunner.Handlers
     ///
     /// </summary>
     [Verb("crowd", HelpText = "Работа с толпами")]
-    public sealed class CrowdHandler : HandlerBase
+    public sealed class CrowdHandler : SetHandler
         {
         #region Опции командной строки
 
-        [Option('c', "count", Required = true, HelpText = "Количество элементов для обработки в толпе")]
-        public int nItemsCount
-            {
-            get;
-            set;
-            }
-
-        [Option('l', "limit", Required = false, HelpText = "Ограничивать параллелизм")]
-        public bool LimitParallelelism
+        [Option('w', "withoutlimits", Required = false, HelpText = "Не ограничивать параллелизм, без лимитов на кол-во процесоров")]
+        public bool Withoutlimits
             {
             get;
             set;
@@ -61,71 +55,71 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Метод запуска
         /// </summary>
-        protected override async Task<int> InternalRun()
+        protected override async Task<int> InternalRunForSet()
             {
-            ActorTime actorTime = default;
-
-            if (nItemsCount <= 0)
-                {
-                RaiseError("count должно быть > 0");
-                }
+            DefaultViewPort.NoOutMessages = false;
+            // ActorTime actorTime = default;
 
             if (nProcessorCount == null)
                 {
                 nProcessorCount = Environment.ProcessorCount;
                 }
 
-            RaiseWarning($"LimitParallelelism = {LimitParallelelism}");
-            RaiseWarning($"nProcessorCount = {nProcessorCount}");
+            RaiseError($"Withoutlimits = {Withoutlimits}");
+            RaiseError($"nProcessorCount = {nProcessorCount}");
+
+            DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
 
             var crowd = new ActorsCrowd();
-            var crowd2 = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
 
             crowd.BindViewPort(DefaultViewPort);
             // crowd.SetIMessageChannel(DefaultViewPort);
 
-            if (LimitParallelelism)
-                {
-                crowd.SetMaxDegreeOfParallelism(nProcessorCount);
-                }
-            else
+            if (Withoutlimits)
                 {
                 crowd.SetMaxDegreeOfParallelism(null);
                 }
+            else
+                {
+                crowd.SetMaxDegreeOfParallelism(nProcessorCount);
+                }
+
+            // var loggerOptions = new ActorLoggerOptions();
+            // loggerOptions.SetLogLevel(ActorLogLevel.Error);
+
+            var globalLoggerOptions = DefaultErrorLoggerOptions.ErrorLoggerOptions;
 
             for (int i = 0; i < nItemsCount; i++)
                 {
-                string name = string.Format(" ПРОСТОЙ-ОБЪЕКТ-{0}", i + 1);
+                var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
                 var actor = new SimpleActor(name);
+                actor.SetLoggerOptions(globalLoggerOptions);
                 crowd.Add(actor);
                 }
 
-            for (int i = 0; i < nItemsCount; i++)
-                {
-                string name = string.Format(" ВЛ-ОБЪЕКТ-{0}", i + 1);
-                var actor = new SimpleActor(name);
-                crowd2.Add(actor);
-                }
+            //var crowd2 = new ActorsCrowd();
+            //for (int i = 0; i < nItemsCount; i++)
+            //    {
+            //    var name = string.Format(" ВЛ-ОБЪЕКТ-{0}", i + 1);
+            //    var actor = new SimpleActor(name);
+            //    crowd2.Add(actor);
+            //    }
 
-            crowd.Add(crowd2);
+            //crowd.Add(crowd2);
 
             //viewPort.OutMessages = false;
             // mci.RaiseMessages = false;
-            actorTime.SetStartDate();
+            //actorTime.SetStartDate();
             await crowd.RunAsync();
-            actorTime.SetEndDate();
+            //actorTime.SetEndDate();
 
             //viewPort.OutMessages = true;
             // mci.RaiseMessages = true;
 
-            RaiseWarning($"nItemsCount = {nItemsCount}");
-            var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
-            RaiseWarning(result);
-            var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
-            RaiseWarning(stat);
+            //var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
+            //RaiseWarning(result);
 
-            DefaultViewPort.ValidateStatistics();
             return 0;
             }
 

@@ -23,11 +23,13 @@ namespace ActorsCP.Actors
                 {
                 lock (Locker)
                     {
-                    if (_actorOptions == null)
+                    if (_actorOptions != null)
                         {
-                        _actorOptions = new ActorOptions();
+                        return _actorOptions;
                         }
-                    return _actorOptions;
+
+                    var gactorOptions = GlobalActorOptions.GetInstance();
+                    return gactorOptions;
                     }
                 }
             }
@@ -47,11 +49,13 @@ namespace ActorsCP.Actors
                 {
                 lock (Locker)
                     {
-                    if (_actorDebugOptions == null)
+                    if (_actorDebugOptions != null)
                         {
-                        _actorDebugOptions = new ActorOptions();
+                        return _actorDebugOptions;
                         }
-                    return _actorDebugOptions;
+
+                    var gactorDebugOptions = GlobalActorDebugOptions.GetInstance();
+                    return gactorDebugOptions;
                     }
                 }
             }

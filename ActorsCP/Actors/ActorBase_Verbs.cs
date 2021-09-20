@@ -83,7 +83,19 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return !IsStarted;
+                switch (State)
+                    {
+                    case ActorState.Pending:
+                    case ActorState.Started:
+                    case ActorState.Running:
+                        {
+                        return false;
+                        }
+                    default:
+                        {
+                        return true;
+                        }
+                    }
                 }
             }
 
@@ -138,7 +150,7 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
-                if (IsCanceled)
+                if (IsCancellationRequested)
                     {
                     OnActorActionError("Выполнение объекта отменено");
                     return false;
@@ -224,7 +236,7 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
-                if (IsCanceled)
+                if (IsCancellationRequested)
                     {
                     OnActorActionError("Выполнение объекта отменено");
                     return false;
