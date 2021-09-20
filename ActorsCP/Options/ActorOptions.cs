@@ -20,6 +20,10 @@ namespace ActorsCP.Options
         /// <param name="newValue">Значение</param>
         public void AddOrUpdate(string key, object newValue)
             {
+            if (string.IsNullOrEmpty(key))
+                {
+                throw new ArgumentNullException($"Значение key не может быть null или пустой строкой");
+                }
             _bag.AddOrUpdate(key, newValue, (_key, oldValue) => newValue);
             }
 
