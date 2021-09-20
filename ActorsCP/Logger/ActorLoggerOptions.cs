@@ -83,14 +83,6 @@ namespace ActorsCP.Logger
         #region Свойства
 
         /// <summary>
-        /// Логгер уровня Ошибки и выше
-        /// </summary>
-        public static ActorLoggerOptions ErrorLoggerOptions
-            {
-            get;
-            } = new ActorLoggerOptions(ActorLogLevel.Error);
-
-        /// <summary>
         /// Уровень подробности логгера
         /// </summary>
         public ActorLogLevel Level

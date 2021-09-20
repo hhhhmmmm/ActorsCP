@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ActorsCP.Logger
@@ -10,7 +9,7 @@ namespace ActorsCP.Logger
     public static class DefaultErrorLoggerOptions
         {
         /// <summary>
-        /// Логгер уровня Ошибки и выше
+        /// Логгер уровня Ошибка и выше
         /// </summary>
         public static ActorLoggerOptions ErrorLoggerOptions
             {

@@ -146,9 +146,9 @@ namespace ActorsCP.Unit.Test
             {
             var a = new ExceptionActor();
             Assert.AreEqual(ActorState.Pending, a.State);
-            Assert.IsFalse(a.IsCanceled);
+            Assert.IsFalse(a.IsCancellationRequested);
             await a.CancelAsync();
-            Assert.IsTrue(a.IsCanceled);
+            Assert.IsTrue(a.IsCancellationRequested);
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
             }
 
@@ -159,14 +159,14 @@ namespace ActorsCP.Unit.Test
             bool bres;
             var a = new ExceptionActor();
             Assert.AreEqual(ActorState.Pending, a.State);
-            Assert.IsFalse(a.IsCanceled);
+            Assert.IsFalse(a.IsCancellationRequested);
 
             bres = await a.StartAsync();
             Assert.IsTrue(bres);
             Assert.AreEqual(ActorState.Started, a.State);
 
             await a.CancelAsync();
-            Assert.IsTrue(a.IsCanceled);
+            Assert.IsTrue(a.IsCancellationRequested);
 
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
             }
@@ -178,7 +178,7 @@ namespace ActorsCP.Unit.Test
             bool bres;
             var a = new ExceptionActor();
             Assert.AreEqual(ActorState.Pending, a.State);
-            Assert.IsFalse(a.IsCanceled);
+            Assert.IsFalse(a.IsCancellationRequested);
 
             bres = await a.StartAsync();
             Assert.IsTrue(bres);
@@ -189,7 +189,7 @@ namespace ActorsCP.Unit.Test
             Assert.AreEqual(ActorState.Stopped, a.State);
 
             await a.CancelAsync();
-            Assert.IsTrue(a.IsCanceled);
+            Assert.IsTrue(a.IsCancellationRequested);
 
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
             }
@@ -201,14 +201,14 @@ namespace ActorsCP.Unit.Test
             bool bres;
             var a = new ExceptionActor();
             Assert.AreEqual(ActorState.Pending, a.State);
-            Assert.IsFalse(a.IsCanceled);
+            Assert.IsFalse(a.IsCancellationRequested);
 
             bres = await a.RunAsync();
             Assert.IsTrue(bres);
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
 
             await a.CancelAsync();
-            Assert.IsTrue(a.IsCanceled);
+            Assert.IsTrue(a.IsCancellationRequested);
 
             Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
             }

@@ -40,6 +40,7 @@
     <Compile Include="ActorQueueTests.cs" />
     <Compile Include="ActorsCrowdTests.cs" />
     <Compile Include="ActorsSetTests.cs" />
+    <Compile Include="CancellationTokenTests.cs" />
     <Compile Include="ExternalObjectsTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="ActorTests.cs" />

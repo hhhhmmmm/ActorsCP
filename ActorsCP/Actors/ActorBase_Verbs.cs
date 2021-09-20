@@ -150,7 +150,7 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
-                if (IsCanceled)
+                if (IsCancellationRequested)
                     {
                     OnActorActionError("Выполнение объекта отменено");
                     return false;
@@ -236,7 +236,7 @@ namespace ActorsCP.Actors
                     return false;
                     }
 
-                if (IsCanceled)
+                if (IsCancellationRequested)
                     {
                     OnActorActionError("Выполнение объекта отменено");
                     return false;

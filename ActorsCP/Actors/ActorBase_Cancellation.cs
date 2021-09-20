@@ -10,10 +10,24 @@ namespace ActorsCP.Actors
     /// </summary>
     public partial class ActorBase
         {
+        #region Приватные мемберы
+
+        /// <summary>
+        /// Текст сообщения
+        /// </summary>
+        private const string _сanceledMessageText = "Выполнение объекта отменено";
+
         /// <summary>
         /// Источник отмены задачи
         /// </summary>
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+        /// <summary>
+        /// Приватная переменная - используется если объект уже Dispose()
+        /// </summary>
+        private bool _IsCanceled;
+
+        #endregion Приватные мемберы
 
         #region Свойства
 
@@ -29,17 +43,21 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
-        /// Выполнение отменено
+        /// Был сделан запрос на отмену выполнения
         /// </summary>
-        public bool IsCanceled
+        public bool IsCancellationRequested
             {
-            get;
-            private set;
+            get
+                {
+                if (_cancellationTokenSource != null)
+                    {
+                    return _cancellationTokenSource.IsCancellationRequested;
+                    }
+                return _IsCanceled;
+                }
             }
 
         #endregion Свойства
-
-        private const string _CancelText = "Выполнение объекта отменено";
 
         /// <summary>
         /// Отменяет выполнение объекта
@@ -47,24 +65,26 @@ namespace ActorsCP.Actors
         /// </summary>
         public virtual async Task CancelAsync()
             {
-            if (IsCanceled)
+            if (IsCancellationRequested)
                 {
                 return;
                 }
 
             if (IsTerminated) // если хочется поставить на завершенном объекте, то хуже уже никому не будет
                 {
-                if (!IsCanceled)
+                if (!IsCancellationRequested)
                     {
-                    IsCanceled = true;
+                    _IsCanceled = true;
+                    _cancellationTokenSource?.Cancel();
                     }
                 return;
                 }
 
             _cancellationTokenSource?.Cancel();
-            IsCanceled = true;
 
-            OnActorActionWarning(_CancelText);
+            _IsCanceled = true;
+
+            OnActorActionWarning(_сanceledMessageText);
 
             if (IsStarted || IsRunning)
                 {
@@ -75,6 +95,35 @@ namespace ActorsCP.Actors
                 {
                 await TerminateAsync().ConfigureAwait(false);
                 }
+            }
+
+        /// <summary>
+        /// Установить новый токен отмены
+        /// </summary>
+        /// <param name="Token">Новый токен отмены</param>
+        public void SetCancellationToken(CancellationTokenSource tokenSource)
+            {
+            if (tokenSource == null)
+                {
+                throw new ArgumentNullException(nameof(tokenSource));
+                }
+
+            SetCancellationToken(tokenSource.Token);
+            }
+
+        /// <summary>
+        /// Установить новый токен отмены
+        /// </summary>
+        /// <param name="token">Новый токен отмены</param>
+        public virtual void SetCancellationToken(CancellationToken token)
+            {
+            if (_cancellationTokenSource != null && _cancellationTokenSource.Token == token)
+                {
+                return;
+                }
+
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
             }
 
         /// <summary>
@@ -91,12 +140,12 @@ namespace ActorsCP.Actors
         /// </summary>
         protected async void OnOperationCanceledException()
             {
-            if (this.ExecutionTime.HasStartDate)
+            if (ExecutionTime.HasStartDate && (!ExecutionTime.HasEndDate))
                 {
                 ExecutionTime.SetEndDate();
                 }
 
-            OnActorActionWarning(_CancelText);
+            OnActorActionWarning(_сanceledMessageText);
 
             if (IsStarted || IsRunning)
                 {

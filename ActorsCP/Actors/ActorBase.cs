@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -270,8 +271,12 @@ namespace ActorsCP.Actors
             _externalObjects?.Clear();
             _externalObjects = null;
 
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
+            if (_cancellationTokenSource != null)
+                {
+                _IsCanceled = _cancellationTokenSource.IsCancellationRequested;
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
+                }
             _parentActor = null;
             _iMessageChannel = null;
             base.DisposeManagedResources();

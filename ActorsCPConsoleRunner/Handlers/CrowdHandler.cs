@@ -85,16 +85,16 @@ namespace ActorsCPConsoleRunner.Handlers
                 crowd.SetMaxDegreeOfParallelism(nProcessorCount);
                 }
 
-            var loggerOptions = new ActorLoggerOptions();
-            loggerOptions.SetLogLevel(ActorLogLevel.Error);
+            // var loggerOptions = new ActorLoggerOptions();
+            // loggerOptions.SetLogLevel(ActorLogLevel.Error);
 
-            //var loggerg = ActorLogger.ErrorLogger;
+            var globalLoggerOptions = DefaultErrorLoggerOptions.ErrorLoggerOptions;
 
             for (int i = 0; i < nItemsCount; i++)
                 {
                 var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
                 var actor = new SimpleActor(name);
-                actor.SetLoggerOptions(loggerOptions);
+                actor.SetLoggerOptions(globalLoggerOptions);
                 crowd.Add(actor);
                 }
 
