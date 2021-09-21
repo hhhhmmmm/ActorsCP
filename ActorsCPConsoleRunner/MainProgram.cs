@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ActorsCP;
 using ActorsCP.Logger;
+using ActorsCP.Options;
 using ActorsCP.ViewPorts.ConsoleViewPort;
 
 using ActorsCPConsoleRunner.Handlers;

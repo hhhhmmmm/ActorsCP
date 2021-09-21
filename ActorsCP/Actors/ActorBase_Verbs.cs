@@ -165,6 +165,7 @@ namespace ActorsCP.Actors
                 if (bres)
                     {
                     SetActorState(ActorState.Started);
+                    AfterStateChanged();
                     OnActorAction($"{Name} успешно запущен");
                     return true;
                     }
@@ -209,6 +210,7 @@ namespace ActorsCP.Actors
                     {
                     OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
                     SetActorState(ActorState.Stopped);
+                    AfterStateChanged();
                     return true;
                     }
                 return false;
@@ -219,6 +221,10 @@ namespace ActorsCP.Actors
                 await TerminateAsync().ConfigureAwait(false);
                 return false;
                 }
+            }
+
+        protected virtual void AfterStateChanged()
+            {
             }
 
         /// <summary>

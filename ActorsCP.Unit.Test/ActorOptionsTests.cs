@@ -26,8 +26,8 @@ namespace ActorsCP.Unit.Test
         public void Init()
             {
             var gao = GlobalActorOptions.GetInstance();
-            gao.AddOrUpdate(dogKey, dog);
-            gao.AddOrUpdate(catKey, cat);
+            GlobalSettings.AddOrUpdateActorOption(dogKey, dog);
+            GlobalSettings.AddOrUpdateActorOption(catKey, cat);
             }
 
         [Test]

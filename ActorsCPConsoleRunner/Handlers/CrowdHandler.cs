@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using ActorsCP;
 using ActorsCP.Actors;
+using ActorsCP.Executors;
 using ActorsCP.Logger;
+using ActorsCP.Options;
 using ActorsCP.Tests.TestActors;
 
 using CommandLine;
@@ -58,6 +61,10 @@ namespace ActorsCPConsoleRunner.Handlers
         protected override async Task<int> InternalRunForSet()
             {
             DefaultViewPort.NoOutMessages = false;
+
+            GlobalSettings.AddOrUpdateActorDebugOption(ActorDebugKeywords.ViewPort_DebugStateChangedEvent, true);
+            DefaultViewPort.Reconfigure();
+
             // ActorTime actorTime = default;
 
             if (nProcessorCount == null)
@@ -72,10 +79,6 @@ namespace ActorsCPConsoleRunner.Handlers
 
             var crowd = new ActorsCrowd();
             crowd.SetCleanupAfterTermination(true);
-
-            crowd.BindViewPort(DefaultViewPort);
-            // crowd.SetIMessageChannel(DefaultViewPort);
-
             if (Withoutlimits)
                 {
                 crowd.SetMaxDegreeOfParallelism(null);
@@ -93,10 +96,19 @@ namespace ActorsCPConsoleRunner.Handlers
             for (int i = 0; i < nItemsCount; i++)
                 {
                 var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
-                var actor = new SimpleActor(name);
+                //var actor = new SimpleActor(name);
+                var actor = new WaitActor(name);
                 actor.SetLoggerOptions(globalLoggerOptions);
+                actor.Interval = 10;
                 crowd.Add(actor);
                 }
+
+            using (var executor = new ActorExecutor(crowd, DefaultViewPort))
+                {
+                // crowd.BindViewPort(DefaultViewPort);
+                // crowd.SetIMessageChannel(DefaultViewPort);
+                await executor.RunAsync();
+                } // end using
 
             //var crowd2 = new ActorsCrowd();
             //for (int i = 0; i < nItemsCount; i++)
@@ -111,7 +123,7 @@ namespace ActorsCPConsoleRunner.Handlers
             //viewPort.OutMessages = false;
             // mci.RaiseMessages = false;
             //actorTime.SetStartDate();
-            await crowd.RunAsync();
+            // await crowd.RunAsync();
             //actorTime.SetEndDate();
 
             //viewPort.OutMessages = true;
