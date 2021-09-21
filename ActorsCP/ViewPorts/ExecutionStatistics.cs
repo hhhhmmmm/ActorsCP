@@ -55,6 +55,11 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         public volatile int Errors;
 
+        /// <summary>
+        /// Измениось состояние
+        /// </summary>
+        public volatile int StateChanged;
+
         #endregion Счетчики
 
         #region Перегрузки
@@ -76,7 +81,8 @@ namespace ActorsCP.ViewPorts
                     TerminatedObjects == c.TerminatedObjects &&
                     RunningObjects == c.RunningObjects &&
                     Exceptions == c.Exceptions &&
-                    Errors == c.Errors
+                    Errors == c.Errors &&
+                    StateChanged == c.StateChanged
                     ;
                 }
 
@@ -96,7 +102,8 @@ namespace ActorsCP.ViewPorts
                 TerminatedObjects.GetHashCode() ^
                 Exceptions.GetHashCode() ^
                 RunningObjects.GetHashCode() ^
-                Errors.GetHashCode();
+                Errors.GetHashCode() ^
+                StateChanged.GetHashCode();
             return hash;
             }
 
@@ -122,6 +129,7 @@ namespace ActorsCP.ViewPorts
                 sb.Append($"отвязано - {TotalUnboundObjects}, " + nl);
                 sb.Append($"запущено - {StartedObjects}, " + nl);
                 sb.Append($"остановлено - {StoppedObjects}" + nl);
+                sb.Append($"изменений состояния - {StateChanged}" + nl);
 
                 return sb.ToString();
                 }

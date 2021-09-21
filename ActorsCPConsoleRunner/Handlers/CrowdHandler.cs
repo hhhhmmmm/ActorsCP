@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using ActorsCP;
 using ActorsCP.Actors;
 using ActorsCP.Executors;
 using ActorsCP.Logger;
+using ActorsCP.Options;
 using ActorsCP.Tests.TestActors;
 
 using CommandLine;
@@ -59,6 +61,10 @@ namespace ActorsCPConsoleRunner.Handlers
         protected override async Task<int> InternalRunForSet()
             {
             DefaultViewPort.NoOutMessages = false;
+
+            GlobalSettings.AddOrUpdateActorDebugOption(ActorDebugKeywords.ViewPort_DebugStateChangedEvent, true);
+            DefaultViewPort.Reconfigure();
+
             // ActorTime actorTime = default;
 
             if (nProcessorCount == null)
@@ -91,11 +97,13 @@ namespace ActorsCPConsoleRunner.Handlers
                 {
                 var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
                 var actor = new SimpleActor(name);
+                //var actor = new WaitActor(name);
                 actor.SetLoggerOptions(globalLoggerOptions);
+                // actor.Interval = 10;
                 crowd.Add(actor);
                 }
 
-            using (var executor = new Executor(crowd, DefaultViewPort))
+            using (var executor = new ActorExecutor(crowd, DefaultViewPort))
                 {
                 // crowd.BindViewPort(DefaultViewPort);
                 // crowd.SetIMessageChannel(DefaultViewPort);

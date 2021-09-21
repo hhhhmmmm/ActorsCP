@@ -4,6 +4,7 @@ using System.Threading;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
+using ActorsCP.Options;
 
 namespace ActorsCP.ViewPorts
     {
@@ -25,6 +26,11 @@ namespace ActorsCP.ViewPorts
         #endregion Конструкторы
 
         #region Приватные мемберы
+
+        /// <summary>
+        /// Отладка сообщений вьюпорта об изменении состояния набора
+        /// </summary>
+        protected bool _ViewPort_DebugStateChangedEvent;
 
         /// <summary>
         /// Статистика выполнения
@@ -129,14 +135,32 @@ namespace ActorsCP.ViewPorts
             }
 
         /// <summary>
+        /// Вывести отладочное сообщение во вьюпорт
+        /// </summary>
+        /// <param name="text">Текст сообщения</param>
+        private void RaiseDebugEvent(string text)
+            {
+            var a = new ActorActionEventArgs("Отладка вьюпорта: " + text, ActorActionEventType.Debug);
+            Actor_Event(this, a);
+            }
+
+        /// <summary>
         /// События - изменилось состояние объекта
         /// </summary>
         /// <param name="sender">Отправитель - объект</param>
         /// <param name="e">Событие</param>
         public void Actor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
-            if (e is ActorSetCountChangedEventArgs) // изменилось состояние запущенной очереди или толпы
+            if (e is ActorSetCountChangedEventArgs i) // изменилось состояние запущенной очереди или толпы
                 {
+                Interlocked.Increment(ref _сurrentExecutionStatistics.StateChanged);
+
+                if (_ViewPort_DebugStateChangedEvent) //  Отладка сообщений вьюпорта об изменении состояния набора
+                    {
+                    var str = $" Actor_StateChangedEvent: W-{i.WaitingCount}, R-{i.RunningCount}, C-{i.CompletedCount}, State={i.State}";
+                    RaiseDebugEvent(str);
+                    }
+
                 return;
                 }
 
@@ -189,6 +213,23 @@ namespace ActorsCP.ViewPorts
         public void ValidateStatistics()
             {
             СurrentExecutionStatistics.ValidateStatistics();
+            }
+
+        /// <summary>
+        /// Перенастроить вьюпорт
+        /// </summary>
+        public void Reconfigure()
+            {
+            InternalReconfigure();
+            }
+
+        /// <summary>
+        /// Перенастроить вьюпорт
+        /// </summary>
+        protected virtual void InternalReconfigure()
+            {
+            var gado = GlobalActorDebugOptions.GetInstance();
+            gado.GetBool(ActorDebugKeywords.ViewPort_DebugStateChangedEvent, out _ViewPort_DebugStateChangedEvent);
             }
         } // end class ViewPortBase
     } // end namespace ActorsCP.ViewPorts

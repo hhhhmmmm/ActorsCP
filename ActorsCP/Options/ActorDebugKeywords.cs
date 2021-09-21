@@ -9,5 +9,9 @@ namespace ActorsCP.Options
     /// </summary>
     public static class ActorDebugKeywords
         {
+        /// <summary>
+        /// Отладка сообщений вьюпорта об изменении состояния набора
+        /// </summary>
+        public const string ViewPort_DebugStateChangedEvent = "ViewPort_DebugStateChangedEvent";
         }
     }

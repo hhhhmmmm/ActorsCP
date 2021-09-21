@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors;
 using ActorsCP.ViewPorts;
 
@@ -9,7 +10,7 @@ namespace ActorsCP.Executors
     /// <summary>
     /// Базовый класс для исполнителей Позволяет выполнять объекты в фоновом потоке по умолчанию
     /// </summary>
-    public class Executor : ActorBase
+    public class ActorExecutor : ActorBase
         {
         #region Свойства
 
@@ -41,7 +42,7 @@ namespace ActorsCP.Executors
         /// <param name="name">Название исполнителя</param>
         /// <param name="actor">Исполняемый объект</param>
         /// <param name="iViewPort">Вьюпорт</param>
-        public Executor(string name, ActorBase actor, IActorViewPort iViewPort) : base(name)
+        public ActorExecutor(string name, ActorBase actor, IActorViewPort iViewPort) : base(name)
             {
             if (actor == null)
                 {
@@ -62,7 +63,7 @@ namespace ActorsCP.Executors
         /// </summary>
         /// <param name="actor">Исполняемый объект</param>
         /// <param name="iViewPort">Вьюпорт</param>
-        public Executor(ActorBase actor, IActorViewPort iViewPort) : this("Исполнитель", actor, iViewPort)
+        public ActorExecutor(ActorBase actor, IActorViewPort iViewPort) : this("Исполнитель", actor, iViewPort)
             {
             }
 

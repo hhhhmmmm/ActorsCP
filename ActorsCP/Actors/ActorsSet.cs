@@ -71,6 +71,15 @@ namespace ActorsCP.Actors
 
         #region Свойства
 
+        /// <summary>
+        /// Интервал сообщений между сообщениями об изменении состояния очереди в ms
+        /// </summary>
+        public int ActorsSetChangedMessagesInterval
+            {
+            get;
+            set;
+            } = 100; // ms - 10 кадров в секунду
+
         ///// <summary>
         ///// Количество объектов ожидающих выполнения
         ///// </summary>
@@ -304,22 +313,62 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
+        /// Последнее отправленное сообщение об изменении состояния очереди
+        /// </summary>
+        private ActorSetCountChangedEventArgs _lastSentEvent;
+
+        /// <summary>
         /// Отправить событие о том, что состояние набора изменилось
         /// </summary>
-        /// <param name="actor"></param>
-        private void RaiseActorsSetChanged(ActorBase actor)
+        /// <param name="actor">Объект вызвавший изменение</param>
+        protected void RaiseActorsSetChanged(ActorBase actor)
             {
+            if (_lastSentEvent != null && (ActorsSetChangedMessagesInterval > 0))
+                {
+                var lastEventDate = _lastSentEvent.EventDate; // дата последнего события
+                var curDate = DateTime.Now; // текущая дата
+                var diff = curDate.Subtract(lastEventDate);
+                var diffMs = diff.TotalMilliseconds; // разница в ms
+                if (diffMs < ActorsSetChangedMessagesInterval && (_lastSentEvent.State == State))
+                    {
+                    return;
+                    }
+                }
+
             var ev = new ActorSetCountChangedEventArgs(_waitingCount, _runningCount, _completedCount, State);
 
-#if DEBUG
-            //            Debug.WriteLine($"RaiseActorsSetChanged(): Объект:{ actor.State}, очередь: {ev}");
-#endif //
             RaiseActorStateChanged(ev);
+            _lastSentEvent = ev;
             }
 
         #endregion Приватные методы
 
         #region Перегруженные методы
+
+        protected override void AfterStateChanged()
+            {
+            RaiseActorsSetChanged(this);
+            }
+
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <returns></returns>
+        //protected override Task<bool> InternalStartAsync()
+        //    {
+        //    //RaiseActorsSetChanged(this);
+        //    return CompletedTaskBoolTrue;
+        //    }
+
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <returns></returns>
+        //protected override Task<bool> InternalStopAsync()
+        //    {
+        //    //RaiseActorsSetChanged(this);
+        //    return CompletedTaskBoolTrue;
+        //    }
 
         /// <summary>
         /// Полная и окончательная остановка

@@ -74,6 +74,8 @@ namespace ActorsCP.Actors
                 }
 
             var array = WaitingList.ToArray();
+
+            RaiseActorsSetChanged(this);
             foreach (var actor in array)
                 {
                 ThrowIfCancellationRequested();
@@ -83,7 +85,7 @@ namespace ActorsCP.Actors
                     bresult = false;
                     }
                 }
-
+            // RaiseActorsSetChanged(this);
             return bresult;
             }
 
