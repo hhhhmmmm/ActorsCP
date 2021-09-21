@@ -141,7 +141,7 @@ namespace ActorsCP.ViewPorts
         private void RaiseDebugEvent(string text)
             {
             var a = new ActorActionEventArgs("Отладка вьюпорта: " + text, ActorActionEventType.Debug);
-            Actor_Event(this, a);
+            InternalActor_Event(this, a);
             }
 
         /// <summary>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-
 using ActorsCP.Actors;
 using ActorsCP.Helpers;
 
@@ -235,41 +234,6 @@ namespace ActorsCP.ViewPorts
                     } // end IsAlive
                 }
             }
-
-        //        /// <summary>
-        //        /// Отвязать от объекта все имеющиеся вьюпорты
-        //        /// </summary>
-        //        /// <param name="childActor">Объект</param>
-        //        private void UnbindViewPortsFromChildActor(ActorBase childActor)
-        //            {
-        //            if (childActor == null)
-        //                {
-        //                throw new ArgumentNullException(nameof(childActor));
-        //                }
-
-        //            if (childActor.Parent != _parentActor)
-        //                {
-        //                throw new ArgumentException("Переданный объект не является дочерним");
-        //                }
-
-        //            foreach (var wr in ViewPortsList)
-        //                {
-        //                if (wr.IsAlive)
-        //                    {
-        //                    var eh = wr.Target as IActorViewPort;
-        //                    if (eh != null)
-        //                        {
-        //                        childActor.UnbindViewPort(eh);
-        //                        }
-        //                    } // end IsAlive
-        //                } // end foreach
-
-        //            Interlocked.Decrement(ref _bindViewPortsToChildActorCounter);
-
-        //#if DEBUG_BIND_UNBIND
-        //                _parentActor.RaiseOnActorActionDebug($"Вызван UnbindViewPortsFromChildActor, BindViewPortsToChildActorCounter = {BindViewPortsToChildActorCounter}");
-        //#endif // DEBUG_BIND_UNBIND
-        //            }
 
         #region Реализация интерфейса IDisposable
 

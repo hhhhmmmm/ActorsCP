@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 using ActorsCP.Actors;
 using ActorsCP.Executors;
 using ActorsCP.Logger;
@@ -22,7 +18,7 @@ namespace ActorsCPConsoleRunner.Handlers
     ///
     /// </summary>
     [Verb("queue", HelpText = "Работа с очередями")]
-    public class QueueHandler : SetHandler
+    public sealed class QueueHandler : SetHandler
         {
         #region Опции командной строки
 

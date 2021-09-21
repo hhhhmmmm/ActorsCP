@@ -127,67 +127,8 @@ namespace ActorsCP.Actors
         /// <returns></returns>
         private async Task<bool> RunInParallel(HashSet<ActorBase> actorsList)
             {
-            int nCount = actorsList.Count;
-            ActorTime actorTime = default;
-            try
-                {
-                actorTime.SetStartDate();
-                //if (!MaxDegreeOfParallelism.HasValue)
-                //    {
-                //    return await RunInParallelWithoutLimits(actorsList).ConfigureAwait(false);
-                //    }
-                //else
-                //    {
-                return await RunInParallelWithLimits(actorsList).ConfigureAwait(false);
-                //    }
-                }
-            finally
-                {
-                actorTime.SetEndDate();
-#if DEBUG
-                var time = actorTime.GetTimeIntervalWithComment(nCount);
-                var str = $"{Name} - {time}";
-                OnActorActionDebug(str);
-#endif // DEBUG
-                }
+            return await RunInParallelWithLimits(actorsList).ConfigureAwait(false);
             }
-
-        /// <summary>
-        /// Выполнить без ограничения по параллельности
-        /// Работает примерно на 15% медленнее чем RunInParallelWithLimits()
-        /// 10.7-9.0 10.5-9.4 11.1-9.4
-        /// </summary>
-        /// <param name="actorsList">Список объектов</param>
-        /// <returns>true если все объекты вернули true</returns>
-        //private static async Task<bool> RunInParallelWithoutLimits(HashSet<ActorBase> actorsList)
-        //    {
-        //    int nCount = actorsList.Count;
-
-        //    // var runningTasks = new List<Task<bool>>(nCount);
-        //    var runningTasks = new ConcurrentQueue<Task<bool>>();
-        //    var localActorsList = new List<ActorBase>(nCount);
-
-        //    localActorsList.AddRange(actorsList);
-
-        //    Parallel.ForEach(localActorsList, (ActorBase actor) =>
-        //    {
-        //        var task = actor.RunAsync();
-        //        runningTasks.Enqueue(task);
-        //    });
-
-        //    var results = await Task.WhenAll(runningTasks).ConfigureAwait(false);
-
-        //    #region Изучаем результаты
-
-        //    if (results.Any((bool x) => { return x == false; })) // если есть хоть один равный false
-        //        {
-        //        return false;
-        //        }
-
-        //    return true;
-
-        //    #endregion Изучаем результаты
-        //    }
 
         #endregion Приватные методы
 
@@ -196,17 +137,17 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actorsList">Список объектов</param>
         /// <returns></returns>
-        public async Task<bool> RunInParallelWithLimits(HashSet<ActorBase> actorsList)
+        private async Task<bool> RunInParallelWithLimits(HashSet<ActorBase> actorsList)
             {
-            int _MaxDegreeOfParallelism;
+            int maxDegreeOfParallelism;
 
             if (MaxDegreeOfParallelism.HasValue)
                 {
-                _MaxDegreeOfParallelism = MaxDegreeOfParallelism.Value;
+                maxDegreeOfParallelism = MaxDegreeOfParallelism.Value;
                 }
             else
                 {
-                _MaxDegreeOfParallelism = Environment.ProcessorCount;
+                maxDegreeOfParallelism = Environment.ProcessorCount;
                 }
 
             int nCount = actorsList.Count;
@@ -215,7 +156,7 @@ namespace ActorsCP.Actors
 
             // первый параметр указывает, какому числу объектов изначально будет доступен семафор
             // а второй параметр указывает, какой максимальное число объектов будет использовать данный семафор
-            using (var semaphoreSlim = new SemaphoreSlim(_MaxDegreeOfParallelism, _MaxDegreeOfParallelism))
+            using (var semaphoreSlim = new SemaphoreSlim(maxDegreeOfParallelism, maxDegreeOfParallelism))
                 {
                 #region Локальные функции
 
