@@ -53,13 +53,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewPorts\BufferedActorViewPortBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ActorsCP.dotNET.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewPorts\" />
+    <ProjectReference Include="..\ActorsCP\ActorsCP.csproj">
+      <Project>{FD96F2BD-E209-440A-8707-ED26E995E991}</Project>
+      <Name>ActorsCP</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

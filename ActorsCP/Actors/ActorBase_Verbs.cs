@@ -223,6 +223,10 @@ namespace ActorsCP.Actors
                 }
             }
 
+        /// <summary>
+        /// Метод уведомительного характера для производных классов
+        /// чтобы выбросить сообщение об изменении состояния
+        /// </summary>
         protected virtual void AfterStateChanged()
             {
             }

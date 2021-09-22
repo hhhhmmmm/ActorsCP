@@ -9,7 +9,7 @@ using ActorsCP.Options;
 namespace ActorsCP.ViewPorts
     {
     /// <summary>
-    /// Базовый класс вьюпорта со всемми интерфейсами
+    /// Базовый класс вьюпорта со всеми интерфейсами
     /// </summary>
     public class ActorViewPortBase : IActorViewPort, IActorBindViewPortHandler, IActorEventsHandler
         {
@@ -18,7 +18,6 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="parameter"></param>
         public ActorViewPortBase()
             {
             }
