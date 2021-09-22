@@ -4,6 +4,7 @@ using System.Threading;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
+using ActorsCP.Helpers;
 using ActorsCP.Options;
 
 namespace ActorsCP.ViewPorts
@@ -11,7 +12,10 @@ namespace ActorsCP.ViewPorts
     /// <summary>
     /// Базовый класс вьюпорта со всеми интерфейсами
     /// </summary>
-    public class ActorViewPortBase : IActorViewPort, IActorBindViewPortHandler, IActorEventsHandler
+    public class ActorViewPortBase : DisposableImplementation<ActorViewPortBase>,
+        IActorViewPort,
+        IActorBindViewPortHandler,
+        IActorEventsHandler
         {
         #region Конструкторы
 
@@ -34,7 +38,7 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Статистика выполнения
         /// </summary>
-        private ExecutionStatistics _сurrentExecutionStatistics;
+        protected ExecutionStatistics _сurrentExecutionStatistics;
 
         #endregion Приватные мемберы
 

@@ -10,6 +10,8 @@ namespace ActorsCP.ViewPorts
         {
         #region Счетчики
 
+        #region Обычный вьюпорт
+
         /// <summary>
         /// Общее количество привязанных объектов
         /// </summary>
@@ -60,6 +62,22 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         public volatile int StateChanged;
 
+        #endregion Обычный вьюпорт
+
+        #region Tpl вьюпорт
+
+        /// <summary>
+        /// Количество добавленных сообщений
+        /// </summary>
+        public volatile int TplAddedMessages;
+
+        /// <summary>
+        /// Количество обработанных сообщений
+        /// </summary>
+        public volatile int TplProcessedMessages;
+
+        #endregion Tpl вьюпорт
+
         #endregion Счетчики
 
         #region Перегрузки
@@ -82,7 +100,9 @@ namespace ActorsCP.ViewPorts
                     RunningObjects == c.RunningObjects &&
                     Exceptions == c.Exceptions &&
                     Errors == c.Errors &&
-                    StateChanged == c.StateChanged
+                    StateChanged == c.StateChanged &&
+                    TplAddedMessages == c.TplAddedMessages &&
+                    TplProcessedMessages == c.TplProcessedMessages
                     ;
                 }
 
@@ -130,6 +150,17 @@ namespace ActorsCP.ViewPorts
                 sb.Append($"запущено - {StartedObjects}, " + nl);
                 sb.Append($"остановлено - {StoppedObjects}" + nl);
                 sb.Append($"изменений состояния - {StateChanged}" + nl);
+                sb.Append($"====================================" + nl);
+
+                if (TplAddedMessages != 0)
+                    {
+                    sb.Append($"Tpl: добавлено сообщений  - {TplAddedMessages}" + nl);
+                    }
+
+                if (TplProcessedMessages != 0)
+                    {
+                    sb.Append($"Tpl: обработано сообщений - {TplProcessedMessages}" + nl);
+                    }
 
                 return sb.ToString();
                 }
@@ -173,9 +204,9 @@ namespace ActorsCP.ViewPorts
             {
             get
                 {
-                if (TotalBoundObjects == 0)
+                if (TotalBoundObjects == 0) // не было ни одного объекта
                     {
-                    return false;
+                    return true;
                     }
                 return TotalBoundObjects == TerminatedObjects;
                 }
@@ -240,6 +271,12 @@ namespace ActorsCP.ViewPorts
             if (RunningObjects != 0)
                 {
                 throw new Exception($"Не все объекты остановлены - RunningObjects = {RunningObjects}");
+                }
+
+            if (TplAddedMessages != TplProcessedMessages)
+                {
+                var str = $"TplAddedMessages!= TplProcessedMessages({ TplAddedMessages } != {TplProcessedMessages})";
+                throw new Exception(str);
                 }
             }
         } // end struct ExecutionStatistics
