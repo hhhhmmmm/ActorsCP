@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewPorts\BufferedActorViewPortBase.cs" />
+    <Compile Include="ViewPorts\ConsoleViewPort\BufferedConsoleActorViewPort.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ActorsCP.dotNET.snk" />

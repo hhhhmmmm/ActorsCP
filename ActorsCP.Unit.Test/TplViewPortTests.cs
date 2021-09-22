@@ -37,11 +37,13 @@ namespace ActorsCP.Unit.Test
 
         [Test]
         [TestCase(1, TestName = "20. 1 - Tpl вьюпорт")]
-        [TestCase(10, TestName = "20. 10 - Tpl вьюпорт")]
-        [TestCase(1000, TestName = "20. 1000 - Tpl вьюпорт")]
-        [TestCase(10000, TestName = "20. 10000 - Tpl вьюпорт")]
-        [TestCase(50000, TestName = "20. 50000 - Tpl вьюпорт")]
-        [TestCase(100000, TestName = "20. 100000 - Tpl вьюпорт")]
+        [TestCase(10, TestName = "30. 10 - Tpl вьюпорт")]
+        [TestCase(1000, TestName = "40. 1000 - Tpl вьюпорт")]
+        [TestCase(10000, TestName = "50. 10000 - Tpl вьюпорт")]
+        [TestCase(50000, TestName = "60. 50000 - Tpl вьюпорт")]
+        [TestCase(75000, TestName = "70. 75000 - Tpl вьюпорт")]
+        [TestCase(100000, TestName = "80. 100000 - Tpl вьюпорт")]
+        [TestCase(300000, TestName = "90. 300000 - Tpl вьюпорт")]
         public async Task SimpleActorTest2(int N)
             {
             using (var viewport = new BufferedActorViewPortBase())

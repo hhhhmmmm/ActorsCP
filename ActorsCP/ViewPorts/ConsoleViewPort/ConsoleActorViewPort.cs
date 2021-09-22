@@ -10,11 +10,6 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
     /// </summary>
     public partial class ConsoleActorViewPort : ActorViewPortBase, IMessageChannel
         {
-        /// <summary>
-        /// Локер
-        /// </summary>
-        protected static readonly object Locker = new object();
-
         #region Конструкторы
 
         /// <summary>

@@ -40,6 +40,11 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         protected ExecutionStatistics _сurrentExecutionStatistics;
 
+        /// <summary>
+        /// Локер
+        /// </summary>
+        protected static readonly object Locker = new object();
+
         #endregion Приватные мемберы
 
         #region Свойства

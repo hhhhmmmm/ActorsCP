@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-#define DEBUG_TPL_ERRORREPORTER
+// #define DEBUG_TPL_ERRORREPORTER
 #endif // DEBUG_TPL_ERRORREPORTER
 
 using System;
@@ -10,6 +10,8 @@ using System.Threading.Tasks.Dataflow;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
+using ActorsCP.Helpers;
+using ActorsCP.UtilityActors;
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
@@ -18,9 +20,11 @@ namespace ActorsCP.dotNET.ViewPorts
     /// Базовый класс вьюпорта со всеми интерфейсами
     /// и буферизованным выводом
     /// </summary>
-    public class BufferedActorViewPortBase : ActorViewPortBase
+    public class BufferedActorViewPortBase : ActorViewPortBase, IMessageChannel
         {
         #region Приватные мемберы
+
+        private readonly ActorBase emptyActor = new EmptyActor();
 
         /// <summary>
         /// Буфер сообщений
@@ -250,16 +254,9 @@ namespace ActorsCP.dotNET.ViewPorts
                 throw new Exception("Непонятно как обрабатывать");
                 }
 
-            #endregion Обработка
-            }
+            viewPortItem.Dispose();
 
-        /// <summary>
-        /// Обработать как ActorStateChangedEventArgs
-        /// </summary>
-        /// <param name="viewPortItem">Данные</param>
-        private void ProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
-            {
-            InternalProcessAsActorStateChangedEventArgs(viewPortItem);
+            #endregion Обработка
             }
 
         /// <summary>
@@ -271,17 +268,18 @@ namespace ActorsCP.dotNET.ViewPorts
             InternalProcessAsActorEventArgs(viewPortItem);
             }
 
-        #endregion Обработка сообщений
-
-        #region Перегружаемые методы
-
         /// <summary>
         /// Обработать как ActorStateChangedEventArgs
         /// </summary>
         /// <param name="viewPortItem">Данные</param>
-        protected virtual void InternalProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
+        private void ProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
             {
+            InternalProcessAsActorStateChangedEventArgs(viewPortItem);
             }
+
+        #endregion Обработка сообщений
+
+        #region Перегружаемые методы
 
         /// <summary>
         /// Обработать как ActorEventArgs
@@ -291,6 +289,94 @@ namespace ActorsCP.dotNET.ViewPorts
             {
             }
 
+        /// <summary>
+        /// Обработать как ActorStateChangedEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected virtual void InternalProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
+            {
+            }
+
         #endregion Перегружаемые методы
+
+        #region Реализация интерфейса IMessageChannel
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="debugText">Текст отладочного сообщения</param>
+        public async void RaiseDebug(string debugText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+
+            var ea = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
+            var viewPortItem = new ViewPortItem(emptyActor, ea);
+            await TplDataFlowAddDataAsync(viewPortItem);
+            }
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="messageText">Текст сообщения</param>
+        public async void RaiseMessage(string messageText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var ea = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
+            var viewPortItem = new ViewPortItem(emptyActor, ea);
+            await TplDataFlowAddDataAsync(viewPortItem);
+            }
+
+        /// <summary>
+        /// Вывести предупреждение
+        /// </summary>
+        /// <param name="warningText">Текст сообщения</param>
+        public async void RaiseWarning(string warningText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var ea = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
+            var viewPortItem = new ViewPortItem(emptyActor, ea);
+            await TplDataFlowAddDataAsync(viewPortItem);
+            }
+
+        /// <summary>
+        /// Вывести сообщение об ошибке
+        /// </summary>
+        /// <param name="errorText">Текст сообщения об ошибке</param>
+        public async void RaiseError(string errorText)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var ea = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
+            var viewPortItem = new ViewPortItem(emptyActor, ea);
+            await TplDataFlowAddDataAsync(viewPortItem);
+            }
+
+        /// <summary>
+        /// Вывести сообщение об исключении
+        /// </summary>
+        /// <param name="exception">Исключение</param>
+        public async void RaiseException(Exception exception)
+            {
+            if (NoOutMessages)
+                {
+                return;
+                }
+            var ea = new ActorExceptionEventArgs(exception);
+            var viewPortItem = new ViewPortItem(emptyActor, ea);
+            await TplDataFlowAddDataAsync(viewPortItem);
+            }
+
+        #endregion Реализация интерфейса IMessageChannel
         }
     }
