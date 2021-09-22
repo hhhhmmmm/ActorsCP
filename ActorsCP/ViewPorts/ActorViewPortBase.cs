@@ -4,21 +4,24 @@ using System.Threading;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
+using ActorsCP.Helpers;
 using ActorsCP.Options;
 
 namespace ActorsCP.ViewPorts
     {
     /// <summary>
-    /// Базовый класс вьюпорта со всемми интерфейсами
+    /// Базовый класс вьюпорта со всеми интерфейсами
     /// </summary>
-    public class ActorViewPortBase : IActorViewPort, IActorBindViewPortHandler, IActorEventsHandler
+    public class ActorViewPortBase : DisposableImplementation<ActorViewPortBase>,
+        IActorViewPort,
+        IActorBindViewPortHandler,
+        IActorEventsHandler
         {
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="parameter"></param>
         public ActorViewPortBase()
             {
             }
@@ -35,7 +38,12 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Статистика выполнения
         /// </summary>
-        private ExecutionStatistics _сurrentExecutionStatistics;
+        protected ExecutionStatistics _сurrentExecutionStatistics;
+
+        /// <summary>
+        /// Локер
+        /// </summary>
+        protected static readonly object Locker = new object();
 
         #endregion Приватные мемберы
 

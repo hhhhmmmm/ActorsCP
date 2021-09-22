@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Собрано VS2019")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ActorsCP")]
+[assembly: AssemblyProduct("ActorsCP.dotNET")]
 [assembly: AssemblyCopyright("Copyright ©  2021 Андрей Хренов")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("88f06a54-20ed-4cd2-b8fd-8f6ab10cbe9c")]
+[assembly: Guid("bc9891b8-41b7-43c4-abd0-afc265e5acc1")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("21.09.22.0")]
+[assembly: AssemblyVersion("21.09.21.0")]
 
 // Можно менять, это не оказывает влияния на совместимость в exe файлом
-[assembly: AssemblyFileVersion("21.09.22.0")]
+[assembly: AssemblyFileVersion("21.09.21.0")]

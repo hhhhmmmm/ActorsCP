@@ -49,10 +49,10 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
                 {
                 return;
                 }
-            var message = CreateErrorMessage("В приложении возникло необработанное исключение");
-            WriteLineToConsole(message);
-            message = CreateExceptionMessage(ex);
-            WriteLineToConsole(message);
+            var message = ConsoleViewPortStatics.CreateErrorMessage("В приложении возникло необработанное исключение");
+            ConsoleViewPortStatics.WriteLineToConsole(message);
+            message = ConsoleViewPortStatics.CreateExceptionMessage(ex);
+            ConsoleViewPortStatics.WriteLineToConsole(message);
             }
 
         /// <summary>
@@ -160,8 +160,8 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// <returns></returns>
         private static bool Control_C_Handler(CtrlType sig)
             {
-            var message = CreateWarningMessage("Завершение приложения по причине внешнего Ctrl-C или других причин");
-            WriteLineToConsole(message);
+            var message = ConsoleViewPortStatics.CreateWarningMessage("Завершение приложения по причине внешнего Ctrl-C или других причин");
+            ConsoleViewPortStatics.WriteLineToConsole(message);
             var bres = ExitInstance(-1);
             return bres;
             }
@@ -172,8 +172,8 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// <param name="exitCode">Код завершения</param>
         public static bool ExitInstance(int exitCode)
             {
-            var message = CreateWarningMessage("Приложение завершило работу.");
-            WriteLineToConsole(message);
+            var message = ConsoleViewPortStatics.CreateWarningMessage("Приложение завершило работу.");
+            ConsoleViewPortStatics.WriteLineToConsole(message);
             RestoreColors();
             Environment.Exit(exitCode);
             return true;

@@ -76,7 +76,7 @@ namespace ActorsCPConsoleRunner
         /// <param name="options"></param>
         private static void ConfigureAndRun(HandlerBase options)
             {
-            Console.ForegroundColor = (ConsoleColor)ConsoleActorViewPort.MessageColor;
+            Console.ForegroundColor = (ConsoleColor)ConsoleViewPortStatics.MessageColor;
 
             HandlerResult = options.Run();
             }
@@ -96,8 +96,8 @@ namespace ActorsCPConsoleRunner
 
             foreach (var error in errors)
                 {
-                var message = ConsoleActorViewPort.CreateErrorMessage(error.ToString());
-                ConsoleActorViewPort.WriteLineToConsole(message);
+                var message = ConsoleViewPortStatics.CreateErrorMessage(error.ToString());
+                ConsoleViewPortStatics.WriteLineToConsole(message);
                 }
             }
 
