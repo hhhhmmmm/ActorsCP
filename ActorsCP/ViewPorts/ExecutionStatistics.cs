@@ -154,12 +154,12 @@ namespace ActorsCP.ViewPorts
 
                 if (TplAddedMessages != 0)
                     {
-                    sb.Append($"Tpl: добавлено сообщений  - {TplAddedMessages}" + nl);
+                    sb.AppendLine($"Tpl: добавлено сообщений  - {TplAddedMessages}");
                     }
 
                 if (TplProcessedMessages != 0)
                     {
-                    sb.Append($"Tpl: обработано сообщений - {TplProcessedMessages}" + nl);
+                    sb.AppendLine($"Tpl: обработано сообщений - {TplProcessedMessages}");
                     }
 
                 return sb.ToString();

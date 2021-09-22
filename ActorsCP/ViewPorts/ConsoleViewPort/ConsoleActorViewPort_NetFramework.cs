@@ -174,7 +174,6 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             {
             var message = ConsoleViewPortStatics.CreateWarningMessage("Приложение завершило работу.");
             ConsoleViewPortStatics.WriteLineToConsole(message);
-            RestoreColors();
             Environment.Exit(exitCode);
             return true;
             }

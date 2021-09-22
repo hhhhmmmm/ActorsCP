@@ -215,6 +215,8 @@ namespace ActorsCP.ViewPorts
 
         #endregion Перегружаемые методы IActorEventsHandler
 
+        #region Публичные методы
+
         /// <summary>
         /// Проверить корректность собранных значений счетчиков
         /// </summary>
@@ -224,11 +226,30 @@ namespace ActorsCP.ViewPorts
             }
 
         /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        public void Init(string additionalText = null)
+            {
+            InternalInit(additionalText);
+            }
+
+        /// <summary>
         /// Перенастроить вьюпорт
         /// </summary>
         public void Reconfigure()
             {
             InternalReconfigure();
+            }
+
+        #endregion Публичные методы
+
+        /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        protected virtual void InternalInit(string additionalText)
+            {
             }
 
         /// <summary>

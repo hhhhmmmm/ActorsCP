@@ -2,8 +2,11 @@
 using System.Text;
 using System.Threading.Tasks;
 using ActorsCP.Actors;
+using ActorsCP.dotNET.ViewPorts;
+using ActorsCP.dotNET.ViewPorts.ConsoleViewPort;
 using ActorsCP.Helpers;
 using ActorsCP.Logger;
+using ActorsCP.ViewPorts;
 using ActorsCP.ViewPorts.ConsoleViewPort;
 using CommandLine;
 
@@ -31,7 +34,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Вьюпорт по умолчанию
         /// </summary>
-        public ConsoleActorViewPort DefaultViewPort
+        public ActorViewPortBase DefaultViewPort
             {
             get;
             private set;
@@ -52,6 +55,16 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         [Option('l', "log", Required = false, Default = false, HelpText = "Писать лог в файл лога")]
         public bool WriteLog
+            {
+            get;
+            set;
+            }
+
+        /// <summary>
+        ///Выдавать сообщения вьюпорта на экран
+        /// </summary>
+        [Option('v', "viewport", Required = false, Default = "Tpl", HelpText = "Тип вьюпорта - Tpl, Cp")]
+        public string ViewportType
             {
             get;
             set;
@@ -109,8 +122,26 @@ namespace ActorsCPConsoleRunner.Handlers
 
             #endregion Настройка логгера
 
-            DefaultViewPort = new ConsoleActorViewPort();
-            DefaultViewPort.Init();
+            if (ViewportType.Equals("Cp", StringComparison.OrdinalIgnoreCase))
+                {
+                dynamic vp = new ConsoleActorViewPort();
+                DefaultViewPort = vp;
+                vp.Init();
+
+                vp.NoOutMessages = false;
+                vp?.RaiseWarning("Вьюпорт типа ConsoleActorViewPort");
+                }
+            else
+            if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(ViewportType))
+                {
+                dynamic vp = new BufferedConsoleActorViewPort();
+                DefaultViewPort = vp;
+                vp.Init();
+
+                vp.NoOutMessages = false;
+                vp?.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort");
+                }
+
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
 
             ActorTime actorTime = default;
@@ -119,11 +150,21 @@ namespace ActorsCPConsoleRunner.Handlers
             int result = task.Result;
             actorTime.SetEndDate();
 
-            DefaultViewPort.NoOutMessages = false;
-
             var time = actorTime.ShortTimeInterval;
             var str = $"Полное время обработчика: {time}";
-            DefaultViewPort?.RaiseWarning(str);
+            dynamic d = DefaultViewPort;
+
+            if (DefaultViewPort is BufferedActorViewPortBase t)
+                {
+                var tt = t.TerminateTplDataFlowAsync();
+                tt.Wait();
+                }
+
+            DefaultViewPort.ValidateStatistics();
+            DefaultViewPort.Dispose();
+
+            var message = ConsoleViewPortStatics.CreateWarningMessage(str);
+            ConsoleViewPortStatics.WriteLineToConsole(message);
             return result;
             }
 
@@ -143,38 +184,43 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         /// Вывести сообщение
         /// </summary>
-        /// <param name="MessageText">Текст сообщения</param>
-        public void RaiseMessage(string MessageText)
+        /// <param name="messageText">Текст сообщения</param>
+        public void RaiseMessage(string messageText)
             {
-            DefaultViewPort?.RaiseMessage(MessageText);
+            dynamic d = DefaultViewPort;
+            d?.RaiseMessage(messageText);
             }
 
         /// <summary>
         /// Вывести предупреждение
         /// </summary>
-        /// <param name="MessageText">Текст сообщения</param>
-        public void RaiseWarning(string MessageText)
+        /// <param name="messageText">Текст сообщения</param>
+        public void RaiseWarning(string messageText)
             {
-            DefaultViewPort?.RaiseWarning(MessageText);
+            dynamic d = DefaultViewPort;
+            d?.RaiseWarning(messageText);
             }
 
         /// <summary>
         /// Вывести сообщение об ошибке
         /// </summary>
-        /// <param name="ErrorText">Текст сообщения об ошибке</param>
-        public void RaiseError(string ErrorText)
+        /// <param name="errorText">Текст сообщения об ошибке</param>
+        public void RaiseError(string errorText)
             {
-            DefaultViewPort?.RaiseError(ErrorText);
+            dynamic d = DefaultViewPort;
+            d?.RaiseError(errorText);
             }
 
         public void RaiseDebug(string debugText)
             {
-            DefaultViewPort?.RaiseDebug(debugText);
+            dynamic d = DefaultViewPort;
+            d?.RaiseDebug(debugText);
             }
 
         public void RaiseException(Exception exception)
             {
-            DefaultViewPort?.RaiseException(exception);
+            dynamic d = DefaultViewPort;
+            d?.RaiseException(exception);
             }
 
         #endregion Реализация интерфейса IMessageChannel

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace ActorsCP.Actors.Events
     {
@@ -7,10 +8,28 @@ namespace ActorsCP.Actors.Events
     /// </summary>
     public class ActorEventArgs : EventArgs
         {
+        #region Глобальные внутренние объекты
+
+        /// <summary>
+        /// Генератор последовательных номеров объектов
+        /// </summary>
+        private static int s_N_global = 0;
+
+        #endregion Глобальные внутренние объекты
+
+        #region Приватные мемберы
+
+        /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        private readonly int _N = 0;
+
         /// <summary>
         /// Дата события в виде строки
         /// </summary>
         private string _stringEventDate;
+
+        #endregion Приватные мемберы
 
         #region Конструкторы
 
@@ -19,6 +38,7 @@ namespace ActorsCP.Actors.Events
         /// </summary>
         public ActorEventArgs()
             {
+            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
             EventDate = DateTime.Now;
             }
 
@@ -27,12 +47,22 @@ namespace ActorsCP.Actors.Events
         #region Свойства
 
         /// <summary>
+        /// Уникальный последовательный номер объекта
+        /// </summary>
+        public int N
+            {
+            get
+                {
+                return _N;
+                }
+            }
+
+        /// <summary>
         /// Дата события
         /// </summary>
         public DateTime EventDate
             {
             get;
-            private set;
             }
 
         /// <summary>

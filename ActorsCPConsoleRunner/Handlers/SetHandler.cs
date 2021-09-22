@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using ActorsCP.Actors;
 using ActorsCP.Tests.TestActors;
-
+using ActorsCP.ViewPorts.ConsoleViewPort;
 using CommandLine;
 using CommandLine.Text;
 
@@ -39,7 +39,8 @@ namespace ActorsCPConsoleRunner.Handlers
             var str = actorTime.GetTimeIntervalWithComment(nItemsCount);
             RaiseError(str);
             var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
-            RaiseError(stat);
+            var m = ConsoleViewPortStatics.CreateWarningMessage(stat);
+            ConsoleViewPortStatics.WriteToConsole(m);
             DefaultViewPort.ValidateStatistics();
             return bres;
             }

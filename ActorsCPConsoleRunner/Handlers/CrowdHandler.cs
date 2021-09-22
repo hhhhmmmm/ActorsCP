@@ -72,8 +72,8 @@ namespace ActorsCPConsoleRunner.Handlers
                 nProcessorCount = Environment.ProcessorCount;
                 }
 
-            RaiseError($"Withoutlimits = {Withoutlimits}");
-            RaiseError($"nProcessorCount = {nProcessorCount}");
+            RaiseWarning($"Withoutlimits = {Withoutlimits}");
+            RaiseWarning($"nProcessorCount = {nProcessorCount}");
 
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
 
@@ -96,10 +96,10 @@ namespace ActorsCPConsoleRunner.Handlers
             for (int i = 0; i < nItemsCount; i++)
                 {
                 var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
-                //var actor = new SimpleActor(name);
-                var actor = new WaitActor(name);
+                var actor = new SimpleActor(name);
+                //var actor = new WaitActor(name);
+                //actor.Interval = 10;
                 actor.SetLoggerOptions(globalLoggerOptions);
-                actor.Interval = 10;
                 crowd.Add(actor);
                 }
 
@@ -109,28 +109,6 @@ namespace ActorsCPConsoleRunner.Handlers
                 // crowd.SetIMessageChannel(DefaultViewPort);
                 await executor.RunAsync();
                 } // end using
-
-            //var crowd2 = new ActorsCrowd();
-            //for (int i = 0; i < nItemsCount; i++)
-            //    {
-            //    var name = string.Format(" ВЛ-ОБЪЕКТ-{0}", i + 1);
-            //    var actor = new SimpleActor(name);
-            //    crowd2.Add(actor);
-            //    }
-
-            //crowd.Add(crowd2);
-
-            //viewPort.OutMessages = false;
-            // mci.RaiseMessages = false;
-            //actorTime.SetStartDate();
-            // await crowd.RunAsync();
-            //actorTime.SetEndDate();
-
-            //viewPort.OutMessages = true;
-            // mci.RaiseMessages = true;
-
-            //var result = actorTime.GetTimeIntervalWithComment(nItemsCount);
-            //RaiseWarning(result);
 
             return 0;
             }

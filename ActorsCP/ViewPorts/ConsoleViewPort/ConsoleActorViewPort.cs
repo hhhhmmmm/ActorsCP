@@ -10,51 +10,31 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
     /// </summary>
     public partial class ConsoleActorViewPort : ActorViewPortBase, IMessageChannel
         {
-        #region Конструкторы
-
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        public ConsoleActorViewPort()
-            {
-            }
-
-        #endregion Конструкторы
-
-        #region Публичные методы
-
-        /// <summary>
-        /// Установить цвет по умолчанию
-        /// </summary>
-        public void SetDefaultColor()
-            {
-            ConsoleViewPortStatics.SetDefaultColor();
-            }
-
-        #endregion Публичные методы
-
-        #region Публичные статические методы
-
         /// <summary>
         /// Инициализация вьюпорта
         /// </summary>
         /// <param name="additionalText">Заголовок</param>
-        public void Init(string additionalText = null)
+        protected override void InternalInit(string additionalText)
             {
+            ConsoleViewPortStatics.SetDefaultColor();
+
 #if NET461 || NET47 || NETFRAMEWORK
             InitDotNetFramework(additionalText);
 #endif // NET461 || NET47
             }
 
+        #region Реализация интерфейса IDisposable
+
         /// <summary>
-        /// Восстановить цвета консоли
+        /// Освободить управляемые ресурсы
         /// </summary>
-        public static void RestoreColors()
+        protected override void DisposeManagedResources()
             {
             ConsoleViewPortStatics.RestoreColors();
+            base.DisposeManagedResources();
             }
 
-        #endregion Публичные статические методы
+        #endregion Реализация интерфейса IDisposable
 
         #region Перегружаемые методы IActorEventsHandler
 

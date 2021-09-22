@@ -88,6 +88,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ActorsCP.dotNET\ActorsCP.dotNET.csproj">
+      <Project>{bc9891b8-41b7-43c4-abd0-afc265e5acc1}</Project>
+      <Name>ActorsCP.dotNET</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ActorsCP\ActorsCP.csproj">
       <Project>{fd96f2bd-e209-440a-8707-ed26e995e991}</Project>
       <Name>ActorsCP</Name>
