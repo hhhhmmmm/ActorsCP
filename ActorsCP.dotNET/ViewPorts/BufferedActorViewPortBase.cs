@@ -103,7 +103,12 @@ namespace ActorsCP.dotNET.ViewPorts
                 MaxDegreeOfParallelism = 1
                 };
 
-            _tplDataFlowDataBufferBlock = new BufferBlock<ViewPortItem>();
+            var dataflowBlockOptions = new DataflowBlockOptions()
+                {
+                // MaxMessagesPerTask = 1
+                };
+
+            _tplDataFlowDataBufferBlock = new BufferBlock<ViewPortItem>(dataflowBlockOptions);
             _tplDataFlowDataActionBlock = new ActionBlock<ViewPortItem>(TplDataFlowProcessAction, executionDataflowBlockOptions);
             _tplDataFlowDataBufferBlock.LinkTo(_tplDataFlowDataActionBlock, dataflowLinkOptions);
 
@@ -136,7 +141,7 @@ namespace ActorsCP.dotNET.ViewPorts
             //    {
             //    var debugA = new ActorActionEventArgs("Последнее сообщение вьюпорта - завершениe");
             //    ViewPortItem vi = new ViewPortItem(EmptyActor.Value, debugA);
-            //    await TplDataFlowAddDataAsync(vi);
+            //     TplDataFlowAddData(vi);
             //    }
 #endif // DEBUG
 
@@ -199,7 +204,7 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task TplDataFlowAddDataAsync(ViewPortItem data)
+        public void TplDataFlowAddData(ViewPortItem data)
             {
             if (data == null)
                 {
@@ -212,7 +217,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
 
             Interlocked.Increment(ref _сurrentExecutionStatistics.TplAddedMessages);
-            await _tplDataFlowDataBufferBlock.SendAsync(data);
+            _tplDataFlowDataBufferBlock.Post(data); // await SendAsync(data) - медленно
             }
 
         #endregion Добавление сообщений
@@ -224,11 +229,11 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="sender">Отправитель - объект</param>
         /// <param name="e">Событие</param>
-        protected override async void InternalActor_Event(object sender, ActorEventArgs e)
+        protected override void InternalActor_Event(object sender, ActorEventArgs e)
             {
             var actor = sender as ActorBase;
             var viewPortItem = new ViewPortItem(actor, e);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         /// <summary>
@@ -236,11 +241,11 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="sender">Отправитель - объект</param>
         /// <param name="e">Событие</param>
-        protected override async void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
+        protected override void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
             var actor = sender as ActorBase;
             var viewPortItem = new ViewPortItem(actor, e);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         #endregion Перегружаемые методы IActorEventsHandler
@@ -331,7 +336,7 @@ namespace ActorsCP.dotNET.ViewPorts
         /// Вывести сообщение
         /// </summary>
         /// <param name="debugText">Текст отладочного сообщения</param>
-        public async void RaiseDebug(string debugText)
+        public void RaiseDebug(string debugText)
             {
             if (NoOutMessages)
                 {
@@ -340,14 +345,14 @@ namespace ActorsCP.dotNET.ViewPorts
 
             var ea = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение
         /// </summary>
         /// <param name="messageText">Текст сообщения</param>
-        public async void RaiseMessage(string messageText)
+        public void RaiseMessage(string messageText)
             {
             if (NoOutMessages)
                 {
@@ -355,14 +360,14 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             var ea = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         /// <summary>
         /// Вывести предупреждение
         /// </summary>
         /// <param name="warningText">Текст сообщения</param>
-        public async void RaiseWarning(string warningText)
+        public void RaiseWarning(string warningText)
             {
             if (NoOutMessages)
                 {
@@ -370,14 +375,14 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             var ea = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение об ошибке
         /// </summary>
         /// <param name="errorText">Текст сообщения об ошибке</param>
-        public async void RaiseError(string errorText)
+        public void RaiseError(string errorText)
             {
             if (NoOutMessages)
                 {
@@ -385,14 +390,14 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             var ea = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение об исключении
         /// </summary>
         /// <param name="exception">Исключение</param>
-        public async void RaiseException(Exception exception)
+        public void RaiseException(Exception exception)
             {
             if (NoOutMessages)
                 {
@@ -400,7 +405,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             var ea = new ActorExceptionEventArgs(exception);
             var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            TplDataFlowAddData(viewPortItem);
             }
 
         #endregion Реализация интерфейса IMessageChannel

@@ -101,7 +101,7 @@ namespace ActorsCP.Actors
                 if (_delegate != null)
                     {
                     _actorTime.SetEndDate();
-                    var str = string.Format("Конец {0} {1}", _counterName, _actorTime.TimeIntervalWithComment);
+                    var str = $"Конец {_counterName} { _actorTime.TimeIntervalWithComment}";
                     _delegate(str);
                     }
                 }

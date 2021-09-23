@@ -84,13 +84,12 @@ namespace ActorsCP.Actors
         /// <returns>true если объект все выполнил успешно</returns>
         protected override async Task<bool> InternalRunAsync()
             {
-            bool bresult = true;
             if (WaitingCount == 0)
                 {
                 return true;
                 }
 
-            bresult = await RunInParallel(WaitingList).ConfigureAwait(false);
+            bool bresult = await RunInParallel(WaitingList).ConfigureAwait(false);
             return bresult;
             }
 

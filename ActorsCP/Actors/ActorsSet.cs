@@ -326,7 +326,7 @@ namespace ActorsCP.Actors
             if (_lastSentEvent != null && (ActorsSetChangedMessagesInterval > 0))
                 {
                 var lastEventDate = _lastSentEvent.EventDate; // дата последнего события
-                var curDate = DateTime.Now; // текущая дата
+                var curDate = DateTimeNowCache.GetDateTime(); // текущая дата
                 var diff = curDate.Subtract(lastEventDate);
                 var diffMs = diff.TotalMilliseconds; // разница в ms
                 if (diffMs < ActorsSetChangedMessagesInterval && (_lastSentEvent.State == State))

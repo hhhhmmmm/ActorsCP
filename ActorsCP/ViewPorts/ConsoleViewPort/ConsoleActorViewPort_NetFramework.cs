@@ -121,18 +121,6 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             }
 
         /// <summary>
-        /// Возвращает версию файла сборки (та, которая указывается в AssemblyFileVersion в файле AssemblyInfo.cs)
-        /// </summary>
-        /// <returns></returns>
-        private static string GetAssemblyFileVersion()
-            {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            var version = fvi.FileVersion;
-            return version;
-            }
-
-        /// <summary>
         /// Хандлер Ctrl-C
         /// </summary>
         private static EventHandler _Control_C_handler;

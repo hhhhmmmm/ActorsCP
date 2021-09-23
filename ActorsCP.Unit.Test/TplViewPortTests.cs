@@ -56,7 +56,7 @@ namespace ActorsCP.Unit.Test
                     {
                     var actor = base.TestActorsBuilder.NewSimpleActor;
                     var viewPortItem = new ViewPortItem(actor, ea);
-                    await viewport.TplDataFlowAddDataAsync(viewPortItem);
+                    viewport.TplDataFlowAddData(viewPortItem);
                     }
 
                 viewport.Terminate();

@@ -111,7 +111,7 @@ namespace ActorsCPConsoleRunner.Handlers
             if (WriteLog)
                 {
                 var logger = ActorLoggerImplementation.GetInstance();
-                bool bres = logger.InitLog("ConsoleRunner");
+                logger.InitLog("ConsoleRunner");
                 logger.SetLogLevel(MainProgram.ActorLogLevel);
                 ActorLoggerImplementation.ConfigureNLogGlobally(logger);
 

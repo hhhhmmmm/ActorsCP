@@ -52,7 +52,7 @@ namespace ActorsCP.Actors.Events
         /// <param name="actionEventType">Тип сообщения</param>
         public ActorActionEventArgs(string action, ActorActionEventType actionEventType)
             {
-            MessageText = action?.TrimStart();
+            MessageText = action;
             ActionEventType = actionEventType;
             }
 

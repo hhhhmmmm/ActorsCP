@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using ActorsCP.Helpers;
 
 namespace ActorsCP.Actors.Events
     {
@@ -39,7 +40,7 @@ namespace ActorsCP.Actors.Events
         public ActorEventArgs()
             {
             _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
-            EventDate = DateTime.Now;
+            EventDate = DateTimeNowCache.GetDateTime();
             }
 
         #endregion Конструкторы

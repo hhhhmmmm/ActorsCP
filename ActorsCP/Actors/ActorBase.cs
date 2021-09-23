@@ -77,11 +77,13 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ActorBase()
+        protected ActorBase()
             {
             _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
 
-            SetName($"Объект {N} (ActorUid = {ActorUid})");
+            Name = "Объект " + N; // остальные - медленно
+            // Name = $"Объект {N} (ActorUid = {ActorUid})"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
+            // Name = $"Объект {N}"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
             SetRunOnlyOnce(true);
             }
@@ -90,7 +92,7 @@ namespace ActorsCP.Actors
         /// Конструктор
         /// </summary>
         /// <param name="name">Название объекта</param>
-        public ActorBase(string name) : this(name, null)
+        protected ActorBase(string name) : this(name, null)
             {
             }
 
@@ -98,7 +100,7 @@ namespace ActorsCP.Actors
         /// Конструктор
         /// </summary>
         /// <param name="parentActor">Родительский объект</param>
-        public ActorBase(ActorBase parentActor) : this(null, parentActor)
+        protected ActorBase(ActorBase parentActor) : this(null, parentActor)
             {
             }
 
@@ -107,7 +109,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="name">Название объекта</param>
         /// <param name="parentActor">Родительский объект</param>
-        public ActorBase(string name, ActorBase parentActor) : this()
+        protected ActorBase(string name, ActorBase parentActor) : this()
             {
             if (!string.IsNullOrEmpty(name))
                 {
@@ -250,22 +252,22 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Метод вызывается перед началом Dispose
         /// </summary>
-        private async void PreDisposeHandler()
+        private void PreDisposeHandler()
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync().ConfigureAwait(false);
+                TerminateAsync().Wait(); // await работает медленно
                 }
             }
 
         /// <summary>
         /// Освободить управляемые ресурсы
         /// </summary>
-        protected override async void DisposeManagedResources()
+        protected override void DisposeManagedResources()
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync().ConfigureAwait(false);
+                TerminateAsync().Wait(); // await работает медленно
                 }
 
             _externalObjects?.Clear();
