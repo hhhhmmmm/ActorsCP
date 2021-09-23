@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors;
-using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.dotNET.ViewPorts.ConsoleViewPort;
 using ActorsCP.Helpers;
 using ActorsCP.Logger;
 using ActorsCP.ViewPorts;
 using ActorsCP.ViewPorts.ConsoleViewPort;
+
 using CommandLine;
 
 namespace ActorsCPConsoleRunner.Handlers
@@ -122,6 +123,8 @@ namespace ActorsCPConsoleRunner.Handlers
 
             #endregion Настройка логгера
 
+            #region Создание вьюпорта
+
             if (ViewportType.Equals("Cp", StringComparison.OrdinalIgnoreCase))
                 {
                 dynamic vp = new ConsoleActorViewPort();
@@ -134,15 +137,17 @@ namespace ActorsCPConsoleRunner.Handlers
             else
             if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(ViewportType))
                 {
-                dynamic vp = new BufferedConsoleActorViewPort();
+                var vp = new BufferedConsoleActorViewPort();
                 DefaultViewPort = vp;
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp?.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort");
+                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort");
                 }
 
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
+
+            #endregion Создание вьюпорта
 
             ActorTime actorTime = default;
             actorTime.SetStartDate();
@@ -150,21 +155,29 @@ namespace ActorsCPConsoleRunner.Handlers
             int result = task.Result;
             actorTime.SetEndDate();
 
-            var time = actorTime.ShortTimeInterval;
-            var str = $"Полное время обработчика: {time}";
-            dynamic d = DefaultViewPort;
-
-            if (DefaultViewPort is BufferedActorViewPortBase t)
-                {
-                var tt = t.TerminateTplDataFlowAsync();
-                tt.Wait();
-                }
-
+            DefaultViewPort.Terminate();
             DefaultViewPort.ValidateStatistics();
-            DefaultViewPort.Dispose();
 
-            var message = ConsoleViewPortStatics.CreateWarningMessage(str);
+            #region Статистика
+
+            var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
+            var mstat = ConsoleViewPortStatics.CreateWarningMessage(stat);
+            ConsoleViewPortStatics.WriteToConsole(mstat);
+
+            #endregion Статистика
+
+            DefaultViewPort.Dispose();
+            DefaultViewPort = null;
+
+            #region Полное время обработчика
+
+            var time = actorTime.ShortTimeInterval;
+            var stime = $"Полное время работы InternalRun(): {time}";
+            var message = ConsoleViewPortStatics.CreateWarningMessage(stime);
             ConsoleViewPortStatics.WriteLineToConsole(message);
+
+            #endregion Полное время обработчика
+
             return result;
             }
 

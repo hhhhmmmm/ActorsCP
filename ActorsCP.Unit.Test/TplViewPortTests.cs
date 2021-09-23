@@ -22,14 +22,14 @@ namespace ActorsCP.Unit.Test
 
         [Test]
         [TestCase(TestName = "10. Простой Tpl вьюпорт - старт/стоп")]
-        public async Task SimpleActorTest()
+        public void SimpleActorTest()
             {
             using (var viewport = new BufferedActorViewPortBase())
                 {
-                viewport.InitTplDataFlow();
-                Assert.IsTrue(viewport.TplDataFlowInitialized);
-                await viewport.TerminateTplDataFlowAsync();
-                Assert.IsTrue(viewport.TplDataFlowTerminated);
+                viewport.Init();
+                Assert.IsTrue(viewport.IsInitialized);
+                viewport.Terminate();
+                Assert.IsTrue(viewport.IsTerminated);
 
                 viewport.ValidateStatistics();
                 }
@@ -48,8 +48,8 @@ namespace ActorsCP.Unit.Test
             {
             using (var viewport = new BufferedActorViewPortBase())
                 {
-                viewport.InitTplDataFlow();
-                Assert.IsTrue(viewport.TplDataFlowInitialized);
+                viewport.Init();
+                Assert.IsTrue(viewport.IsInitialized);
 
                 var ea = new ActorEventArgs();
                 for (int i = 0; i < N; i++)
@@ -59,8 +59,8 @@ namespace ActorsCP.Unit.Test
                     await viewport.TplDataFlowAddDataAsync(viewPortItem);
                     }
 
-                await viewport.TerminateTplDataFlowAsync();
-                Assert.IsTrue(viewport.TplDataFlowTerminated);
+                viewport.Terminate();
+                Assert.IsTrue(viewport.IsTerminated);
 
                 var stat = viewport.СurrentExecutionStatistics;
 

@@ -104,7 +104,7 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// Установить заголовок
         /// </summary>
         /// <param name="additionalText">Заголовок</param>
-        public static void SetTitle(string additionalText = null)
+        public override void InternalSetTitle(string additionalText)
             {
             var assembly = System.Reflection.Assembly.GetEntryAssembly();
             var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -181,20 +181,5 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         #endregion Группа обработки Ctrl-С
 
 #endif // NET461 || NET47
-
-        #region Свойства
-
-        /// <summary>
-        ///
-        /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
-
-        #endregion Свойства
-
-        //
         } // end class ConsoleActorViewPort
     } // end namespace ActorsCP.ViewPorts.ConsoleViewPort

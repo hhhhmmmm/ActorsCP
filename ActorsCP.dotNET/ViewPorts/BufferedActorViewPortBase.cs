@@ -52,21 +52,12 @@ namespace ActorsCP.dotNET.ViewPorts
         #region Свойства
 
         /// <summary>
-        /// Tpl завершен
+        ///
         /// </summary>
-        public bool TplDataFlowInitialized
+        public bool AddFinalMessage
             {
             get;
-            private set;
-            }
-
-        /// <summary>
-        /// Tpl завершен
-        /// </summary>
-        public bool TplDataFlowTerminated
-            {
-            get;
-            private set;
+            set;
             }
 
         #endregion Свойства
@@ -76,11 +67,11 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <summary>
         /// Освободить управляемые ресурсы
         /// </summary>
-        protected override async void DisposeManagedResources()
+        protected override void DisposeManagedResources()
             {
-            if (TplDataFlowInitialized && (!TplDataFlowTerminated))
+            if (!IsTerminated)
                 {
-                await TerminateTplDataFlowAsync();
+                Terminate();
                 }
 
             ConsoleViewPortStatics.RestoreColors();
@@ -92,25 +83,34 @@ namespace ActorsCP.dotNET.ViewPorts
         #region Инициализация/Завершение
 
         /// <summary>
-        /// Инициализация TplDataFlow
+        /// Инициализация вьюпорта
         /// </summary>
-        public void InitTplDataFlow()
+        /// <param name="additionalText">Заголовок</param>
+        protected override void InternalInit(string additionalText)
             {
-            if (_tplDataFlowDataBufferBlock != null)
+            if (IsInitialized)
                 {
                 return;
                 }
 
-            var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
+            var dataflowLinkOptions = new DataflowLinkOptions
+                {
+                PropagateCompletion = true
+                };
+
+            var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions
+                {
+                MaxDegreeOfParallelism = 1
+                };
 
             _tplDataFlowDataBufferBlock = new BufferBlock<ViewPortItem>();
-            _tplDataFlowDataActionBlock = new ActionBlock<ViewPortItem>(TplDataFlowProcessAction);
-            _tplDataFlowDataBufferBlock.LinkTo(_tplDataFlowDataActionBlock, linkOptions);
+            _tplDataFlowDataActionBlock = new ActionBlock<ViewPortItem>(TplDataFlowProcessAction, executionDataflowBlockOptions);
+            _tplDataFlowDataBufferBlock.LinkTo(_tplDataFlowDataActionBlock, dataflowLinkOptions);
 
             _tplDataFlowDataBufferBlock.Completion.ContinueWith(TplDataFlow_DataBufferBlock_Completion);
             _tplDataFlowDataActionBlock.Completion.ContinueWith(TplDataFlow_ActionBlock_Completion);
 
-            TplDataFlowInitialized = true;
+            base.InternalInit(additionalText);
 
 #if DEBUG_TPL_ERRORREPORTER
             Debug.WriteLine("InitTplDataFlow()");
@@ -118,37 +118,49 @@ namespace ActorsCP.dotNET.ViewPorts
             }
 
         /// <summary>
-        /// Завершить TplDataFlow
+        /// Завершение вьюпорта
         /// </summary>
-        public async Task TerminateTplDataFlowAsync()
+        protected override void InternalTerminate()
             {
 #if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine("TerminateTplDataFlowAsync() - начало");
+            Debug.WriteLine("TerminateTplDataFlow() - начало");
 #endif // DEBUG_TPL_ERRORREPORTER
 
-            if (_tplDataFlowDataBufferBlock == null)
+            if (IsTerminated)
                 {
                 return;
                 }
 
 #if DEBUG
-            var debugA = new ActorActionEventArgs("Последнее сообщение вьюпорта - завершениe");
-            ViewPortItem vi = new ViewPortItem(EmptyActor.Value, debugA);
-            await TplDataFlowAddDataAsync(vi);
+            //if (AddFinalMessage)
+            //    {
+            //    var debugA = new ActorActionEventArgs("Последнее сообщение вьюпорта - завершениe");
+            //    ViewPortItem vi = new ViewPortItem(EmptyActor.Value, debugA);
+            //    await TplDataFlowAddDataAsync(vi);
+            //    }
 #endif // DEBUG
 
+            //while (true)
+            //    {
+            //    if (_tplDataFlowDataBufferBlock.Count == 0)
+            //        {
+            //        break;
+            //        }
+            //    Thread.Sleep(100);
+            //    }
+
             _tplDataFlowDataBufferBlock.Complete();
-            //_tplDataFlowDataBufferBlock.Completion.Wait();
+            _tplDataFlowDataBufferBlock.Completion.Wait();
             _tplDataFlowDataBufferBlock = null;
 
-            //_tplDataFlowDataActionBlock.Complete();
+            _tplDataFlowDataActionBlock.Complete();
             _tplDataFlowDataActionBlock.Completion.Wait();
             _tplDataFlowDataActionBlock = null;
 
-            TplDataFlowTerminated = true;
+            base.InternalTerminate();
 
 #if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine($"TerminateTplDataFlowAsync() - конец");
+            Debug.WriteLine($"TerminateTplDataFlow() - конец");
 #endif // DEBUG_TPL_ERRORREPORTER
             }
 
@@ -193,9 +205,14 @@ namespace ActorsCP.dotNET.ViewPorts
                 {
                 throw new ArgumentNullException(nameof(data), "data не может быть null");
                 }
-            Interlocked.Increment(ref _сurrentExecutionStatistics.TplAddedMessages);
 
-            _tplDataFlowDataBufferBlock.Post(data);
+            if (_tplDataFlowDataBufferBlock == null)
+                {
+                throw new InvalidOperationException("_tplDataFlowDataBufferBlock == null");
+                }
+
+            Interlocked.Increment(ref _сurrentExecutionStatistics.TplAddedMessages);
+            await _tplDataFlowDataBufferBlock.SendAsync(data);
             }
 
         #endregion Добавление сообщений
@@ -289,16 +306,6 @@ namespace ActorsCP.dotNET.ViewPorts
         #endregion Обработка сообщений
 
         #region Перегружаемые методы
-
-        /// <summary>
-        /// Инициализация вьюпорта
-        /// </summary>
-        /// <param name="additionalText">Заголовок</param>
-        protected override void InternalInit(string additionalText)
-            {
-            ConsoleViewPortStatics.SetDefaultColor();
-            InitTplDataFlow();
-            }
 
         /// <summary>
         /// Обработать как ActorEventArgs
