@@ -27,6 +27,15 @@ namespace ActorsCP.Actors
         #region Свойства
 
         /// <summary>
+        /// Подавить вывод
+        /// </summary>
+        public bool SuppressOutput
+            {
+            get;
+            private set;
+            }
+
+        /// <summary>
         /// Время
         /// </summary>
         public ActorTime Time
@@ -45,8 +54,9 @@ namespace ActorsCP.Actors
         /// Конструктор
         /// </summary>
         /// <param name="counterName">Название счетчика</param>
-        /// <param name="_delegate">Делегат который будет вызван по завершении жизни </param>
-        public ActorDisposableTime(string counterName, Action<string> _delegate)
+        /// <param name="_delegate">Делегат который будет вызван по завершении жизни</param>
+        /// <param name="suppressOutput">Подавить вывод</param>
+        public ActorDisposableTime(string counterName, Action<string> _delegate, bool suppressOutput = false)
             {
             if (counterName == null)
                 {
@@ -58,11 +68,15 @@ namespace ActorsCP.Actors
                 throw new ArgumentNullException(nameof(Delegate), "Delegate не может быть null");
                 }
 
+            SuppressOutput = suppressOutput;
             _counterName = counterName;
             this._delegate = _delegate;
             _actorTime.SetStartDate();
 
-            this._delegate($"Начало {_counterName}");
+            if (!SuppressOutput)
+                {
+                this._delegate($"Начало {_counterName}");
+                }
             }
 
         #endregion Конструкторы
@@ -101,8 +115,11 @@ namespace ActorsCP.Actors
                 if (_delegate != null)
                     {
                     _actorTime.SetEndDate();
-                    var str = $"Конец {_counterName} { _actorTime.TimeIntervalWithComment}";
-                    _delegate(str);
+                    if (!SuppressOutput)
+                        {
+                        var str = $"Конец {_counterName} { _actorTime.TimeIntervalWithComment}";
+                        _delegate(str);
+                        }
                     }
                 }
 

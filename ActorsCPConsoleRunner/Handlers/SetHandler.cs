@@ -28,7 +28,7 @@ namespace ActorsCPConsoleRunner.Handlers
             {
             if (nItemsCount <= 0)
                 {
-                RaiseError("count должно быть > 0");
+                WriteErrorMessage("count должно быть > 0");
                 }
 
             ActorTime actorTime = default;
@@ -38,9 +38,9 @@ namespace ActorsCPConsoleRunner.Handlers
             actorTime.SetEndDate();
 
             DefaultViewPort.NoOutMessages = false;
-            RaiseError($"nItemsCount = {nItemsCount}");
+            WriteWarningMessage($"nItemsCount = {nItemsCount}");
             var str = actorTime.GetTimeIntervalWithComment(nItemsCount);
-            RaiseError(str);
+            WriteWarningMessage(str);
 
             return bres;
             }

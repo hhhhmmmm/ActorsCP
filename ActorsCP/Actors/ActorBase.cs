@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
+using ActorsCP.Options;
 
 namespace ActorsCP.Actors
     {
     /// <summary>
-    ///
+    /// Базовый класс
     /// </summary>
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
@@ -34,6 +35,17 @@ namespace ActorsCP.Actors
             get
                 {
                 return TasksHelper.CompletedTaskBoolFalse;
+                }
+            }
+
+        /// <summary>
+        /// Завершенная задача
+        /// </summary>
+        protected static Task CompletedTask
+            {
+            get
+                {
+                return Task.CompletedTask;
                 }
             }
 
@@ -86,6 +98,16 @@ namespace ActorsCP.Actors
             // Name = $"Объект {N}"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
             SetRunOnlyOnce(true);
+
+            #region Многословность актора
+
+            var go = GlobalActorOptions.GetInstance();
+            if (go.GetInt(ActorKeywords.ActorVerbosity, out int flagVerbosity))
+                {
+                Verbosity = (ActorVerbosity)flagVerbosity;
+                }
+
+            #endregion Многословность актора
             }
 
         /// <summary>
@@ -212,6 +234,15 @@ namespace ActorsCP.Actors
             private set;
             }
 
+        /// <summary>
+        /// Многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        public ActorVerbosity Verbosity
+            {
+            get;
+            private set;
+            } = ActorVerbosity.Running | ActorVerbosity.Starting | ActorVerbosity.Started | ActorVerbosity.Stopping | ActorVerbosity.Stopped;
+
         #endregion Свойства
 
         #region Блок завершения
@@ -332,6 +363,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Stopped);
                     RaiseActorStateChanged(ActorStates.Stopped);
+
                     break;
                     }
                 case ActorState.Running:
@@ -382,6 +414,15 @@ namespace ActorsCP.Actors
         #endregion Защищенные методы
 
         #region Методы
+
+        /// <summary>
+        /// Установить многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        /// <param name="verbosity">Многословность объекта</param>
+        public void SetVerbosity(ActorVerbosity verbosity)
+            {
+            Verbosity = verbosity;
+            }
 
         /// <summary>
         /// Установить флаг разрешения запуска только один раз

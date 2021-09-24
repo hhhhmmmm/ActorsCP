@@ -1,8 +1,11 @@
-﻿namespace ActorsCP.Actors
+﻿using System;
+
+namespace ActorsCP.Actors
     {
     /// <summary>
-    /// Многословность объекта
+    /// Многословность объекта - о каких событиях он будет сообщать
     /// </summary>
+    [Flags]
     public enum ActorVerbosity
         {
         /// <summary>
@@ -11,24 +14,29 @@
         Off = 0,
 
         /// <summary>
-        /// Запускается...
+        /// Выполнение
         /// </summary>
-        Starting = 0,
+        Running = 1,
+
+        /// <summary>
+        /// Запуск...
+        /// </summary>
+        Starting = 2,
 
         /// <summary>
         /// Запущен
         /// </summary>
-        Started = 1,
+        Started = 4,
 
         /// <summary>
         /// Останавливается
         /// </summary>
-        Stopping = 2,
+        Stopping = 8,
 
         /// <summary>
         /// Остановлен
         /// </summary>
-        Stopped = 3,
+        Stopped = 16,
 
         ///// <summary>
         ///// Завершен навсегда

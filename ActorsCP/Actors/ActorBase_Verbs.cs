@@ -2,8 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 
-using ActorsCP.Actors.Events;
-
 namespace ActorsCP.Actors
     {
     /// <summary>
@@ -160,13 +158,21 @@ namespace ActorsCP.Actors
                     {
                     return true;
                     }
-                OnActorAction($"Запуск {Name}...");
+
+                if ((Verbosity & ActorVerbosity.Starting) != 0)
+                    {
+                    OnActorAction($"Запуск {Name}...");
+                    }
+
                 var bres = await InternalStartAsync().ConfigureAwait(false);
                 if (bres)
                     {
                     SetActorState(ActorState.Started);
                     AfterStateChanged();
-                    OnActorAction($"{Name} успешно запущен");
+                    if ((Verbosity & ActorVerbosity.Started) != 0)
+                        {
+                        OnActorAction($"{Name} успешно запущен");
+                        }
                     return true;
                     }
                 OnActorActionError($"Ошибка запуска {Name}");
@@ -204,11 +210,17 @@ namespace ActorsCP.Actors
                     return true;
                     }
 
-                OnActorAction($"Остановка {Name}...");
+                if ((Verbosity & ActorVerbosity.Stopping) != 0)
+                    {
+                    OnActorAction($"Остановка {Name}...");
+                    }
                 var bres = await InternalStopAsync().ConfigureAwait(false);
                 if (bres)
                     {
-                    OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
+                    if ((Verbosity & ActorVerbosity.Stopped) != 0)
+                        {
+                        OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
+                        }
                     SetActorState(ActorState.Stopped);
                     AfterStateChanged();
                     return true;
@@ -266,54 +278,62 @@ namespace ActorsCP.Actors
 
                 #region Выполнение
 
-                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction))
-                    {
-                    if (!IsStarted)
-                        {
-                        bres = await StartAsync().ConfigureAwait(false);
-                        if (!bres)
-                            {
-                            return false;
-                            }
-                        }
+                bool SuppressOutput = true;
 
+                if ((Verbosity & ActorVerbosity.Running) != 0)
+                    {
+                    SuppressOutput = false;
+                    }
+
+                if (!IsStarted)
+                    {
+                    bres = await StartAsync().ConfigureAwait(false);
+                    if (!bres)
+                        {
+                        return false;
+                        }
+                    }
+
+                Task<bool> runtask;
+                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction, SuppressOutput))
+                    {
                     _executionTime.SetStartDate();
                     SetActorState(ActorState.Running);
 
                     HasBeenRun = true;
 
-                    var runtask = InternalRunAsync();
+                    runtask = InternalRunAsync();
                     await runtask.ConfigureAwait(false);
                     _executionTime.SetEndDate();
+                    } // end using
 
-                    if (IsStarted || IsRunning)
-                        {
-                        if (RunOnlyOnce)
-                            {
-                            bres = await StopAsync().ConfigureAwait(false);
-                            if (!bres)
-                                {
-                                await TerminateAsync().ConfigureAwait(false);
-                                return false;
-                                }
-                            }
-                        else // можно запускать несколько раз
-                            {
-                            SetActorState(ActorState.Started);
-                            }
-                        }
-
+                if (IsStarted || IsRunning)
+                    {
                     if (RunOnlyOnce)
                         {
-                        bres = await TerminateAsync().ConfigureAwait(false);
+                        bres = await StopAsync().ConfigureAwait(false);
                         if (!bres)
                             {
+                            await TerminateAsync().ConfigureAwait(false);
                             return false;
                             }
                         }
+                    else // можно запускать несколько раз
+                        {
+                        SetActorState(ActorState.Started);
+                        }
+                    }
 
-                    return runtask.Result;
-                    } // end using
+                if (RunOnlyOnce)
+                    {
+                    bres = await TerminateAsync().ConfigureAwait(false);
+                    if (!bres)
+                        {
+                        return false;
+                        }
+                    }
+
+                return runtask.Result;
 
                 #endregion Выполнение
                 } // end try

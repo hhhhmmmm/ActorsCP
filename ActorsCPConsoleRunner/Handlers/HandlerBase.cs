@@ -6,6 +6,7 @@ using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts.ConsoleViewPort;
 using ActorsCP.Helpers;
 using ActorsCP.Logger;
+using ActorsCP.Options;
 using ActorsCP.ViewPorts;
 using ActorsCP.ViewPorts.ConsoleViewPort;
 
@@ -66,6 +67,16 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         [Option('v', "viewport", Required = false, Default = "queue", HelpText = "Тип вьюпорта - tpl, cp, queue")]
         public string ViewportType
+            {
+            get;
+            set;
+            }
+
+        /// <summary>
+        /// Многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        [Option('z', "verbosity", Required = false, HelpText = "Многословность объекта 1-2-4-8")]
+        public string ActorVerbosity
             {
             get;
             set;
@@ -132,7 +143,7 @@ namespace ActorsCPConsoleRunner.Handlers
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp?.RaiseWarning("Вьюпорт типа ConsoleActorViewPort");
+                WriteWarningMessage("Вьюпорт типа ConsoleActorViewPort");
                 }
             else
             if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase))
@@ -143,7 +154,7 @@ namespace ActorsCPConsoleRunner.Handlers
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort - tpl");
+                WriteWarningMessage("Вьюпорт типа BufferedConsoleActorViewPort - tpl");
                 }
             else
             if (ViewportType.Equals("queue", StringComparison.OrdinalIgnoreCase))
@@ -154,7 +165,7 @@ namespace ActorsCPConsoleRunner.Handlers
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort - queue");
+                WriteWarningMessage("Вьюпорт типа BufferedConsoleActorViewPort - queue");
                 }
             else
             if (string.IsNullOrEmpty(ViewportType))
@@ -165,12 +176,21 @@ namespace ActorsCPConsoleRunner.Handlers
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp.RaiseWarning("Вьюпорт по умолчанию - типа BufferedConsoleActorViewPort - queue");
+                WriteWarningMessage("Вьюпорт по умолчанию - типа BufferedConsoleActorViewPort - queue");
                 }
 
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
 
             #endregion Создание вьюпорта
+
+            var go = GlobalActorOptions.GetInstance();
+
+            if (!string.IsNullOrEmpty(ActorVerbosity))
+                {
+                var iActorVerbosity = int.Parse(ActorVerbosity);
+                go.AddOrUpdate(ActorKeywords.ActorVerbosity, iActorVerbosity);
+                WriteWarningMessage($"ActorVerbosity: {iActorVerbosity}");
+                }
 
             ActorTime actorTime = default;
             actorTime.SetStartDate();
@@ -184,8 +204,7 @@ namespace ActorsCPConsoleRunner.Handlers
             #region Статистика
 
             var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
-            var mstat = ConsoleViewPortStatics.CreateWarningMessage(stat);
-            ConsoleViewPortStatics.WriteToConsole(mstat);
+            WriteWarningMessage(stat);
 
             #endregion Статистика
 
@@ -196,8 +215,7 @@ namespace ActorsCPConsoleRunner.Handlers
 
             var time = actorTime.ShortTimeInterval;
             var stime = $"Полное время работы InternalRun(): {time}";
-            var message = ConsoleViewPortStatics.CreateWarningMessage(stime);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
+            WriteWarningMessage(stime);
 
             #endregion Полное время обработчика
 
@@ -205,6 +223,26 @@ namespace ActorsCPConsoleRunner.Handlers
             }
 
         #endregion Методы
+
+        /// <summary>
+        /// Сообщение
+        /// </summary>
+        /// <param name="text"></param>
+        protected void WriteWarningMessage(string text)
+            {
+            var mstat = ConsoleViewPortStatics.CreateWarningMessage(text);
+            ConsoleViewPortStatics.WriteLineToConsole(mstat);
+            }
+
+        /// <summary>
+        /// Сообщение
+        /// </summary>
+        /// <param name="text"></param>
+        protected void WriteErrorMessage(string text)
+            {
+            var mstat = ConsoleViewPortStatics.CreateErrorMessage(text);
+            ConsoleViewPortStatics.WriteLineToConsole(mstat);
+            }
 
         /// <summary>
         /// Метод запуска
