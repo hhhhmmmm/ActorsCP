@@ -11,6 +11,17 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Authors>Андрей Хренов</Authors>
+        <Product>Библиотека объектов-акторов</Product>
+        <Copyright>© 2021 Андрей Хренов. All rights reserved.</Copyright>
+        <Description>Библиотека объектов-акторов</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/hhhhmmmm/ActorsCP</PackageProjectUrl>
+        <PackageIconUrl>https://github.com/hhhhmmmm/ActorsCP/tree/master/ActorsCP/Images/logo_nuget.png?raw=true</PackageIconUrl>
+        <RepositoryUrl>https://github.com/hhhhmmmm/ActorsCP/✏️.git</RepositoryUrl>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <DebugType>full</DebugType>
