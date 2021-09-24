@@ -64,19 +64,19 @@ namespace ActorsCP.ViewPorts
 
         #endregion Обычный вьюпорт
 
-        #region Tpl вьюпорт
+        #region Буферизованный вьюпорт
 
         /// <summary>
         /// Количество добавленных сообщений
         /// </summary>
-        public volatile int TplAddedMessages;
+        public volatile int BufferedAddedMessages;
 
         /// <summary>
         /// Количество обработанных сообщений
         /// </summary>
-        public volatile int TplProcessedMessages;
+        public volatile int BufferedProcessedMessages;
 
-        #endregion Tpl вьюпорт
+        #endregion Буферизованный вьюпорт
 
         #endregion Счетчики
 
@@ -101,8 +101,8 @@ namespace ActorsCP.ViewPorts
                     Exceptions == c.Exceptions &&
                     Errors == c.Errors &&
                     StateChanged == c.StateChanged &&
-                    TplAddedMessages == c.TplAddedMessages &&
-                    TplProcessedMessages == c.TplProcessedMessages
+                    BufferedAddedMessages == c.BufferedAddedMessages &&
+                    BufferedProcessedMessages == c.BufferedProcessedMessages
                     ;
                 }
 
@@ -152,14 +152,14 @@ namespace ActorsCP.ViewPorts
                 sb.Append($"изменений состояния - {StateChanged}" + nl);
                 sb.Append($"====================================" + nl);
 
-                if (TplAddedMessages != 0)
+                if (BufferedAddedMessages != 0)
                     {
-                    sb.AppendLine($"Tpl: добавлено сообщений  - {TplAddedMessages}");
+                    sb.AppendLine($"Буфер сообщений: добавлено сообщений  - {BufferedAddedMessages}");
                     }
 
-                if (TplProcessedMessages != 0)
+                if (BufferedProcessedMessages != 0)
                     {
-                    sb.AppendLine($"Tpl: обработано сообщений - {TplProcessedMessages}");
+                    sb.AppendLine($"Буфер сообщений: обработано сообщений - {BufferedProcessedMessages}");
                     }
 
                 return sb.ToString();
@@ -273,9 +273,9 @@ namespace ActorsCP.ViewPorts
                 throw new Exception($"Не все объекты остановлены - RunningObjects = {RunningObjects}");
                 }
 
-            if (TplAddedMessages != TplProcessedMessages)
+            if (BufferedAddedMessages != BufferedProcessedMessages)
                 {
-                var str = $"TplAddedMessages!= TplProcessedMessages({ TplAddedMessages } != {TplProcessedMessages})";
+                var str = $"BufferedAddedMessages!= BufferedProcessedMessages({ BufferedAddedMessages } != {BufferedProcessedMessages})";
                 throw new Exception(str);
                 }
             }

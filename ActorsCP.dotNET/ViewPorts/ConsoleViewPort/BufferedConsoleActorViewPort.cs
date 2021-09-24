@@ -145,6 +145,19 @@ namespace ActorsCP.dotNET.ViewPorts.ConsoleViewPort
 
         #endregion Группа обработки Ctrl-С
 
+        #region Реализация интерфейса IDisposable
+
+        /// <summary>
+        /// Освободить управляемые ресурсы
+        /// </summary>
+        protected override void DisposeManagedResources()
+            {
+            base.DisposeManagedResources();
+            ConsoleViewPortStatics.RestoreColors();
+            }
+
+        #endregion Реализация интерфейса IDisposable
+
         #region Перегружаемые методы
 
         /// <summary>

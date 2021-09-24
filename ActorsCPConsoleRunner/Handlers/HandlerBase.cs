@@ -64,7 +64,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// <summary>
         ///Выдавать сообщения вьюпорта на экран
         /// </summary>
-        [Option('v', "viewport", Required = false, Default = "Tpl", HelpText = "Тип вьюпорта - Tpl, Cp")]
+        [Option('v', "viewport", Required = false, Default = "queue", HelpText = "Тип вьюпорта - tpl, cp, queue")]
         public string ViewportType
             {
             get;
@@ -135,14 +135,37 @@ namespace ActorsCPConsoleRunner.Handlers
                 vp?.RaiseWarning("Вьюпорт типа ConsoleActorViewPort");
                 }
             else
-            if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(ViewportType))
+            if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase))
                 {
                 var vp = new BufferedConsoleActorViewPort();
+                vp.UseQueueForBuffering = false;
                 DefaultViewPort = vp;
                 vp.Init();
 
                 vp.NoOutMessages = false;
-                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort");
+                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort - tpl");
+                }
+            else
+            if (ViewportType.Equals("queue", StringComparison.OrdinalIgnoreCase))
+                {
+                var vp = new BufferedConsoleActorViewPort();
+                vp.UseQueueForBuffering = true;
+                DefaultViewPort = vp;
+                vp.Init();
+
+                vp.NoOutMessages = false;
+                vp.RaiseWarning("Вьюпорт типа BufferedConsoleActorViewPort - queue");
+                }
+            else
+            if (string.IsNullOrEmpty(ViewportType))
+                {
+                var vp = new BufferedConsoleActorViewPort();
+                vp.UseQueueForBuffering = true;
+                DefaultViewPort = vp;
+                vp.Init();
+
+                vp.NoOutMessages = false;
+                vp.RaiseWarning("Вьюпорт по умолчанию - типа BufferedConsoleActorViewPort - queue");
                 }
 
             DefaultViewPort.NoOutMessages = NoOutMessagesDefault;
