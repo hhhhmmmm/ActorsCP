@@ -105,7 +105,7 @@ namespace ActorsCP.ViewPorts
                 {
                 _queueSemaphoreSlim.Wait(QueueTimeout);
 
-                if (_queue.Count > 0 && _queue.TryDequeue(out ViewPortItem viewPortItem))
+                if (!(_queue.IsEmpty) && _queue.TryDequeue(out ViewPortItem viewPortItem))
                     {
                     ProcessExtractedMessage(viewPortItem);
                     }
@@ -143,7 +143,7 @@ namespace ActorsCP.ViewPorts
             _queueSemaphoreSlim?.Dispose();
             _queueSemaphoreSlim = null;
 
-            if (_queue.Count != 0)
+            if (!_queue.IsEmpty)
                 {
                 throw new Exception($"В очереди осталось {_queue.Count} сообщений");
                 }
@@ -258,14 +258,19 @@ namespace ActorsCP.ViewPorts
                 throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem не может быть null");
                 }
 
+            if (viewPortItem.ActorEventArgs == null)
+                {
+                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem.ActorEventArgs не может быть null");
+                }
+
             Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedProcessedMessages);
 
-            if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs stateEvent)
+            if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs)
                 {
                 ProcessAsActorStateChangedEventArgs(viewPortItem);
                 }
             else
-            if (viewPortItem.ActorEventArgs is ActorEventArgs actorEvent)
+            if (viewPortItem.ActorEventArgs is ActorEventArgs)
                 {
                 ProcessAsActorEventArgs(viewPortItem);
                 }
