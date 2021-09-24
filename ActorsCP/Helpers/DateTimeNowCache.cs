@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace ActorsCP.Helpers
     {
@@ -9,19 +8,19 @@ namespace ActorsCP.Helpers
     public static class DateTimeNowCache
         {
         /// <summary>
-        /// Количество повторяющихся запросов
+        /// Последнее запомненное время
         /// </summary>
-        private const int MaxCount = 20;
+        private static DateTime _recentLocalTime = DateTime.Now;
+
+        /// <summary>
+        /// Шаг квантования, ms
+        /// </summary>
+        private const double MinDiffMs = 40; // 20 кадров в секунду
 
         /// <summary>
         /// Последнее запомненное время
         /// </summary>
-        private static DateTime _recentTime = DateTime.Now;
-
-        /// <summary>
-        /// Количество пропущенных вызовов
-        /// </summary>
-        private static volatile int _skipped;
+        private static DateTime _recentUtcTime = DateTime.UtcNow;
 
         /// <summary>
         /// DateTime за последние MaxCount вызовов.
@@ -29,13 +28,17 @@ namespace ActorsCP.Helpers
         /// <returns>Последнее сохраненное DateTime</returns>
         public static DateTime GetDateTime()
             {
-            var sc = Interlocked.Increment(ref _skipped);
-            if (sc > MaxCount)
+            DateTime curUtcTime = DateTime.UtcNow;
+            var diff = curUtcTime.Subtract(_recentUtcTime);
+            var diffMs = diff.TotalMilliseconds; // разница в ms
+
+            if (diffMs >= MinDiffMs)
                 {
-                _recentTime = DateTime.Now;
-                _skipped = 0;
+                _recentUtcTime = curUtcTime;
+                _recentLocalTime = _recentUtcTime.ToLocalTime();
                 }
-            return _recentTime;
+
+            return _recentLocalTime;
             }
         }
     }
