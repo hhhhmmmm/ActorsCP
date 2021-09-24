@@ -14,7 +14,7 @@ namespace ActorsCP.dotNET.ViewPorts.ConsoleViewPort
     /// <summary>
     /// Буферизованный консольный вьюпорт для актора
     /// </summary>
-    public class BufferedConsoleActorViewPort : BufferedActorViewPortBase
+    public class BufferedConsoleActorViewPort : TplBufferedActorViewPortBase
         {
         /// <summary>
         /// Инициализация для .Net framework

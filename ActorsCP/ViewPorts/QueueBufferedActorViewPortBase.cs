@@ -138,7 +138,7 @@ namespace ActorsCP.ViewPorts
         private void InternalTerminateAsQueue()
             {
             _queueTask.Wait();
-            _queueTask?.Dispose();
+            _queueTask.Dispose();
             _queueTask = null;
             _queueSemaphoreSlim?.Dispose();
             _queueSemaphoreSlim = null;

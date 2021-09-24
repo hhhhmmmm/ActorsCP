@@ -8,7 +8,7 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
     /// <summary>
     /// Консольный вьюпорт для актора
     /// </summary>
-    public partial class ConsoleActorViewPort : ActorViewPortBase, IMessageChannel
+    public partial class ConsoleActorViewPort : QueueBufferedActorViewPortBase, IMessageChannel
         {
         /// <summary>
         /// Инициализация вьюпорта
@@ -21,6 +21,8 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
 #if NET461 || NET47 || NETFRAMEWORK
             InitDotNetFramework(additionalText);
 #endif // NET461 || NET47
+
+            base.InternalInit(additionalText);
             }
 
         #region Реализация интерфейса IDisposable

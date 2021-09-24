@@ -25,7 +25,7 @@ namespace ActorsCP.Unit.Test
         [TestCase(false, TestName = "10. Простой Queue вьюпорт - старт/стоп")]
         public void SimpleActorTest(bool useQueueForBuffering)
             {
-            using (var viewport = new BufferedActorViewPortBase())
+            using (var viewport = new TplBufferedActorViewPortBase())
                 {
                 viewport.UseQueueForBuffering = useQueueForBuffering;
                 viewport.Init();
@@ -56,7 +56,7 @@ namespace ActorsCP.Unit.Test
         [TestCase(300000, true, TestName = "90. 300000 - Queue вьюпорт")]
         public void SimpleActorTest2(int N, bool useQueueForBuffering)
             {
-            using (var viewport = new BufferedActorViewPortBase())
+            using (var viewport = new TplBufferedActorViewPortBase())
                 {
                 viewport.UseQueueForBuffering = useQueueForBuffering;
                 viewport.Init();

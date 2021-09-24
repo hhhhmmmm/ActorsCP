@@ -75,7 +75,7 @@ namespace ActorsCPConsoleRunner.Handlers
 
             for (int i = 0; i < nItemsCount; i++)
                 {
-                var name = string.Format(" ПРОСТОЙ-ОБЪЕКТ{0}", i + 1);
+                var name = string.Format("ПРОСТОЙ-ОБЪЕКТ {0}", i + 1);
                 var actor = new WaitActor(name);
                 actor.SetLoggerOptions(globalLoggerOptions);
                 actor.Interval = 100;
