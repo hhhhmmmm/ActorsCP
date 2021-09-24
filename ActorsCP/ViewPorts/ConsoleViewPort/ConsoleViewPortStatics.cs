@@ -151,7 +151,11 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// <returns></returns>
         public static string FormatMessageText(ActorActionEventArgs action)
             {
+#if DEBUG
+            var str = action.N.ToString("D8") + " " + action.EventDateAsString + " " + action.MessageText;
+#else
             var str = action.EventDateAsString + " " + action.MessageText;
+#endif // DEBUG
             return str;
             }
 

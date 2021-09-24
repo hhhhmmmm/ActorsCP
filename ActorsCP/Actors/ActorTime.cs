@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using ActorsCP.Helpers;
 
 namespace ActorsCP.Actors
     {
@@ -70,7 +71,7 @@ namespace ActorsCP.Actors
         public void SetStartDate()
             {
             HasStartDate = true;
-            StartDate = DateTime.Now;
+            StartDate = DateTimeNowCache.GetDateTime();
             }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace ActorsCP.Actors
         public void SetEndDate()
             {
             HasEndDate = true;
-            EndDate = DateTime.Now;
+            EndDate = DateTimeNowCache.GetDateTime();
             ExecutionTimeSpan = EndDate - StartDate;
             Duration = ExecutionTimeSpan.Duration();
             }
@@ -166,8 +167,8 @@ namespace ActorsCP.Actors
 
                 if (HasStartDate && HasEndDate)
                     {
-                    var DurationTime = Duration.ToString("hh\\:mm\\:ss\\.fff");
-                    return DurationTime;
+                    var durationTime = Duration.ToString("hh\\:mm\\:ss\\.fff");
+                    return durationTime;
                     }
                 return string.Empty;
                 }

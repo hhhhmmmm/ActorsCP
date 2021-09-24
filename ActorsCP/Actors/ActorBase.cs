@@ -2,14 +2,14 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
+using ActorsCP.Options;
 
 namespace ActorsCP.Actors
     {
     /// <summary>
-    ///
+    /// Базовый класс
     /// </summary>
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
@@ -34,6 +34,17 @@ namespace ActorsCP.Actors
             get
                 {
                 return TasksHelper.CompletedTaskBoolFalse;
+                }
+            }
+
+        /// <summary>
+        /// Завершенная задача
+        /// </summary>
+        protected static Task CompletedTask
+            {
+            get
+                {
+                return Task.CompletedTask;
                 }
             }
 
@@ -77,20 +88,32 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ActorBase()
+        protected ActorBase()
             {
             _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
 
-            SetName($"Объект {N} (ActorUid = {ActorUid})");
+            Name = "Объект " + N; // остальные - медленно
+            // Name = $"Объект {N} (ActorUid = {ActorUid})"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
+            // Name = $"Объект {N}"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
             SetRunOnlyOnce(true);
+
+            #region Многословность актора
+
+            var go = GlobalActorOptions.GetInstance();
+            if (go.GetInt(ActorKeywords.ActorVerbosity, out int flagVerbosity))
+                {
+                Verbosity = (ActorVerbosity)flagVerbosity;
+                }
+
+            #endregion Многословность актора
             }
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="name">Название объекта</param>
-        public ActorBase(string name) : this(name, null)
+        protected ActorBase(string name) : this(name, null)
             {
             }
 
@@ -98,7 +121,7 @@ namespace ActorsCP.Actors
         /// Конструктор
         /// </summary>
         /// <param name="parentActor">Родительский объект</param>
-        public ActorBase(ActorBase parentActor) : this(null, parentActor)
+        protected ActorBase(ActorBase parentActor) : this(null, parentActor)
             {
             }
 
@@ -107,7 +130,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="name">Название объекта</param>
         /// <param name="parentActor">Родительский объект</param>
-        public ActorBase(string name, ActorBase parentActor) : this()
+        protected ActorBase(string name, ActorBase parentActor) : this()
             {
             if (!string.IsNullOrEmpty(name))
                 {
@@ -210,6 +233,17 @@ namespace ActorsCP.Actors
             private set;
             }
 
+        /// <summary>
+        /// Многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        public ActorVerbosity Verbosity
+            {
+            get;
+            private set;
+            } = ActorVerbosity.Starting | ActorVerbosity.Running | ActorVerbosity.Stopped;
+
+        // ActorVerbosity.Running | ActorVerbosity.Starting | ActorVerbosity.Started | ActorVerbosity.Stopping | ActorVerbosity.Stopped;
+
         #endregion Свойства
 
         #region Блок завершения
@@ -250,22 +284,22 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Метод вызывается перед началом Dispose
         /// </summary>
-        private async void PreDisposeHandler()
+        private void PreDisposeHandler()
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync().ConfigureAwait(false);
+                TerminateAsync().Wait(); // await работает медленно
                 }
             }
 
         /// <summary>
         /// Освободить управляемые ресурсы
         /// </summary>
-        protected override async void DisposeManagedResources()
+        protected override void DisposeManagedResources()
             {
             if (State != ActorState.Terminated)
                 {
-                await TerminateAsync().ConfigureAwait(false);
+                TerminateAsync().Wait(); // await работает медленно
                 }
 
             _externalObjects?.Clear();
@@ -330,6 +364,7 @@ namespace ActorsCP.Actors
                     {
                     RaiseActorEvent(ActorStates.Stopped);
                     RaiseActorStateChanged(ActorStates.Stopped);
+
                     break;
                     }
                 case ActorState.Running:
@@ -380,6 +415,24 @@ namespace ActorsCP.Actors
         #endregion Защищенные методы
 
         #region Методы
+
+        /// <summary>
+        /// Установить уникальный идентификатор объекта
+        /// </summary>
+        /// <param name="actorUid">Уникальный идентификатор объекта</param>
+        public void SetActorUid(Guid actorUid)
+            {
+            ActorUid = actorUid;
+            }
+
+        /// <summary>
+        /// Установить многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        /// <param name="verbosity">Многословность объекта</param>
+        public void SetVerbosity(ActorVerbosity verbosity)
+            {
+            Verbosity = verbosity;
+            }
 
         /// <summary>
         /// Установить флаг разрешения запуска только один раз

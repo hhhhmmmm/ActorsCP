@@ -21,6 +21,12 @@ namespace ActorsCP.UtilityActors
 
         #endregion Конструкторы
 
-        //
+        /// <summary>
+        /// Констанстный пустой актор
+        /// </summary>
+        public static EmptyActor Value
+            {
+            get;
+            } = new EmptyActor();
         } // end class EmptyActor
     } // end namespace ActorsCP.UtilityActors

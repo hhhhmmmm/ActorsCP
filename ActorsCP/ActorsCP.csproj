@@ -11,6 +11,17 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Authors>Андрей Хренов</Authors>
+        <Product>Библиотека объектов-акторов</Product>
+        <Copyright>© 2021 Андрей Хренов. All rights reserved.</Copyright>
+        <Description>Библиотека объектов-акторов</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/hhhhmmmm/ActorsCP</PackageProjectUrl>
+        <PackageIconUrl>https://github.com/hhhhmmmm/ActorsCP/tree/master/ActorsCP/Images/logo_nuget.png?raw=true</PackageIconUrl>
+        <RepositoryUrl>https://github.com/hhhhmmmm/ActorsCP/✏️.git</RepositoryUrl>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <DebugType>full</DebugType>
@@ -29,7 +40,6 @@
 
     <!-- Conditionally obtain references for the .NET Framework 4.6.1 target -->
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <Reference Include="System.Data.DataSetExtensions" />
         <Reference Include="System.Configuration" />
         <Reference Include="System.Net" />
         <Reference Include="System.Threading.Tasks" />
@@ -39,7 +49,6 @@
 
     <!-- Conditionally obtain references for the .NET Framework 4.7 target -->
     <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
-        <Reference Include="System.Data.DataSetExtensions" />
         <Reference Include="System.Configuration" />
         <Reference Include="System.Net" />
         <Reference Include="System.Threading.Tasks" />

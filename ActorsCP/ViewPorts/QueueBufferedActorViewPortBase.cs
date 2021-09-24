@@ -1,73 +1,78 @@
-﻿#if DEBUG
-// #define DEBUG_TPL_ERRORREPORTER
-#endif // DEBUG_TPL_ERRORREPORTER
-
-using System;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.UtilityActors;
-using ActorsCP.ViewPorts;
 
-namespace ActorsCP.dotNET.ViewPorts
+namespace ActorsCP.ViewPorts
     {
     /// <summary>
-    /// Базовый класс вьюпорта со всеми интерфейсами
+    /// Буферизованный класс вьюпорта со всеми интерфейсами
     /// и буферизованным выводом
     /// </summary>
-    public class BufferedActorViewPortBase : ActorViewPortBase, IMessageChannel
+    public class QueueBufferedActorViewPortBase : ActorViewPortBase, IMessageChannel
         {
         #region Приватные мемберы
 
-        private readonly ActorBase emptyActor = new EmptyActor();
+        /// <summary>
+        /// Очередь сообщения
+        /// </summary>
+        private ConcurrentQueue<ViewPortItem> _queue;
 
         /// <summary>
-        /// Буфер сообщений
+        /// Семафор для очереди
         /// </summary>
-        private BufferBlock<ViewPortItem> _tplDataFlowDataBufferBlock;
+        private SemaphoreSlim _queueSemaphoreSlim;
 
         /// <summary>
-        /// Актор работы с ошибками
+        /// Вьюпорт находится в состоянии завершения
         /// </summary>
-        private ActionBlock<ViewPortItem> _tplDataFlowDataActionBlock;
+        private bool _isTerminating;
+
+        /// <summary>
+        /// Задача-обработчик очереди сообщений
+        /// </summary>
+        private Task _queueTask;
 
         #endregion Приватные мемберы
-
-        #region Конструкторы
-
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        public BufferedActorViewPortBase()
-            {
-            InitTplDataFlow();
-            }
-
-        #endregion Конструкторы
 
         #region Свойства
 
         /// <summary>
-        /// Tpl завершен
+        /// Использовать очередь для буфера
         /// </summary>
-        public bool TplDataFlowInitialized
+        public bool UseQueueForBuffering
             {
             get;
-            private set;
-            }
+            set;
+            } = true;
 
         /// <summary>
-        /// Tpl завершен
+        /// Таймаут ожидания очереди, ms
         /// </summary>
-        public bool TplDataFlowTerminated
+        private int _queueTimeout = 100;
+
+        /// <summary>
+        /// Таймаут ожидания очереди, ms
+        /// </summary>
+        public int QueueTimeout
             {
-            get;
-            private set;
+            get
+                {
+                return _queueTimeout;
+                }
+            set
+                {
+                if (value < 0)
+                    {
+                    throw new ArgumentException("Значение должно быть больше 0");
+                    }
+                _queueTimeout = value;
+                }
             }
 
         #endregion Свойства
@@ -77,119 +82,140 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <summary>
         /// Освободить управляемые ресурсы
         /// </summary>
-        protected override async void DisposeManagedResources()
+        protected override void DisposeManagedResources()
             {
-            if (TplDataFlowInitialized && (!TplDataFlowTerminated))
+            if (!IsTerminated)
                 {
-                await TerminateTplDataFlowAsync();
+                Terminate();
                 }
+
             base.DisposeManagedResources();
             }
 
         #endregion Реализация интерфейса IDisposable
 
-        #region Инициализация/Завершение
+        #region Очередь
 
         /// <summary>
-        /// Инициализация TplDataFlow
+        /// Цикл обработки сообщений
         /// </summary>
-        public void InitTplDataFlow()
+        private void ProcessMessageFromQueueLoop()
             {
-            if (_tplDataFlowDataBufferBlock != null)
+            while (true)
                 {
-                return;
+                _queueSemaphoreSlim.Wait(QueueTimeout);
+
+                if (!(_queue.IsEmpty) && _queue.TryDequeue(out ViewPortItem viewPortItem))
+                    {
+                    ProcessExtractedMessage(viewPortItem);
+                    }
+                else
+                    {
+                    if (_isTerminating)
+                        {
+                        if (_queue.IsEmpty)
+                            {
+                            return;
+                            }
+                        }
+                    }
                 }
-
-            _tplDataFlowDataBufferBlock = new BufferBlock<ViewPortItem>();
-            _tplDataFlowDataActionBlock = new ActionBlock<ViewPortItem>(TplDataFlowProcessAction);
-            _tplDataFlowDataBufferBlock.LinkTo(_tplDataFlowDataActionBlock);
-
-            _tplDataFlowDataBufferBlock.Completion.ContinueWith(TplDataFlow_DataBufferBlock_Completion);
-            _tplDataFlowDataActionBlock.Completion.ContinueWith(TplDataFlow_ActionBlock_Completion);
-
-            TplDataFlowInitialized = true;
-
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine("InitTplDataFlow()");
-#endif // DEBUG_TPL_ERRORREPORTER
             }
 
         /// <summary>
-        /// Завершить TplDataFlow
+        ///
         /// </summary>
-        public async Task TerminateTplDataFlowAsync()
+        private void InternalInitAsQueue()
             {
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine("TerminateTplDataFlowAsync() - начало");
-#endif // DEBUG_TPL_ERRORREPORTER
+            _queue = new ConcurrentQueue<ViewPortItem>();
+            _queueSemaphoreSlim = new SemaphoreSlim(1, int.MaxValue);
+            _queueTask = Task.Run(() => { ProcessMessageFromQueueLoop(); });
+            }
 
-            if (_tplDataFlowDataBufferBlock == null)
+        /// <summary>
+        ///
+        /// </summary>
+        private void InternalTerminateAsQueue()
+            {
+            _queueTask.Wait();
+            _queueTask.Dispose();
+            _queueTask = null;
+            _queueSemaphoreSlim?.Dispose();
+            _queueSemaphoreSlim = null;
+
+            if (!_queue.IsEmpty)
+                {
+                throw new Exception($"В очереди осталось {_queue.Count} сообщений");
+                }
+
+            _queue = null;
+            }
+
+        #endregion Очередь
+
+        #region Инициализация/Завершение
+
+        /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        protected override void InternalInit(string additionalText)
+            {
+            if (IsInitialized)
                 {
                 return;
                 }
 
-            _tplDataFlowDataBufferBlock.Complete();
-            await _tplDataFlowDataBufferBlock.Completion;
-            _tplDataFlowDataBufferBlock = null;
+            InternalInitAsQueue();
 
-            _tplDataFlowDataActionBlock.Complete();
-            await _tplDataFlowDataActionBlock.Completion;
-            _tplDataFlowDataActionBlock = null;
+            base.InternalInit(additionalText);
+            }
 
-            TplDataFlowTerminated = true;
+        /// <summary>
+        /// Завершение вьюпорта
+        /// </summary>
+        protected override void InternalTerminate()
+            {
+            if (IsTerminated)
+                {
+                return;
+                }
 
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine($"TerminateTplDataFlowAsync() - конец");
-#endif // DEBUG_TPL_ERRORREPORTER
+            _isTerminating = true;
+
+            InternalTerminateAsQueue();
+
+            base.InternalTerminate();
             }
 
         #endregion Инициализация/Завершение
 
-        #region Завершители
-
-        /// <summary>
-        /// Завершение работы буфера
-        /// </summary>
-        /// <param name="task">Задача завершения</param>
-        private void TplDataFlow_DataBufferBlock_Completion(Task task)
-            {
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine($"TplDataFlow_DataBufferBlock_Completion()");
-#endif // DEBUG_TPL_ERRORREPORTER
-            }
-
-        /// <summary>
-        /// Завершение работы актора
-        /// </summary>
-        /// <param name="task">Задача завершения</param>
-        private void TplDataFlow_ActionBlock_Completion(Task task)
-            {
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine($"TplDataFlow_ActionBlock_Completion()");
-#endif // DEBUG_TPL_ERRORREPORTER
-            }
-
-        #endregion Завершители
-
-        #region добавление сообщений
+        #region Добавление сообщений
 
         /// <summary>
         /// Добавить данные в очередь на обработку
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="viewPortItem"></param>
         /// <returns></returns>
-        public async Task TplDataFlowAddDataAsync(ViewPortItem data)
+        public void Add(ViewPortItem viewPortItem)
             {
-            if (data == null)
+            if (viewPortItem == null)
                 {
-                throw new ArgumentNullException(nameof(data), "data не может быть null");
+                throw new ArgumentNullException(nameof(viewPortItem), "data не может быть null");
                 }
-            await _tplDataFlowDataBufferBlock.SendAsync(data);
 
-            Interlocked.Increment(ref _сurrentExecutionStatistics.TplAddedMessages);
+            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedAddedMessages);
+
+            if (_queue == null)
+                {
+                throw new InvalidOperationException("_queue == null");
+                }
+
+            _queue.Enqueue(viewPortItem);
+            _queueSemaphoreSlim.Release();
             }
 
-        #endregion добавление сообщений
+        #endregion Добавление сообщений
 
         #region Перегружаемые методы IActorEventsHandler
 
@@ -198,11 +224,11 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="sender">Отправитель - объект</param>
         /// <param name="e">Событие</param>
-        protected override async void InternalActor_Event(object sender, ActorEventArgs e)
+        protected override void InternalActor_Event(object sender, ActorEventArgs e)
             {
             var actor = sender as ActorBase;
             var viewPortItem = new ViewPortItem(actor, e);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            Add(viewPortItem);
             }
 
         /// <summary>
@@ -210,11 +236,11 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="sender">Отправитель - объект</param>
         /// <param name="e">Событие</param>
-        protected override async void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
+        protected override void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
             var actor = sender as ActorBase;
             var viewPortItem = new ViewPortItem(actor, e);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            Add(viewPortItem);
             }
 
         #endregion Перегружаемые методы IActorEventsHandler
@@ -222,41 +248,38 @@ namespace ActorsCP.dotNET.ViewPorts
         #region Обработка сообщений
 
         /// <summary>
-        /// Обработать сообщение
+        /// Обработать извлеченное сообщение
         /// </summary>
-        /// <param name="viewPortItem">Данные</param>
-        private void TplDataFlowProcessAction(ViewPortItem viewPortItem)
+        /// <param name="viewPortItem">Извлеченное сообщение</param>
+        private void ProcessExtractedMessage(ViewPortItem viewPortItem)
             {
             if (viewPortItem == null)
                 {
-                return;
+                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem не может быть null");
                 }
 
-            Interlocked.Increment(ref _сurrentExecutionStatistics.TplProcessedMessages);
+            if (viewPortItem.ActorEventArgs == null)
+                {
+                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem.ActorEventArgs не может быть null");
+                }
 
-#if DEBUG_TPL_ERRORREPORTER
-            Debug.WriteLine("TplDataFlowProcessAction()");
-#endif // DEBUG_TPL_ERRORREPORTER
+            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedProcessedMessages);
 
-            #region Обработка
-
-            if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs stateEvent)
+            if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs)
                 {
                 ProcessAsActorStateChangedEventArgs(viewPortItem);
                 }
             else
-            if (viewPortItem.ActorEventArgs is ActorEventArgs actorEvent)
+            if (viewPortItem.ActorEventArgs is ActorEventArgs)
                 {
                 ProcessAsActorEventArgs(viewPortItem);
                 }
             else
                 {
-                throw new Exception("Непонятно как обрабатывать");
+                throw new Exception($"Непонятно как обрабатывать viewPortItem.ActorEventArgs = {viewPortItem.ActorEventArgs}");
                 }
 
             viewPortItem.Dispose();
-
-            #endregion Обработка
             }
 
         /// <summary>
@@ -305,7 +328,7 @@ namespace ActorsCP.dotNET.ViewPorts
         /// Вывести сообщение
         /// </summary>
         /// <param name="debugText">Текст отладочного сообщения</param>
-        public async void RaiseDebug(string debugText)
+        public void RaiseDebug(string debugText)
             {
             if (NoOutMessages)
                 {
@@ -313,68 +336,68 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
 
             var ea = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
-            var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
+            Add(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение
         /// </summary>
         /// <param name="messageText">Текст сообщения</param>
-        public async void RaiseMessage(string messageText)
+        public void RaiseMessage(string messageText)
             {
             if (NoOutMessages)
                 {
                 return;
                 }
             var ea = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
-            var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
+            Add(viewPortItem);
             }
 
         /// <summary>
         /// Вывести предупреждение
         /// </summary>
         /// <param name="warningText">Текст сообщения</param>
-        public async void RaiseWarning(string warningText)
+        public void RaiseWarning(string warningText)
             {
             if (NoOutMessages)
                 {
                 return;
                 }
             var ea = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
-            var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
+            Add(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение об ошибке
         /// </summary>
         /// <param name="errorText">Текст сообщения об ошибке</param>
-        public async void RaiseError(string errorText)
+        public void RaiseError(string errorText)
             {
             if (NoOutMessages)
                 {
                 return;
                 }
             var ea = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
-            var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
+            Add(viewPortItem);
             }
 
         /// <summary>
         /// Вывести сообщение об исключении
         /// </summary>
         /// <param name="exception">Исключение</param>
-        public async void RaiseException(Exception exception)
+        public void RaiseException(Exception exception)
             {
             if (NoOutMessages)
                 {
                 return;
                 }
             var ea = new ActorExceptionEventArgs(exception);
-            var viewPortItem = new ViewPortItem(emptyActor, ea);
-            await TplDataFlowAddDataAsync(viewPortItem);
+            var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
+            Add(viewPortItem);
             }
 
         #endregion Реализация интерфейса IMessageChannel

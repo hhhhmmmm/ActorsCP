@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
+using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.Tests.TestActors;
+using ActorsCP.ViewPorts.ConsoleViewPort;
 
 using CommandLine;
 using CommandLine.Text;
@@ -26,7 +28,7 @@ namespace ActorsCPConsoleRunner.Handlers
             {
             if (nItemsCount <= 0)
                 {
-                RaiseError("count должно быть > 0");
+                WriteErrorMessage("count должно быть > 0");
                 }
 
             ActorTime actorTime = default;
@@ -34,18 +36,17 @@ namespace ActorsCPConsoleRunner.Handlers
             actorTime.SetStartDate();
             var bres = await InternalRunForSet();
             actorTime.SetEndDate();
+
             DefaultViewPort.NoOutMessages = false;
-            RaiseError($"nItemsCount = {nItemsCount}");
+            WriteWarningMessage($"nItemsCount = {nItemsCount}");
             var str = actorTime.GetTimeIntervalWithComment(nItemsCount);
-            RaiseError(str);
-            var stat = DefaultViewPort.СurrentExecutionStatistics.TextStatistics;
-            RaiseError(stat);
-            DefaultViewPort.ValidateStatistics();
+            WriteWarningMessage(str);
+
             return bres;
             }
 
         /// <summary>
-        /// Метод запуска
+        /// Метод запуска для набора, вызывается выше
         /// </summary>
         protected virtual Task<int> InternalRunForSet()
             {

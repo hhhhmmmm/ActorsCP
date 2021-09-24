@@ -61,9 +61,6 @@ namespace ActorsCPConsoleRunner
                 }
             finally
                 {
-                ConsoleActorViewPort.RestoreColors();
-
-                // SetTitle("завершен");
                 Environment.Exit(HandlerResult);
                 }
             }

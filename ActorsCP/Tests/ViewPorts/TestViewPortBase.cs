@@ -16,7 +16,7 @@ namespace ActorsCP.Tests.ViewPorts
         /// <summary>
         /// Канал сообщений
         /// </summary>
-        private IMessageChannel _messageChannel;
+        private readonly IMessageChannel _messageChannel;
 
         #region Конструкторы
 
@@ -96,9 +96,5 @@ namespace ActorsCP.Tests.ViewPorts
         public int _Counter_Actor_EventHandlersUnbound;
 
         #endregion Реализация интерфейса IActorBindViewPortHandler
-
-        public void Validate()
-            {
-            }
         } // end class TestViewPortBase
     } // end namespace ActorsCP.Tests.ViewPorts

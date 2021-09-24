@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
@@ -68,6 +69,24 @@ namespace ActorsCP.ViewPorts
             get;
             set;
             } = false;
+
+        /// <summary>
+        /// Вьюпорт инициализирован
+        /// </summary>
+        public bool IsInitialized
+            {
+            get;
+            protected set;
+            }
+
+        /// <summary>
+        /// Вьюпорт завершен
+        /// </summary>
+        public bool IsTerminated
+            {
+            get;
+            protected set;
+            }
 
         #endregion Свойства
 
@@ -215,12 +234,31 @@ namespace ActorsCP.ViewPorts
 
         #endregion Перегружаемые методы IActorEventsHandler
 
+        #region Публичные методы
+
         /// <summary>
         /// Проверить корректность собранных значений счетчиков
         /// </summary>
         public void ValidateStatistics()
             {
             СurrentExecutionStatistics.ValidateStatistics();
+            }
+
+        /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        public void Init(string additionalText = null)
+            {
+            InternalInit(additionalText);
+            }
+
+        /// <summary>
+        /// Завершение вьюпорта
+        /// </summary>
+        public void Terminate()
+            {
+            InternalTerminate();
             }
 
         /// <summary>
@@ -232,12 +270,64 @@ namespace ActorsCP.ViewPorts
             }
 
         /// <summary>
+        /// Установить заголовок
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        public void SetTitle(string additionalText = null)
+            {
+            InternalSetTitle(additionalText);
+            }
+
+        #endregion Публичные методы
+
+        #region Перегружаемые методы
+
+        /// <summary>
+        /// Установить заголовок
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        public virtual void InternalSetTitle(string additionalText)
+            {
+            }
+
+        /// <summary>
+        /// Инициализация вьюпорта
+        /// </summary>
+        /// <param name="additionalText">Заголовок</param>
+        protected virtual void InternalInit(string additionalText)
+            {
+            IsInitialized = true;
+            }
+
+        /// <summary>
+        /// Завершение вьюпорта
+        /// </summary>
+        protected virtual void InternalTerminate()
+            {
+            IsTerminated = true;
+            }
+
+        /// <summary>
         /// Перенастроить вьюпорт
         /// </summary>
         protected virtual void InternalReconfigure()
             {
             var gado = GlobalActorDebugOptions.GetInstance();
             gado.GetBool(ActorDebugKeywords.ViewPort_DebugStateChangedEvent, out _ViewPort_DebugStateChangedEvent);
+            }
+
+        #endregion Перегружаемые методы
+
+        /// <summary>
+        /// Возвращает версию файла сборки (та, которая указывается в AssemblyFileVersion в файле AssemblyInfo.cs)
+        /// </summary>
+        /// <returns></returns>
+        protected static string GetAssemblyFileVersion()
+            {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            var version = fvi.FileVersion;
+            return version;
             }
         } // end class ViewPortBase
     } // end namespace ActorsCP.ViewPorts
