@@ -34,7 +34,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return $"Толпа объектов {N} (ActorUid = {ActorUid})";
+                return "Толпа " + N; // остальные - медленно
                 }
             }
 

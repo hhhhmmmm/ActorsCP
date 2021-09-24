@@ -249,7 +249,6 @@ namespace ActorsCP.Actors
         /// <returns>true если работа успешно завершена</returns>
         public async Task<bool> RunAsync()
             {
-            bool bres = false;
             try
                 {
                 if (IsTerminated)
@@ -278,16 +277,9 @@ namespace ActorsCP.Actors
 
                 #region Выполнение
 
-                bool SuppressOutput = true;
-
-                if ((Verbosity & ActorVerbosity.Running) != 0)
-                    {
-                    SuppressOutput = false;
-                    }
-
                 if (!IsStarted)
                     {
-                    bres = await StartAsync().ConfigureAwait(false);
+                    var bres = await StartAsync().ConfigureAwait(false);
                     if (!bres)
                         {
                         return false;
@@ -295,7 +287,8 @@ namespace ActorsCP.Actors
                     }
 
                 Task<bool> runtask;
-                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction, SuppressOutput))
+                var suppressOutput = (Verbosity & ActorVerbosity.Running) == 0 ? true : false;
+                using (var gt = new ActorDisposableTime($" - выполнения '{Name}'", OnActorAction, suppressOutput))
                     {
                     _executionTime.SetStartDate();
                     SetActorState(ActorState.Running);
@@ -311,7 +304,7 @@ namespace ActorsCP.Actors
                     {
                     if (RunOnlyOnce)
                         {
-                        bres = await StopAsync().ConfigureAwait(false);
+                        var bres = await StopAsync().ConfigureAwait(false);
                         if (!bres)
                             {
                             await TerminateAsync().ConfigureAwait(false);
@@ -326,7 +319,7 @@ namespace ActorsCP.Actors
 
                 if (RunOnlyOnce)
                     {
-                    bres = await TerminateAsync().ConfigureAwait(false);
+                    var bres = await TerminateAsync().ConfigureAwait(false);
                     if (!bres)
                         {
                         return false;

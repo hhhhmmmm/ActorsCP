@@ -191,6 +191,10 @@ namespace ActorsCPConsoleRunner.Handlers
                 go.AddOrUpdate(ActorKeywords.ActorVerbosity, iActorVerbosity);
                 WriteWarningMessage($"ActorVerbosity: {iActorVerbosity}");
                 }
+            else
+                {
+                WriteWarningMessage($"ActorVerbosity: по умолчанию");
+                }
 
             ActorTime actorTime = default;
             actorTime.SetStartDate();

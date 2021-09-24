@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -241,7 +240,9 @@ namespace ActorsCP.Actors
             {
             get;
             private set;
-            } = ActorVerbosity.Running | ActorVerbosity.Starting | ActorVerbosity.Started | ActorVerbosity.Stopping | ActorVerbosity.Stopped;
+            } = ActorVerbosity.Starting | ActorVerbosity.Running | ActorVerbosity.Stopped;
+
+        // ActorVerbosity.Running | ActorVerbosity.Starting | ActorVerbosity.Started | ActorVerbosity.Stopping | ActorVerbosity.Stopped;
 
         #endregion Свойства
 
@@ -414,6 +415,15 @@ namespace ActorsCP.Actors
         #endregion Защищенные методы
 
         #region Методы
+
+        /// <summary>
+        /// Установить уникальный идентификатор объекта
+        /// </summary>
+        /// <param name="actorUid">Уникальный идентификатор объекта</param>
+        public void SetActorUid(Guid actorUid)
+            {
+            ActorUid = actorUid;
+            }
 
         /// <summary>
         /// Установить многословность объекта - о каких событиях он будет сообщать

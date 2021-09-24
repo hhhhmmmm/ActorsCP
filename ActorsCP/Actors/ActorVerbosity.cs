@@ -14,19 +14,19 @@ namespace ActorsCP.Actors
         Off = 0,
 
         /// <summary>
-        /// Выполнение
-        /// </summary>
-        Running = 1,
-
-        /// <summary>
         /// Запуск...
         /// </summary>
-        Starting = 2,
+        Starting = 1,
 
         /// <summary>
         /// Запущен
         /// </summary>
-        Started = 4,
+        Started = 2,
+
+        /// <summary>
+        /// Выполнение
+        /// </summary>
+        Running = 4,
 
         /// <summary>
         /// Останавливается

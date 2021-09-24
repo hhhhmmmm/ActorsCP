@@ -19,7 +19,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return $"Очередь объектов {N} (ActorUid = {ActorUid})";
+                return "Очередь " + N; // остальные - медленно
                 }
             }
 
