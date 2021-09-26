@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Threading.Tasks.Dataflow, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Dataflow.5.0.0\lib\net461\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
@@ -53,9 +54,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NativeInterop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewPorts\FormsViewPortBase_StateTimer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewPorts\Resizer.cs" />
+    <Compile Include="ViewPorts\TextViewPort.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ViewPorts\TplBufferedActorViewPortBase.cs" />
     <Compile Include="ViewPorts\ConsoleViewPort\BufferedConsoleActorViewPort.cs" />
+    <Compile Include="ViewPorts\TreeViewViewPort\ActorsTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ViewPorts\TreeViewViewPort\BufferedTreeViewViewPort.cs" />
+    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.Designer.cs">
+      <DependentUpon>FastTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewActorNode.cs" />
+    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewImage.cs" />
+    <Compile Include="ViewPorts\FormsViewPortBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewPorts\FormsViewPortBase.Designer.cs">
+      <DependentUpon>FormsViewPortBase.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ActorsCP.dotNET.snk" />
@@ -66,6 +93,11 @@
       <Project>{FD96F2BD-E209-440A-8707-ED26E995E991}</Project>
       <Name>ActorsCP</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewPorts\FormsViewPortBase.resx">
+      <DependentUpon>FormsViewPortBase.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
