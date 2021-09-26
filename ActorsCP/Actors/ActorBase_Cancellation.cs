@@ -109,7 +109,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Установить новый токен отмены
         /// </summary>
-        /// <param name="Token">Новый токен отмены</param>
+        /// <param name="tokenSource">Новый токен отмены</param>
         public void SetCancellationToken(CancellationTokenSource tokenSource)
             {
             if (tokenSource == null)

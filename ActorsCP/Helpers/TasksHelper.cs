@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ActorsCP.Helpers
     {
+    /// <summary>
+    ///
+    /// </summary>
     public static class TasksHelper
         {
         /// <summary>
@@ -21,7 +24,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Опции задачи по умолчанию
         /// </summary>
-        public static TaskCreationOptions DefaultTaskCreationOptions = TaskCreationOptions.PreferFairness;
+        private static TaskCreationOptions DefaultTaskCreationOptions = TaskCreationOptions.PreferFairness;
 
         /// <summary>
         /// Создать TaskCompletionSource

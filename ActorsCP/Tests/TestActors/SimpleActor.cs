@@ -31,19 +31,6 @@ namespace ActorsCP.Tests.TestActors
 
         #endregion Конструкторы
 
-        #region Свойства
-
-        /// <summary>
-        ///
-        /// </summary>
-        // public string Property
-        //     {
-        //     get;
-        //     set;
-        //     }
-
-        #endregion Свойства
-
         /// <summary>
         /// Перегружаемая функция для выполнения некоторых действий
         /// </summary>

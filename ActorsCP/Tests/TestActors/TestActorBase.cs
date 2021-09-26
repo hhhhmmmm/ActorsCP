@@ -32,6 +32,9 @@ namespace ActorsCP.Tests.TestActors
 
         #region Перегрузки
 
+        /// <summary>
+        ///
+        /// </summary>
         protected override void DisposeManagedResources()
             {
             base.DisposeManagedResources();
@@ -91,36 +94,54 @@ namespace ActorsCP.Tests.TestActors
 
         #region Свойства
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool DisposeManagedResources_Called
             {
             get;
             private set;
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool DisposeUnmanagedResources_Called
             {
             get;
             private set;
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool InternalStartAsync_Called
             {
             get;
             private set;
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool InternalStopAsync_Called
             {
             get;
             private set;
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool InternalRunAsync_Called
             {
             get;
             private set;
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public bool InternalRunCleanupBeforeTerminationAsync_Called
             {
             get;

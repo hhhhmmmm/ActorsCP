@@ -65,78 +65,78 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
 
         #endregion Перегружаемые методы IActorEventsHandler
 
-        #region Реализация интерфейса IMessageChannel
+        //#region Реализация интерфейса IMessageChannel
 
-        /// <summary>
-        /// Вывести сообщение
-        /// </summary>
-        /// <param name="debugText">Текст отладочного сообщения</param>
-        public void RaiseDebug(string debugText)
-            {
-            if (NoOutMessages)
-                {
-                return;
-                }
-            var message = ConsoleViewPortStatics.CreateDebugMessage(debugText);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
-            }
+        ///// <summary>
+        ///// Вывести сообщение
+        ///// </summary>
+        ///// <param name="debugText">Текст отладочного сообщения</param>
+        //public void RaiseDebug(string debugText)
+        //    {
+        //    if (NoOutMessages)
+        //        {
+        //        return;
+        //        }
+        //    var message = ConsoleViewPortStatics.CreateDebugMessage(debugText);
+        //    ConsoleViewPortStatics.WriteLineToConsole(message);
+        //    }
 
-        /// <summary>
-        /// Вывести сообщение
-        /// </summary>
-        /// <param name="messageText">Текст сообщения</param>
-        public void RaiseMessage(string messageText)
-            {
-            if (NoOutMessages)
-                {
-                return;
-                }
-            var message = ConsoleViewPortStatics.CreateMessage(messageText);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
-            }
+        ///// <summary>
+        ///// Вывести сообщение
+        ///// </summary>
+        ///// <param name="messageText">Текст сообщения</param>
+        //public void RaiseMessage(string messageText)
+        //    {
+        //    if (NoOutMessages)
+        //        {
+        //        return;
+        //        }
+        //    var message = ConsoleViewPortStatics.CreateMessage(messageText);
+        //    ConsoleViewPortStatics.WriteLineToConsole(message);
+        //    }
 
-        /// <summary>
-        /// Вывести предупреждение
-        /// </summary>
-        /// <param name="warningText">Текст сообщения</param>
-        public void RaiseWarning(string warningText)
-            {
-            if (NoOutMessages)
-                {
-                return;
-                }
-            var message = ConsoleViewPortStatics.CreateWarningMessage(warningText);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
-            }
+        ///// <summary>
+        ///// Вывести предупреждение
+        ///// </summary>
+        ///// <param name="warningText">Текст сообщения</param>
+        //public void RaiseWarning(string warningText)
+        //    {
+        //    if (NoOutMessages)
+        //        {
+        //        return;
+        //        }
+        //    var message = ConsoleViewPortStatics.CreateWarningMessage(warningText);
+        //    ConsoleViewPortStatics.WriteLineToConsole(message);
+        //    }
 
-        /// <summary>
-        /// Вывести сообщение об ошибке
-        /// </summary>
-        /// <param name="errorText">Текст сообщения об ошибке</param>
-        public void RaiseError(string errorText)
-            {
-            if (NoOutMessages)
-                {
-                return;
-                }
-            var message = ConsoleViewPortStatics.CreateErrorMessage(errorText);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
-            }
+        ///// <summary>
+        ///// Вывести сообщение об ошибке
+        ///// </summary>
+        ///// <param name="errorText">Текст сообщения об ошибке</param>
+        //public void RaiseError(string errorText)
+        //    {
+        //    if (NoOutMessages)
+        //        {
+        //        return;
+        //        }
+        //    var message = ConsoleViewPortStatics.CreateErrorMessage(errorText);
+        //    ConsoleViewPortStatics.WriteLineToConsole(message);
+        //    }
 
-        /// <summary>
-        /// Вывести сообщение об исключении
-        /// </summary>
-        /// <param name="exception">Исключение</param>
-        public void RaiseException(Exception exception)
-            {
-            if (NoOutMessages)
-                {
-                return;
-                }
-            var message = ConsoleViewPortStatics.CreateExceptionMessage(exception);
-            ConsoleViewPortStatics.WriteLineToConsole(message);
-            }
+        ///// <summary>
+        ///// Вывести сообщение об исключении
+        ///// </summary>
+        ///// <param name="exception">Исключение</param>
+        //public void RaiseException(Exception exception)
+        //    {
+        //    if (NoOutMessages)
+        //        {
+        //        return;
+        //        }
+        //    var message = ConsoleViewPortStatics.CreateExceptionMessage(exception);
+        //    ConsoleViewPortStatics.WriteLineToConsole(message);
+        //    }
 
-        #endregion Реализация интерфейса IMessageChannel
+        //#endregion Реализация интерфейса IMessageChannel
         } // end class ConsoleActorViewPort
     } // end namespace ActorsCP.ViewPorts.Console

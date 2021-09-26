@@ -80,9 +80,9 @@ namespace ActorsCP.Actors
             set;
             } = 100; // ms - 10 кадров в секунду
 
-        ///// <summary>
-        ///// Количество объектов ожидающих выполнения
-        ///// </summary>
+        /// <summary>
+        /// Количество объектов ожидающих выполнения
+        /// </summary>
         public int WaitingCount
             {
             get
@@ -91,9 +91,9 @@ namespace ActorsCP.Actors
                 }
             }
 
-        ///// <summary>
-        /////  Количество выполняющихся объектов
-        ///// </summary>
+        /// <summary>
+        ///  Количество выполняющихся объектов
+        /// </summary>
         public int RunningCount
             {
             get
@@ -102,9 +102,9 @@ namespace ActorsCP.Actors
                 }
             }
 
-        ///// <summary>
-        /////  Количество завершенных объектов
-        ///// </summary>
+        /// <summary>
+        ///  Количество завершенных объектов
+        /// </summary>
         public int CompletedCount
             {
             get
@@ -277,9 +277,9 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Получить копию массива
         /// </summary>
-        /// <param name="actors">Входящий массив вида HashSet<ActorBase></param>
+        /// <param name="actors">Входящий массив вида HashSet ActorBase </param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
             {
             var tmp = new ActorBase[actors.Count];
             actors.CopyTo(tmp, 0);
@@ -289,9 +289,9 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Получить копию массива
         /// </summary>
-        /// <param name="actors">Входящий массив вида ConcurrentContainerT<ActorBase></param>
+        /// <param name="actors">Входящий массив вида ConcurrentContainerT ActorBase </param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
             {
             var tmp = actors.Items.ToArray();
             return tmp;
@@ -345,6 +345,9 @@ namespace ActorsCP.Actors
 
         #region Перегруженные методы
 
+        /// <summary>
+        ///
+        /// </summary>
         protected override void AfterStateChanged()
             {
             RaiseActorsSetChanged(this);
@@ -526,18 +529,6 @@ namespace ActorsCP.Actors
             }
 
         #endregion Перегруженные методы
-
-        #region Реализация интерфейса IDisposable
-
-        /// <summary>
-        /// Освободить управляемые ресурсы
-        /// </summary>
-        //protected override void DisposeManagedResources()
-        //    {
-        //    base.DisposeManagedResources();
-        //    }
-
-        #endregion Реализация интерфейса IDisposable
 
         #region Обработчики событий
 

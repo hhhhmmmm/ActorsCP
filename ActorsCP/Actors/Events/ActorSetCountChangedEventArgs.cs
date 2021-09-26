@@ -39,9 +39,9 @@ namespace ActorsCP.Actors.Events
 
         #region Свойства
 
-        ///// <summary>
-        ///// Количество объектов ожидающих выполнения
-        ///// </summary>
+        /// <summary>
+        /// Количество объектов ожидающих выполнения
+        /// </summary>
         public int WaitingCount
             {
             get
@@ -50,9 +50,9 @@ namespace ActorsCP.Actors.Events
                 }
             }
 
-        ///// <summary>
-        /////  Количество выполняющихся объектов
-        ///// </summary>
+        /// <summary>
+        ///  Количество выполняющихся объектов
+        /// </summary>
         public int RunningCount
             {
             get
@@ -61,9 +61,9 @@ namespace ActorsCP.Actors.Events
                 }
             }
 
-        ///// <summary>
-        /////  Количество завершенных объектов
-        ///// </summary>
+        /// <summary>
+        ///  Количество завершенных объектов
+        /// </summary>
         public int CompletedCount
             {
             get

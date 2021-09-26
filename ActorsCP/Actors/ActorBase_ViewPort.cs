@@ -163,18 +163,6 @@ namespace ActorsCP.Actors
                 }  // end lock
             }
 
-        /// <summary>
-        /// Отвязка производного объекта от подписчиков
-        /// </summary>
-        /// <param name="childActor">Производный объект</param>
-        //public void UnbindChild(ActorBase childActor)
-        //    {
-        //    lock (Locker)
-        //        {
-        //        _viewPortsContainer?.UnbindChild(childActor);
-        //        }  // end lock
-        //    }
-
         #endregion Методы для привязки/отвязки дочерних объектов созданных при вызове метода Run() и прочее
         } // end class ActorBase
     } // end namespace ActorsCP.Actors
