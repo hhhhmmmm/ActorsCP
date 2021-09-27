@@ -3,7 +3,9 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
+using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -95,6 +97,8 @@ namespace ActorsCP.dotNET.ViewPorts
                 {
                 InvokeSetIcon(NormalIcon);
                 }
+
+            CreateViewPort();
             }
 
         #endregion Конструкторы
@@ -246,6 +250,7 @@ namespace ActorsCP.dotNET.ViewPorts
             //TokenSource.Cancel();
             _resizer.SaveSizeAndPositionInRegistry();
             KillStateTimer();
+            TerminateViewPort();
             SetTitle();
             InternalOnFormClosing(sender, e);
             }

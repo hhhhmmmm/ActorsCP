@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using ActorsCP;
+using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.Tests.TestActors;
 
@@ -21,6 +23,15 @@ namespace ActorsCPFormsRunner
             }
 
         /// <summary>
+        /// Последний актор
+        /// </summary>
+        public ActorBase CreatedActor
+            {
+            get;
+            set;
+            }
+
+        /// <summary>
         /// TestActor_Single
         /// </summary>
         /// <param name="sender"></param>
@@ -28,6 +39,7 @@ namespace ActorsCPFormsRunner
         private void OnSingleTestActorClick(object sender, EventArgs e)
             {
             var actor = new SimpleActor();
+            CreatedActor = actor;
             var form = new TextViewPort(actor, "aaa", MainProgram.MainIcon);
             form.Show();
             }
@@ -66,6 +78,16 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnQueueOfCrowdsClick(object sender, EventArgs e)
             {
+            }
+
+        /// <summary>
+        /// Выполнить актора
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void RunActorButtonClick(object sender, EventArgs e)
+            {
+            await CreatedActor?.RunAsync();
             }
         }
     }

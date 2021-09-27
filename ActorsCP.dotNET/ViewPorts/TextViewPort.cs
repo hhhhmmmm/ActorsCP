@@ -3,7 +3,10 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
+using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -72,5 +75,101 @@ namespace ActorsCP.dotNET.ViewPorts
             _control.AppendText(text);
             ScrollToBottom();
             }
+
+        #region Перегружаемые методы
+
+        /// <summary>
+        /// Обработать как ActorEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected override void InternalProcessAsActorEventArgs(ViewPortItem viewPortItem)
+            {
+            string str = null;
+            var actorEventArgs = viewPortItem.ActorEventArgs;
+            var actor = viewPortItem.Sender;
+
+            switch (actorEventArgs)
+                {
+                case ActorExceptionEventArgs exception:
+                    {
+                    str = "Исключение: " + exception.Exception.ToString();
+                    break;
+                    }
+                case ActorActionEventArgs action:
+                    {
+                    #region Тип события
+
+                    switch (action.ActionEventType)
+                        {
+                        case ActorActionEventType.Debug:
+                            {
+                            str = "Отладка: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Error:
+                            {
+                            str = "Ошибка: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Exception:
+                            {
+                            str = "Исключение: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Neutral:
+                            {
+                            str = "Текст: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Warning:
+                            {
+                            str = "Предупреждение: " + action.MessageText;
+                            break;
+                            }
+                        }
+
+                    #endregion Тип события
+
+                    break;
+                    }
+                default:
+                    {
+                    throw new Exception($"Непонятный тип объекта {actorEventArgs}");
+                    }
+                }
+
+            //if (actorEventArgs is ActorActionEventArgs a)
+            //    {
+            //    str = a.EventDateAsString + ": ";
+            //    }
+            //else
+            //if (actorEventArgs is ActorExceptionEventArgs ex)
+            //    {
+            //    }
+            //else
+            //if (actorEventArgs is ActorSetCountChangedEventArgs c)
+            //    {
+            //    }
+            //else
+            //if (actorEventArgs is ActorStateChangedEventArgs c2)
+            //    {
+            //    }
+            //// else
+            AppendText($"'{actor}', {str}" + Environment.NewLine);
+            }
+
+        /// <summary>
+        /// Обработать как ActorStateChangedEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected override void InternalProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
+            {
+            var ea = viewPortItem.ActorEventArgs;
+            var actor = viewPortItem.Sender;
+
+            AppendText($"Актор: {actor}, событие: {ea}" + Environment.NewLine);
+            }
+
+        #endregion Перегружаемые методы
         }
     }

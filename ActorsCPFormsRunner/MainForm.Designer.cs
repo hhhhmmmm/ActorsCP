@@ -30,9 +30,9 @@ namespace ActorsCPFormsRunner
         private void InitializeComponent()
             {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.CrowdTextBox = new System.Windows.Forms.TextBox();
+            this.CrowdLengthTextBox = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
-            this.QueueTextBox = new System.Windows.Forms.TextBox();
+            this.QueueLegthTextBox = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.SleepTimeTextBox = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
@@ -41,15 +41,16 @@ namespace ActorsCPFormsRunner
             this.CombinedQueueActorButton = new System.Windows.Forms.Button();
             this.CrowdTestActorButton = new System.Windows.Forms.Button();
             this.TestActor_QueueOfCrowdsButton = new System.Windows.Forms.Button();
+            this.RunActorButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // CrowdTextBox
+            // CrowdLengthTextBox
             // 
-            this.CrowdTextBox.Location = new System.Drawing.Point(117, 81);
-            this.CrowdTextBox.Name = "CrowdTextBox";
-            this.CrowdTextBox.Size = new System.Drawing.Size(77, 20);
-            this.CrowdTextBox.TabIndex = 42;
-            this.CrowdTextBox.Text = "10";
+            this.CrowdLengthTextBox.Location = new System.Drawing.Point(117, 81);
+            this.CrowdLengthTextBox.Name = "CrowdLengthTextBox";
+            this.CrowdLengthTextBox.Size = new System.Drawing.Size(77, 20);
+            this.CrowdLengthTextBox.TabIndex = 42;
+            this.CrowdLengthTextBox.Text = "10";
             // 
             // label24
             // 
@@ -60,13 +61,13 @@ namespace ActorsCPFormsRunner
             this.label24.TabIndex = 41;
             this.label24.Text = "Длина толпы:";
             // 
-            // QueueTextBox
+            // QueueLegthTextBox
             // 
-            this.QueueTextBox.Location = new System.Drawing.Point(117, 53);
-            this.QueueTextBox.Name = "QueueTextBox";
-            this.QueueTextBox.Size = new System.Drawing.Size(77, 20);
-            this.QueueTextBox.TabIndex = 40;
-            this.QueueTextBox.Text = "10";
+            this.QueueLegthTextBox.Location = new System.Drawing.Point(117, 53);
+            this.QueueLegthTextBox.Name = "QueueLegthTextBox";
+            this.QueueLegthTextBox.Size = new System.Drawing.Size(77, 20);
+            this.QueueLegthTextBox.TabIndex = 40;
+            this.QueueLegthTextBox.Text = "10";
             // 
             // label23
             // 
@@ -144,19 +145,30 @@ namespace ActorsCPFormsRunner
             this.TestActor_QueueOfCrowdsButton.UseVisualStyleBackColor = true;
             this.TestActor_QueueOfCrowdsButton.Click += new System.EventHandler(this.OnQueueOfCrowdsClick);
             // 
+            // RunActorButton
+            // 
+            this.RunActorButton.Location = new System.Drawing.Point(520, 18);
+            this.RunActorButton.Name = "RunActorButton";
+            this.RunActorButton.Size = new System.Drawing.Size(159, 23);
+            this.RunActorButton.TabIndex = 48;
+            this.RunActorButton.Text = "Выполнить актора";
+            this.RunActorButton.UseVisualStyleBackColor = true;
+            this.RunActorButton.Click += new System.EventHandler(this.RunActorButtonClick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.RunActorButton);
             this.Controls.Add(this.QueueTestActorButton);
             this.Controls.Add(this.CombinedQueueActorButton);
             this.Controls.Add(this.CrowdTestActorButton);
             this.Controls.Add(this.TestActor_QueueOfCrowdsButton);
             this.Controls.Add(this.SingleTestActorButton);
-            this.Controls.Add(this.CrowdTextBox);
+            this.Controls.Add(this.CrowdLengthTextBox);
             this.Controls.Add(this.label24);
-            this.Controls.Add(this.QueueTextBox);
+            this.Controls.Add(this.QueueLegthTextBox);
             this.Controls.Add(this.label23);
             this.Controls.Add(this.SleepTimeTextBox);
             this.Controls.Add(this.label22);
@@ -169,9 +181,9 @@ namespace ActorsCPFormsRunner
             }
 
         #endregion
-        private System.Windows.Forms.TextBox CrowdTextBox;
+        private System.Windows.Forms.TextBox CrowdLengthTextBox;
         private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.TextBox QueueTextBox;
+        private System.Windows.Forms.TextBox QueueLegthTextBox;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.TextBox SleepTimeTextBox;
         private System.Windows.Forms.Label label22;
@@ -180,6 +192,7 @@ namespace ActorsCPFormsRunner
         private System.Windows.Forms.Button CombinedQueueActorButton;
         private System.Windows.Forms.Button CrowdTestActorButton;
         private System.Windows.Forms.Button TestActor_QueueOfCrowdsButton;
+        private System.Windows.Forms.Button RunActorButton;
         }
     }
 

@@ -38,6 +38,11 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         private Task _queueTask;
 
+        /// <summary>
+        /// Обработчик элемента ViewPortItem
+        /// </summary>
+        private IViewPortItemProcessor _iViewPortItemProcessor;
+
         #endregion Приватные мемберы
 
         #region Свойства
@@ -97,6 +102,15 @@ namespace ActorsCP.ViewPorts
         #region Очередь
 
         /// <summary>
+        /// Установить обработчик IViewPortItemProcessor
+        /// </summary>
+        /// <param name="_iViewPortItemProcessor">Обработчик элемента ViewPortItem</param>
+        public void SetIViewPortItemProcessor(IViewPortItemProcessor iViewPortItemProcessor)
+            {
+            _iViewPortItemProcessor = iViewPortItemProcessor;
+            }
+
+        /// <summary>
         /// Цикл обработки сообщений
         /// </summary>
         private void ProcessMessageFromQueueLoop()
@@ -149,6 +163,8 @@ namespace ActorsCP.ViewPorts
                 }
 
             _queue = null;
+
+            _iViewPortItemProcessor = null;
             }
 
         #endregion Очередь
@@ -264,6 +280,8 @@ namespace ActorsCP.ViewPorts
                 }
 
             Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedProcessedMessages);
+
+            _iViewPortItemProcessor?.ProcessViewPortItem(viewPortItem);
 
             if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs)
                 {
