@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 using ActorsCP.Actors;
-using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -24,19 +23,21 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <summary>
         /// Вспомогательный класс для изменения/сохранения/восстановления размера окон
         /// </summary>
-        private Resizer _resizer;
+        private readonly Resizer _resizer;
 
         /// <summary>
         /// Контрол в котором происходит отображение информации
         /// </summary>
-        private Control _childControl;
+        private readonly Control _childControl;
 
         /// <summary>
         /// Базовая строка заголовка
         /// </summary>
-        private string _baseCaption;
+        private readonly string _baseCaption;
 
         #endregion Приватные мемберы
+
+        #region Свойства
 
         /// <summary>
         /// Возвращает объект
@@ -57,6 +58,8 @@ namespace ActorsCP.dotNET.ViewPorts
             get;
             private set;
             }
+
+        #endregion Свойства
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
@@ -325,244 +328,5 @@ namespace ActorsCP.dotNET.ViewPorts
             }
 
         #endregion Функции Invoke
-
-        /// <summary>
-        /// Статистика выполнения
-        /// </summary>
-        //private ExecutionStatistics CurrentExecutionStatistics;
-
-        /// <summary>
-        /// Последняя сохраненная статистика выполнения
-        /// </summary>
-        //private ExecutionStatistics LastSavedExecutionStatistics;
-
-        ///// <summary>
-        ///// Мигающая иконка
-        ///// </summary>
-        //private Icon BlinkingIcon;
-
-        ///// <summary>
-        ///// Время выполнения
-        ///// </summary>
-        //private ActorTime ExecutionTime = default;
-
-        /// <summary>
-        /// Актер начал работу
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void OnActorBeginWorking(object sender, EventArgs e)
-        //    {
-        //    // ExecutionTime.SetStartDate();
-        //    SetImageList();
-        //    //    SetTitle();
-        //    SetIcon();
-        //    }
-
-        /// <summary>
-        /// Актер завершил выполнение
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void OnActorTerminated(object sender, EventArgs e)
-        //    {
-        //    //IGuActor impl = (IGuActor)Actor;
-        //    //impl.ActorBeginWorking -= OnActorBeginWorking;
-        //    //impl.ActorTerminated -= OnActorTerminated;
-
-        //    //this.m_ActionQueue.Enqueue(new ViewPortBaseQueuedAction(QueuedActions.Main_ActorTerminated, sender, e));
-        //    }
-
-        /// <summary>
-        /// Список изображений который, возможно, будет использоваться для отображения
-        /// </summary>
-        //protected ImageList TmpTreeImageList
-        //    {
-        //    get
-        //        {
-        //        return null;//
-        //                    //    TreeImageList;
-        //        }
-        //    }
-
-        /// <summary>
-        /// Прокачать сообщения если поток выполнения - UI
-        /// </summary>
-        /// <returns>true если поток выполнения - UI</returns>
-        //protected static bool DoEvents()
-        //    {
-        //    //       return MessagePumpHelper.DoEvents();
-        //    return true;
-        //    }
-
-        /// <summary>
-        /// Установить заголовок
-        /// </summary>
-        //private void SetTitle()
-        //    {
-        //    string PercentCompleted = this.LastSavedExecutionStatistics.PercentCompleted;
-
-        //    if (MainActorTerminated) // выполнение основного актора завершено
-        //        {
-        //        if (this.LastSavedExecutionStatistics.PercentCompleted100) // завершено строго 100%
-        //            {
-        //            InvokeSetText(PercentCompleted + m_BaseCaption + " - завершено, время выполнения: " + ExecutionTime.ShortTimeInterval);
-        //            }
-        //        else
-        //            {
-        //            InvokeSetText(m_BaseCaption + " - завершено, время выполнения: " + ExecutionTime.ShortTimeInterval);
-        //            }
-        //        return;
-        //        }
-
-        //    if (m_Actor.IsCanceled)
-        //        {
-        //        InvokeSetText(PercentCompleted + m_BaseCaption + " - отменен");
-        //        return;
-        //        }
-        //    if (m_Actor.IsInErrorState)
-        //        {
-        //        InvokeSetText(PercentCompleted + m_BaseCaption + " - ошибка, время выполнения: " + ExecutionTime.ShortTimeInterval);
-        //        return;
-        //        }
-        //    if (m_Actor.IsCompletedSuccessfully)
-        //        {
-        //        InvokeSetText(PercentCompleted + m_BaseCaption + " - завершено, время выполнения: " + ExecutionTime.ShortTimeInterval);
-        //        return;
-        //        }
-
-        //    switch (m_Actor.Status)
-        //        {
-        //        case Actors.GuActorExecutionStatus.Pending:
-        //            {
-        //            this.Text = PercentCompleted + m_BaseCaption;
-        //            break;
-        //            }
-        //        case Actors.GuActorExecutionStatus.Initialized:
-        //        case Actors.GuActorExecutionStatus.Running:
-        //            {
-        //            if (!ExecutionTime.HasStartDate)
-        //                {
-        //                ExecutionTime.SetStartDate();
-        //                }
-        //            ExecutionTime.SetEndDate();
-        //            InvokeSetText(PercentCompleted + m_BaseCaption + " - выполняется, время: " + ExecutionTime.ShortTimeInterval);
-        //            break;
-        //            }
-
-        //        default:
-        //            {
-        //            InvokeSetText(PercentCompleted + m_BaseCaption);
-        //            return;
-        //            }
-        //        }
-        //    }
-
-        #region Добавление/удаление в словарь
-
-        ///// <summary>
-        ///// Ожидание при блокировке бага
-        ///// </summary>
-        //private const int BAG_LOCK_SLEEP = 0;
-
-        ///// <summary>
-        ///// Количество попыток доступа к m_Bag
-        ///// </summary>
-        //private const int BAG_ATTEMPTS = 100;
-
-        ///// <summary>
-        ///// Добавить узел в дерево
-        ///// </summary>
-        ///// <param name="ActorUID">Уникальный идентификатор актора</param>
-        ///// <param name="o"></param>
-        //protected bool AddToBag(Guid ActorUID, IViewPortBaseObject o)
-        //    {
-        //    bool bres = false;
-        //    for (int i = 0; i < BAG_ATTEMPTS; i++)
-        //        {
-        //        bres = m_Bag.TryAdd(ActorUID, o);
-        //        if (bres)
-        //            {
-        //            break;
-        //            }
-        //        Thread.Sleep(BAG_LOCK_SLEEP);
-        //        }
-        //    return bres;
-        //    }
-
-        ///// <summary>
-        ///// Найти узел в дереве по объекту Actors.GuActor
-        ///// </summary>
-        ///// <param name="sender">Отправитель</param>
-        ///// <returns></returns>
-        //protected IViewPortBaseObject FindInTheBag(object sender)
-        //    {
-        //    bool bres = false;
-        //    IViewPortBaseObject tvan = null;
-
-        //    if (sender == null)
-        //        {
-        //        return null;
-        //        }
-
-        //    GuActor actor = sender as GuActor;
-        //    if (actor == null)
-        //        {
-        //        return null;
-        //        }
-
-        //    for (int i = 0; i < BAG_ATTEMPTS; i++)
-        //        {
-        //        bres = m_Bag.TryGetValue(actor.ActorUID, out tvan);
-        //        if (bres)
-        //            {
-        //            break;
-        //            }
-        //        if (!m_Bag.IsEmpty)
-        //            {
-        //            Thread.Sleep(BAG_LOCK_SLEEP);
-        //            }
-        //        }
-
-        //    // if (!bres) { MessageBox.Show("aa"); }
-        //    return bres ? tvan : null;
-        //    }
-
-        #endregion Добавление/удаление в словарь
-
-        /// <summary>
-        /// Получить дополнительный текст для статистики
-        /// </summary>
-        /// <returns></returns>
-        protected virtual string GetAdditionalStatisticsText()
-            {
-            return null;
-            }
-
-        /// <summary>
-        /// Обновить статистику
-        /// </summary>
-        private void SetStatistics()
-            {
-            //if (CurrentExecutionStatistics != LastSavedExecutionStatistics)
-
-            //    {
-            //    LastSavedExecutionStatistics = CurrentExecutionStatistics;
-            //    string Statistics = LastSavedExecutionStatistics.GetStatistics();
-
-            //    string AdditionalStatisticsText = GetAdditionalStatisticsText();
-            //    if (!string.IsNullOrEmpty(AdditionalStatisticsText))
-            //        {
-            //        Statistics = Statistics + ", " + AdditionalStatisticsText;
-            //        }
-
-            //    // System.Diagnostics.Debug.WriteLine(Statistics); UpdatingLabel(Statistics);
-
-            //    if (!StatisticsLabel.Text.Equals(Statistics, StringComparison.OrdinalIgnoreCase))
-            //        {
-            //        StatisticsLabel.Text = Statistics;
-            //        }
-            //    }
-            }
         }
     }

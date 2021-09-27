@@ -64,7 +64,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        private int _N = 0;
+        private readonly int _N = 0;
 
         /// <summary>
         /// Родительский объект
@@ -350,33 +350,33 @@ namespace ActorsCP.Actors
                 {
                 case ActorState.Pending:
                     {
-                    RaiseActorEvent(ActorStates.Pending);
-                    RaiseActorStateChanged(ActorStates.Pending);
+                    //RaiseActorEvent(ActorStates.Pending); // не нужно - возникают дубликаты сообщений
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedPending);
                     break;
                     }
                 case ActorState.Started:
                     {
-                    RaiseActorEvent(ActorStates.Started);
-                    RaiseActorStateChanged(ActorStates.Started);
+                    //RaiseActorEvent(ActorStates.Started); // не нужно - возникают дубликаты сообщений
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedStarted);
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    RaiseActorEvent(ActorStates.Stopped);
-                    RaiseActorStateChanged(ActorStates.Stopped);
+                    //RaiseActorEvent(ActorStates.Stopped); // не нужно - возникают дубликаты сообщений
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedStopped);
 
                     break;
                     }
                 case ActorState.Running:
                     {
-                    RaiseActorEvent(ActorStates.Running);
-                    RaiseActorStateChanged(ActorStates.Running);
+                    //RaiseActorEvent(ActorStates.Running); // не нужно - возникают дубликаты сообщений
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedRunning);
                     break;
                     }
                 case ActorState.Terminated:
                     {
-                    RaiseActorEvent(ActorStates.Terminated);
-                    RaiseActorStateChanged(ActorStates.Terminated);
+                    //RaiseActorEvent(ActorStates.Terminated); // не нужно - возникают дубликаты сообщений
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedTerminated);
                     UnbindAllViewPorts();
                     ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;

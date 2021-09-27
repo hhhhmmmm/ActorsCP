@@ -7,12 +7,15 @@ using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts.TreeViewViewPort
     {
+    /// <summary>
+    ///
+    /// </summary>
     public class BufferedTreeViewViewPort : QueueBufferedActorViewPortBase
         {
-        /// <summary>
-        /// Дерево
-        /// </summary>
-        private FastTreeView m_ActorsTreeView;
+        // <summary>
+        // Дерево
+        // </summary>
+        // private FastTreeView m_ActorsTreeView;
 
         #region Конструкторы
 

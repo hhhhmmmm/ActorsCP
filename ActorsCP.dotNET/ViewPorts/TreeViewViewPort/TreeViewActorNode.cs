@@ -108,6 +108,9 @@ namespace ActorsCP.dotNET.ViewPorts.TreeViewViewPort
             ActorsTreeView.SetImage(ac, Image);
             }
 
+        /// <summary>
+        ///
+        /// </summary>
         public void TryExpandAll()
             {
             if (TreeView == null)

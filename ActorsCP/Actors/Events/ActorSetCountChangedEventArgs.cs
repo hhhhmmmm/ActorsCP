@@ -91,7 +91,7 @@ namespace ActorsCP.Actors.Events
         /// <returns></returns>
         public override string ToString()
             {
-            return $"Waiting: {WaitingCount}, Running={RunningCount}, Completed={CompletedCount}, Total = {TotalCount}, ActorState = {base.State}";
+            return $"ActorSetCountChangedEventArgs: Waiting: {WaitingCount}, Running={RunningCount}, Completed={CompletedCount}, Total = {TotalCount}, State = {State}";
             }
         }
     }

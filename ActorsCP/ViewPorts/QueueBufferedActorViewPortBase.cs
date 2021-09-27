@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -104,7 +105,7 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Установить обработчик IViewPortItemProcessor
         /// </summary>
-        /// <param name="_iViewPortItemProcessor">Обработчик элемента ViewPortItem</param>
+        /// <param name="iViewPortItemProcessor">Обработчик элемента ViewPortItem</param>
         public void SetIViewPortItemProcessor(IViewPortItemProcessor iViewPortItemProcessor)
             {
             _iViewPortItemProcessor = iViewPortItemProcessor;
@@ -119,8 +120,12 @@ namespace ActorsCP.ViewPorts
                 {
                 _queueSemaphoreSlim.Wait(QueueTimeout);
 
-                if (!(_queue.IsEmpty) && _queue.TryDequeue(out ViewPortItem viewPortItem))
+                if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out ViewPortItem viewPortItem))
                     {
+#if DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+                    Debug.WriteLine($"ProcessMessageFromQueueLoop(VPI = {viewPortItem.VPI}):viewPortItem (N={viewPortItem.ActorEventArgs.N}): {viewPortItem.ActorEventArgs.ToString() }");
+#endif // DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+
                     ProcessExtractedMessage(viewPortItem);
                     }
                 else
@@ -229,6 +234,10 @@ namespace ActorsCP.ViewPorts
 
             _queue.Enqueue(viewPortItem);
             _queueSemaphoreSlim.Release();
+
+#if DEBUG_ADD_TO_QUEUE
+            Debug.WriteLine($"Add(VPI = {viewPortItem.VPI})");
+#endif // DEBUG_ADD_TO_QUEUE
             }
 
         #endregion Добавление сообщений
@@ -288,7 +297,7 @@ namespace ActorsCP.ViewPorts
                 ProcessAsActorStateChangedEventArgs(viewPortItem);
                 }
             else
-            if (viewPortItem.ActorEventArgs is ActorEventArgs)
+            if (viewPortItem.ActorEventArgs != null)
                 {
                 ProcessAsActorEventArgs(viewPortItem);
                 }
@@ -355,7 +364,7 @@ namespace ActorsCP.ViewPorts
 
             var ea = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseDebug
             }
 
         /// <summary>
@@ -370,7 +379,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseMessage
             }
 
         /// <summary>
@@ -385,7 +394,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseWarning
             }
 
         /// <summary>
@@ -400,7 +409,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseError
             }
 
         /// <summary>
@@ -415,7 +424,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorExceptionEventArgs(exception);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseException
             }
 
         #endregion Реализация интерфейса IMessageChannel

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -25,6 +26,9 @@ namespace ActorsCP.Actors
         /// <param name="actorEventArgs">Событие</param>
         protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
             {
+#if DEBUG_RAISE_EVENT
+            Debug.WriteLine($"RaiseActorEvent({actorEventArgs})");
+#endif // DEBUG_RAISE_EVENT
             _events?.Invoke(this, actorEventArgs);
             }
 
@@ -34,6 +38,9 @@ namespace ActorsCP.Actors
         /// <param name="actorStateChangedEventArgs">Событие</param>
         protected void RaiseActorStateChanged(ActorStateChangedEventArgs actorStateChangedEventArgs)
             {
+#if DEBUG_RAISE_EVENT
+            Debug.WriteLine($"RaiseActorStateChanged({actorStateChangedEventArgs})");
+#endif // DEBUG_RAISE_EVENT
             _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
             }
 

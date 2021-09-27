@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using ActorsCP;
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.Tests.TestActors;
@@ -39,8 +32,9 @@ namespace ActorsCPFormsRunner
         private void OnSingleTestActorClick(object sender, EventArgs e)
             {
             var actor = new SimpleActor();
+            //actor.SetVerbosity(ActorVerbosity.Off);
             CreatedActor = actor;
-            var form = new TextViewPort(actor, "aaa", MainProgram.MainIcon);
+            var form = new TextViewPort(actor, "Одиночка", MainProgram.MainIcon);
             form.Show();
             }
 
@@ -51,6 +45,15 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnQueueTestActor_Click(object sender, EventArgs e)
             {
+            var queue = new ActorsQueue("Очередь акторов");
+            for (int i = 0; i < 10; i++)
+                {
+                var actor = new SimpleActor();
+                queue.Add(actor);
+                }
+            CreatedActor = queue;
+            var form = new TextViewPort(queue, "Очередь акторов", MainProgram.MainIcon);
+            form.Show();
             }
 
         /// <summary>

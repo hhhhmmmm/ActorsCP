@@ -279,7 +279,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actors">Входящий массив вида HashSet<ActorBase></param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
             {
             var tmp = new ActorBase[actors.Count];
             actors.CopyTo(tmp, 0);
@@ -291,7 +291,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actors">Входящий массив вида ConcurrentContainerT<ActorBase></param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
             {
             var tmp = actors.Items.ToArray();
             return tmp;

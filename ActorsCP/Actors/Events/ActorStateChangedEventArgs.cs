@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace ActorsCP.Actors.Events
@@ -7,6 +8,7 @@ namespace ActorsCP.Actors.Events
     /// <summary>
     ///
     /// </summary>
+    [DebuggerDisplay("N = {N}, State = {State}")]
     public class ActorStateChangedEventArgs : ActorEventArgs
         {
         #region Конструкторы
@@ -35,6 +37,13 @@ namespace ActorsCP.Actors.Events
 
         #endregion Свойства
 
-        //
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            {
+            return "ActorStateChangedEventArgs: State = " + State;
+            }
         } // end class ActorStateChangedEventArgs
     } // end namespace ActorsCP.Actors.Events

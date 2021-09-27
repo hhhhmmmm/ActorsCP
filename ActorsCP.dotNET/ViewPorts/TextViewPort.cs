@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
@@ -11,11 +10,28 @@ using ActorsCP.ViewPorts;
 namespace ActorsCP.dotNET.ViewPorts
     {
     /// <summary>
-    ///
+    /// Текстовый вьюпорт
     /// </summary>
     public sealed class TextViewPort : FormsViewPortBase
         {
+        #region Приватные мемберы
+
+        /// <summary>
+        ///
+        /// </summary>
         private RichTextBox _control = new RichTextBox();
+
+        /// <summary>
+        /// Нормальный шрифт
+        /// </summary>
+        private Font NormalFont = new Font("Courier New Cyr", 12);
+
+        /// <summary>
+        ///
+        /// </summary>
+        private Font SmallFont = new Font("Courier New Cyr", 10);
+
+        #endregion Приватные мемберы
 
         #region Конструкторы
 
@@ -30,6 +46,47 @@ namespace ActorsCP.dotNET.ViewPorts
             }
 
         #endregion Конструкторы
+
+        #region ScrollToBottom
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+        private const int WM_VSCROLL = 277;
+        private const int SB_PAGEBOTTOM = 7;
+
+        /// <summary>
+        /// Прокрутить окно до низу
+        /// </summary>
+        private void ScrollToBottom()
+            {
+            SendMessage(_control.Handle, WM_VSCROLL, (IntPtr)SB_PAGEBOTTOM, IntPtr.Zero);
+            _control.SelectionStart = _control.Text.Length;
+            }
+
+        #endregion ScrollToBottom
+
+        /// <summary>
+        /// Добавить текст в контрол
+        /// </summary>
+        /// <param name="text">текст</param>
+        /// <param name="color">цвет текста</param>
+        /// <param name="font">шрифт</param>
+        private void AppendText(string text, Color color, Font font = null)
+            {
+            Invoke(new MethodInvoker(delegate
+            {
+                _control.SelectionStart = _control.TextLength;
+                _control.SelectionLength = 0;
+                _control.SelectionFont = font ?? NormalFont;
+                _control.SelectionColor = color;
+                _control.AppendText(text);
+                _control.SelectionColor = _control.ForeColor;
+                ScrollToBottom();
+                }));
+            }
+
+        #region Перегружаемые методы
 
         /// <summary>
         /// Создать дочерний элемент управления
@@ -50,33 +107,8 @@ namespace ActorsCP.dotNET.ViewPorts
             _control.HideSelection = false;//Hide selection so that AppendText will auto scroll to the end
             _control.BorderStyle = BorderStyle.FixedSingle;
 
-            //for (int i = 0; i < 1000; i++)
-            //    {
-            //    AppendText(i.ToString() + "\r\n");
-            //    }
-
             return _control;
             }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
-
-        private const int WM_VSCROLL = 277;
-        private const int SB_PAGEBOTTOM = 7;
-
-        private void ScrollToBottom()
-            {
-            SendMessage(_control.Handle, WM_VSCROLL, (IntPtr)SB_PAGEBOTTOM, IntPtr.Zero);
-            _control.SelectionStart = _control.Text.Length;
-            }
-
-        private void AppendText(string text)
-            {
-            _control.AppendText(text);
-            ScrollToBottom();
-            }
-
-        #region Перегружаемые методы
 
         /// <summary>
         /// Обработать как ActorEventArgs
@@ -84,15 +116,19 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="viewPortItem">Данные</param>
         protected override void InternalProcessAsActorEventArgs(ViewPortItem viewPortItem)
             {
+            Color color = Color.Black;
+
             string str = null;
             var actorEventArgs = viewPortItem.ActorEventArgs;
             var actor = viewPortItem.Sender;
 
+            str = actorEventArgs.EventDateAsString + " ";
             switch (actorEventArgs)
                 {
                 case ActorExceptionEventArgs exception:
                     {
-                    str = "Исключение: " + exception.Exception.ToString();
+                    color = Color.Red;
+                    str = str + "Исключение: " + exception.Exception.ToString();
                     break;
                     }
                 case ActorActionEventArgs action:
@@ -103,27 +139,32 @@ namespace ActorsCP.dotNET.ViewPorts
                         {
                         case ActorActionEventType.Debug:
                             {
-                            str = "Отладка: " + action.MessageText;
+                            color = Color.Gray;
+                            str = str + "Отладка: " + action.MessageText;
                             break;
                             }
                         case ActorActionEventType.Error:
                             {
-                            str = "Ошибка: " + action.MessageText;
+                            color = Color.Red;
+                            str = str + "Ошибка: " + action.MessageText;
                             break;
                             }
                         case ActorActionEventType.Exception:
                             {
-                            str = "Исключение: " + action.MessageText;
+                            color = Color.Red;
+                            str = str + "Исключение: " + action.MessageText;
                             break;
                             }
                         case ActorActionEventType.Neutral:
                             {
-                            str = "Текст: " + action.MessageText;
+                            color = Color.Green;
+                            str = str + " " + action.MessageText;
                             break;
                             }
                         case ActorActionEventType.Warning:
                             {
-                            str = "Предупреждение: " + action.MessageText;
+                            color = Color.Orange;
+                            str = str + "Предупреждение: " + action.MessageText;
                             break;
                             }
                         }
@@ -138,24 +179,7 @@ namespace ActorsCP.dotNET.ViewPorts
                     }
                 }
 
-            //if (actorEventArgs is ActorActionEventArgs a)
-            //    {
-            //    str = a.EventDateAsString + ": ";
-            //    }
-            //else
-            //if (actorEventArgs is ActorExceptionEventArgs ex)
-            //    {
-            //    }
-            //else
-            //if (actorEventArgs is ActorSetCountChangedEventArgs c)
-            //    {
-            //    }
-            //else
-            //if (actorEventArgs is ActorStateChangedEventArgs c2)
-            //    {
-            //    }
-            //// else
-            AppendText($"'{actor}', {str}" + Environment.NewLine);
+            AppendText(str + Environment.NewLine, color);
             }
 
         /// <summary>
@@ -164,10 +188,33 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="viewPortItem">Данные</param>
         protected override void InternalProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
             {
-            var ea = viewPortItem.ActorEventArgs;
+            Color color = Color.Blue;
+
+            string str = null;
+            var actorEventArgs = viewPortItem.ActorEventArgs;
             var actor = viewPortItem.Sender;
 
-            AppendText($"Актор: {actor}, событие: {ea}" + Environment.NewLine);
+            str = actorEventArgs.EventDateAsString + " ";
+
+            switch (actorEventArgs)
+                {
+                case ActorSetCountChangedEventArgs c:
+                    {
+                    str = str + " " + $"W: {c.WaitingCount} R: {c.RunningCount} C: {c.CompletedCount} + T {c.TotalCount}";
+                    break;
+                    }
+                case ActorStateChangedEventArgs e:
+                    {
+                    str = str + " " + e.State;
+                    break;
+                    }
+                default:
+                    {
+                    throw new Exception($"Непонятный тип объекта {actorEventArgs}");
+                    }
+                }
+
+            AppendText($"  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
             }
 
         #endregion Перегружаемые методы

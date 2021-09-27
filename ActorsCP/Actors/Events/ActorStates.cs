@@ -11,7 +11,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Ожидание запуска - начальное состояние
         /// </summary>
-        public static ActorStateChangedEventArgs Pending
+        public static ActorStateChangedEventArgs ActorStateChangedPending
             {
             get;
             } = new ActorStateChangedEventArgs(ActorState.Pending);
@@ -19,31 +19,31 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Переведен в состояние работы
         /// </summary>
-        public static ActorStateChangedEventArgs Started
+        public static ActorStateChangedEventArgs ActorStateChangedStarted
             {
             get;
             } = new ActorStateChangedEventArgs(ActorState.Started);
 
         /// <summary>
-        /// Работает
-        /// </summary>
-        public static ActorStateChangedEventArgs Stopped
-            {
-            get;
-            } = new ActorStateChangedEventArgs(ActorState.Stopped);
-
-        /// <summary>
         /// Остановлен
         /// </summary>
-        public static ActorStateChangedEventArgs Running
+        public static ActorStateChangedEventArgs ActorStateChangedRunning
             {
             get;
             } = new ActorStateChangedEventArgs(ActorState.Running);
 
         /// <summary>
+        /// Работает
+        /// </summary>
+        public static ActorStateChangedEventArgs ActorStateChangedStopped
+            {
+            get;
+            } = new ActorStateChangedEventArgs(ActorState.Stopped);
+
+        /// <summary>
         /// Завершен навсегда
         /// </summary>
-        public static ActorStateChangedEventArgs Terminated
+        public static ActorStateChangedEventArgs ActorStateChangedTerminated
             {
             get;
             } = new ActorStateChangedEventArgs(ActorState.Terminated);

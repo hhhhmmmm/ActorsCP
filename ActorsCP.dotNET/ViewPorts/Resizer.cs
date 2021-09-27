@@ -102,11 +102,11 @@ namespace ActorsCP.dotNET.ViewPorts
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
+        private static extern bool GetWindowRect(HandleRef hWnd, out Rect lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SystemParametersInfo(Int32 uAction, Int32 uParam, ref RECT lpvParam, Int32 fuWinIni);
+        private static extern bool SystemParametersInfo(Int32 uAction, Int32 uParam, ref Rect lpvParam, Int32 fuWinIni);
 
         private const Int32 SPI_GETWORKAREA = 48;
 
@@ -114,7 +114,7 @@ namespace ActorsCP.dotNET.ViewPorts
         private static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        private struct Rect
             {
             public int Left;        // x position of upper-left corner
             public int Top;         // y position of upper-left corner
@@ -213,7 +213,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 return false;
                 }
 
-            RECT WindowRect;
+            Rect WindowRect;
             if (!GetWindowRect(new HandleRef(ControlledForm, ControlledForm.Handle), out WindowRect))
                 {
                 return false;
@@ -331,7 +331,7 @@ namespace ActorsCP.dotNET.ViewPorts
 
             int iScreenWidth, iScreenHeight;
 
-            RECT ScreenRect = new RECT();
+            Rect ScreenRect = new Rect();
 
             SystemParametersInfo(SPI_GETWORKAREA, 0, ref ScreenRect, 0);
 

@@ -22,7 +22,7 @@ namespace ActorsCP.Options
             {
             if (string.IsNullOrEmpty(key))
                 {
-                throw new ArgumentNullException($"Значение key не может быть null или пустой строкой");
+                throw new ArgumentNullException(nameof(key), "Значение key не может быть null или пустой строкой");
                 }
             _bag.AddOrUpdate(key, newValue, (_key, oldValue) => newValue);
             }

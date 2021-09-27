@@ -17,7 +17,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Счетчик
         /// </summary>
-        private ActorTime _actorTime = default(ActorTime);
+        private ActorTime _actorTime = default;
 
         /// <summary>
         /// Делегат который будет вызван по завершении жизни
