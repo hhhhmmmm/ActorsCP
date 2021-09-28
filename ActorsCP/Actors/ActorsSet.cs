@@ -350,26 +350,6 @@ namespace ActorsCP.Actors
             RaiseActorsSetChanged(this);
             }
 
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <returns></returns>
-        //protected override Task<bool> InternalStartAsync()
-        //    {
-        //    //RaiseActorsSetChanged(this);
-        //    return CompletedTaskBoolTrue;
-        //    }
-
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <returns></returns>
-        //protected override Task<bool> InternalStopAsync()
-        //    {
-        //    //RaiseActorsSetChanged(this);
-        //    return CompletedTaskBoolTrue;
-        //    }
-
         /// <summary>
         /// Полная и окончательная остановка
         /// </summary>
@@ -579,21 +559,7 @@ namespace ActorsCP.Actors
                     }
                 case ActorState.Stopped:
                     {
-                    if (actor.RunOnlyOnce)
-                        {
-                        if (!_completed.Contains(actor))
-                            {
-                            if (actor.State != ActorState.Terminated)
-                                {
-                                await actor.TerminateAsync().ConfigureAwait(false);
-                                }
-                            else
-                                {
-                                MoveToCompleted(actor);
-                                }
-                            }
-                        }
-                    else
+                    if (!actor.RunOnlyOnce)
                         {
                         MoveToWaiting(actor);
                         }

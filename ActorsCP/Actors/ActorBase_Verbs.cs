@@ -222,7 +222,10 @@ namespace ActorsCP.Actors
                         OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
                         }
                     SetActorState(ActorState.Stopped);
-                    AfterStateChanged();
+                    if (State != ActorState.Terminated)
+                        {
+                        AfterStateChanged();
+                        }
                     return true;
                     }
                 return false;
@@ -324,6 +327,11 @@ namespace ActorsCP.Actors
                         {
                         return false;
                         }
+                    }
+
+                if (AnErrorOccurred)
+                    {
+                    return false;
                     }
 
                 return runtask.Result;

@@ -335,7 +335,7 @@ namespace ActorsCP.Actors
         /// Установить новое состояние объекта
         /// </summary>
         /// <param name="newState">новое состояние объекта</param>
-        protected void SetActorState(ActorState newState)
+        protected async void SetActorState(ActorState newState)
             {
             if (State == newState)
                 {
@@ -347,40 +347,36 @@ namespace ActorsCP.Actors
                 throw new InvalidOperationException($"Актор {Name} находится в состоянии Terminated, изменение состояния невозможно");
                 }
 
-            ActorState _previousState = State;
-
             State = newState;
 
             switch (State)
                 {
                 case ActorState.Pending:
                     {
-                    //RaiseActorEvent(ActorStates.Pending); // не нужно - возникают дубликаты сообщений
                     RaiseActorStateChanged(ActorStates.ActorStateChangedPending);
                     break;
                     }
                 case ActorState.Started:
                     {
-                    //RaiseActorEvent(ActorStates.Started); // не нужно - возникают дубликаты сообщений
                     RaiseActorStateChanged(ActorStates.ActorStateChangedStarted);
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    //RaiseActorEvent(ActorStates.Stopped); // не нужно - возникают дубликаты сообщений
                     RaiseActorStateChanged(ActorStates.ActorStateChangedStopped);
-
+                    if (RunOnlyOnce) // если объект запускается только один раз, то нужно его сразу завершить
+                        {
+                        await TerminateAsync().ConfigureAwait(false);
+                        }
                     break;
                     }
                 case ActorState.Running:
                     {
-                    //RaiseActorEvent(ActorStates.Running); // не нужно - возникают дубликаты сообщений
                     RaiseActorStateChanged(ActorStates.ActorStateChangedRunning);
                     break;
                     }
                 case ActorState.Terminated:
                     {
-                    //RaiseActorEvent(ActorStates.Terminated); // не нужно - возникают дубликаты сообщений
                     RaiseActorStateChanged(ActorStates.ActorStateChangedTerminated);
                     UnbindAllViewPorts();
                     ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
