@@ -1,4 +1,4 @@
-﻿#define DEBUG_RAISE_EVENT
+﻿// #define DEBUG_RAISE_EVENT
 
 using System.Globalization;
 using System.Text;
@@ -29,9 +29,9 @@ namespace ActorsCP.Actors
         /// <param name="actorEventArgs">Событие</param>
         protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
             {
-#if DEBUG_RAISE_EVENT
-            Logger.LogDebug($"RaiseActorEvent({actorEventArgs})");
-#endif // DEBUG_RAISE_EVENT
+            //#if DEBUG_RAISE_EVENT
+            //            Logger.LogDebug($"RaiseActorEvent({actorEventArgs})");
+            //#endif // DEBUG_RAISE_EVENT
             _events?.Invoke(this, actorEventArgs);
             }
 
@@ -52,9 +52,9 @@ namespace ActorsCP.Actors
                 throw new InvalidOperationException("Событие ActorStateChangedEventArgs(ActorState.Terminated) уже было отправлено");
                 }
 
-#if DEBUG_RAISE_EVENT
-            Logger.LogDebug($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
-#endif // DEBUG_RAISE_EVENT
+            //#if DEBUG_RAISE_EVENT
+            //            Logger.LogDebug($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
+            //#endif // DEBUG_RAISE_EVENT
             _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
 
             if (actorStateChangedEventArgs.State == ActorState.Terminated)

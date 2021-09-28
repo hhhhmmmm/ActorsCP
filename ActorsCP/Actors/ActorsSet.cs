@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Linq;
 
-#if DEBUG
+// #if DEBUG
 // #define DEBUG_TRACK_MOVES
-#endif // DEBUG
+// #endif // DEBUG
 
 using System;
 using System.Collections.Generic;

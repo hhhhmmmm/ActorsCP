@@ -52,9 +52,9 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="viewPortItem">элемент типа ViewPortItem</param>
         public void ProcessViewPortItem(ViewPortItem viewPortItem)
             {
-#if DEBUG
-            Logger.LogInfo($"FormsViewPortBase:ProcessViewPortItem(): {viewPortItem.ActorEventArgs}");
-#endif // DEBUG
+            //#if DEBUG
+            //            Logger.LogInfo($"FormsViewPortBase:ProcessViewPortItem(): {viewPortItem.ActorEventArgs}");
+            //#endif // DEBUG
 
             if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs)
                 {

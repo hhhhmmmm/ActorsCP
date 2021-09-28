@@ -67,7 +67,7 @@ namespace ActorsCP.dotNET.ViewPorts
 
         #endregion ScrollToBottom
 
-        private object Locker = new object();
+        // private object Locker = new object();
 
         /// <summary>
         /// Добавить текст в контрол
@@ -77,22 +77,22 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="font">шрифт</param>
         private void AppendText(string text, Color color, Font font = null)
             {
-#if DEBUG
-            Logger.LogInfo($"TextViewPort:AppendText(): {text}");
-#endif // DEBUG
+            //#if DEBUG
+            //            Logger.LogInfo($"TextViewPort:AppendText(): {text}");
+            //#endif // DEBUG
 
             Invoke(new MethodInvoker(delegate
             {
-                lock (Locker)
-                    {
-                    _control.SelectionStart = _control.TextLength;
-                    _control.SelectionLength = 0;
-                    _control.SelectionFont = font ?? NormalFont;
-                    _control.SelectionColor = color;
-                    _control.AppendText(text);
-                    _control.SelectionColor = _control.ForeColor;
-                    ScrollToBottom();
-                    }
+                //  lock (Locker)
+                //      {
+                _control.SelectionStart = _control.TextLength;
+                _control.SelectionLength = 0;
+                _control.SelectionFont = font ?? NormalFont;
+                _control.SelectionColor = color;
+                _control.AppendText(text);
+                _control.SelectionColor = _control.ForeColor;
+                ScrollToBottom();
+                //     }
                 }));
             }
 
@@ -188,8 +188,9 @@ namespace ActorsCP.dotNET.ViewPorts
                     throw new Exception($"Непонятный тип объекта {actorEventArgs}");
                     }
                 }
-            int AEA = viewPortItem.ActorEventArgs.AEA;
+            // int AEA = viewPortItem.ActorEventArgs.AEA;
             // AppendText($" AEA_{AEA}, " + str + Environment.NewLine, color);
+            AppendText(str + Environment.NewLine, color);
             }
 
         /// <summary>
@@ -223,8 +224,9 @@ namespace ActorsCP.dotNET.ViewPorts
                     throw new Exception($"Непонятный тип объекта {actorEventArgs}");
                     }
                 }
-            int AEA = viewPortItem.ActorEventArgs.AEA;
-            AppendText($" AEA_{AEA},  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
+            // int AEA = viewPortItem.ActorEventArgs.AEA;
+            // AppendText($" AEA_{AEA},  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
+            AppendText($"{actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
             }
 
         #endregion Перегружаемые методы

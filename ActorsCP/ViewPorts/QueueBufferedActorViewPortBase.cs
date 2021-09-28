@@ -1,5 +1,5 @@
-﻿#define DEBUG_ADD_TO_QUEUE
-#define DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+﻿// #define DEBUG_ADD_TO_QUEUE
+// #define DEBUG_PROCESSMESSAGEFROMQUEUELOOP
 
 using System;
 using System.Collections.Concurrent;
@@ -137,11 +137,11 @@ namespace ActorsCP.ViewPorts
 
                 if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out ViewPortItem viewPortItem))
                     {
-#if DEBUG_PROCESSMESSAGEFROMQUEUELOOP
-                    var str = $"ProcessMessageFromQueueLoop(VPI_{viewPortItem.VPI}):viewPortItem (AEA_{viewPortItem.ActorEventArgs.AEA}): {viewPortItem.ActorEventArgs.ToString() }";
-                    Logger.LogDebug(str);
-                    Debug.WriteLine(str);
-#endif // DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+                    //#if DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+                    //                    var str = $"ProcessMessageFromQueueLoop(VPI_{viewPortItem.VPI}):viewPortItem (AEA_{viewPortItem.ActorEventArgs.AEA}): {viewPortItem.ActorEventArgs.ToString() }";
+                    //                    Logger.LogDebug(str);
+                    //                    Debug.WriteLine(str);
+                    //#endif // DEBUG_PROCESSMESSAGEFROMQUEUELOOP
 
                     ProcessExtractedMessage(viewPortItem);
                     }
@@ -252,11 +252,11 @@ namespace ActorsCP.ViewPorts
             _queue.Enqueue(viewPortItem);
             _queueSemaphoreSlim.Release();
 
-#if DEBUG_ADD_TO_QUEUE
-            var str = $"Add(VPI_{viewPortItem.VPI}, AEA_{viewPortItem.ActorEventArgs.AEA} )";
-            Logger.LogDebug(str);
-            Debug.WriteLine(str);
-#endif // DEBUG_ADD_TO_QUEUE
+            //#if DEBUG_ADD_TO_QUEUE
+            //            var str = $"Add(VPI_{viewPortItem.VPI}, AEA_{viewPortItem.ActorEventArgs.AEA} )";
+            //            Logger.LogDebug(str);
+            //            Debug.WriteLine(str);
+            //#endif // DEBUG_ADD_TO_QUEUE
             }
 
         #endregion Добавление сообщений

@@ -1,6 +1,6 @@
-﻿#if DEBUG
+﻿// #if DEBUG
 // #define DEBUG_BIND_UNBIND
-#endif // DEBUG
+// #endif // DEBUG
 
 using System;
 
