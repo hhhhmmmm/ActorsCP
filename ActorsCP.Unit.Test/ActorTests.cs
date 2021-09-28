@@ -127,7 +127,7 @@ namespace ActorsCP.Unit.Test
                 Assert.AreEqual(exCleanup.State, ActorState.Terminated);
                 Assert.IsTrue(exCleanup.AnErrorOccurred);
                 }
-            catch (Exception e)
+            catch (Exception)
                 {
                 }
             }

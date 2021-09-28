@@ -144,13 +144,13 @@ namespace ActorsCP.Actors
                 {
                 if (IsTerminated)
                     {
-                    OnActorActionError("Попытка запуска завершенного объекта");
+                    OnActorActionError($"Попытка запуска завершенного '{Name}'");
                     return false;
                     }
 
                 if (IsCancellationRequested)
                     {
-                    OnActorActionError("Выполнение объекта отменено");
+                    OnActorActionError($"Выполнение '{Name}' отменено");
                     return false;
                     }
 
@@ -161,7 +161,7 @@ namespace ActorsCP.Actors
 
                 if ((Verbosity & ActorVerbosity.Starting) != 0)
                     {
-                    OnActorAction($"Запуск {Name}...");
+                    OnActorAction($"Запуск '{Name}'...");
                     }
 
                 var bres = await InternalStartAsync().ConfigureAwait(false);
@@ -171,11 +171,11 @@ namespace ActorsCP.Actors
                     AfterStateChanged();
                     if ((Verbosity & ActorVerbosity.Started) != 0)
                         {
-                        OnActorAction($"{Name} успешно запущен");
+                        OnActorAction($"'{Name}' успешно запущен");
                         }
                     return true;
                     }
-                OnActorActionError($"Ошибка запуска {Name}");
+                OnActorActionError($"Ошибка запуска '{Name}'");
                 return false;
                 }
             catch (Exception e)
@@ -196,7 +196,7 @@ namespace ActorsCP.Actors
                 {
                 if (IsTerminated && (IsStarted || IsRunning))
                     {
-                    OnActorActionError("Попытка остановки завершенного объекта");
+                    OnActorActionError($"Попытка остановки завершенного '{Name}'");
                     return false;
                     }
 
@@ -212,14 +212,14 @@ namespace ActorsCP.Actors
 
                 if ((Verbosity & ActorVerbosity.Stopping) != 0)
                     {
-                    OnActorAction($"Остановка {Name}...");
+                    OnActorAction($"Остановка '{Name}'...");
                     }
                 var bres = await InternalStopAsync().ConfigureAwait(false);
                 if (bres)
                     {
                     if ((Verbosity & ActorVerbosity.Stopped) != 0)
                         {
-                        OnActorAction($"{Name} остановлен {ExecutionTime.TimeIntervalWithComment}");
+                        OnActorAction($"'{Name}' остановлен {ExecutionTime.TimeIntervalWithComment}");
                         }
                     SetActorState(ActorState.Stopped);
                     if (State != ActorState.Terminated)
@@ -291,7 +291,7 @@ namespace ActorsCP.Actors
 
                 Task<bool> runtask;
                 var suppressOutput = (Verbosity & ActorVerbosity.Running) == 0 ? true : false;
-                using (var gt = new ActorDisposableTime($" - выполнения '{Name}'", OnActorAction, suppressOutput))
+                using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction, suppressOutput))
                     {
                     _executionTime.SetStartDate();
                     SetActorState(ActorState.Running);

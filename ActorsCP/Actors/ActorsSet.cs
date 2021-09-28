@@ -526,7 +526,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
+        private void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
             {
             if (e is ActorSetCountChangedEventArgs) // события изменения состояния набора не интересны
                 {

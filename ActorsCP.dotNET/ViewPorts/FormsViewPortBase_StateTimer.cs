@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActorsCP.Actors;
 using System.Windows.Forms;
+using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -11,6 +12,21 @@ namespace ActorsCP.dotNET.ViewPorts
     /// </summary>
     partial class FormsViewPortBase
         {
+        /// <summary>
+        /// Время выполнения
+        /// </summary>
+        private ActorTime _executionTime = default;
+
+        /// <summary>
+        /// Статистика выполнения
+        /// </summary>
+        private ExecutionStatistics _currentExecutionStatistics;
+
+        /// <summary>
+        /// Последняя сохраненная статистика выполнения
+        /// </summary>
+        private ExecutionStatistics _lastSavedExecutionStatistics;
+
         /// <summary>
         /// Таймер событий (для отрисовки всех событий излучаемых акторами)
         /// </summary>
@@ -54,7 +70,41 @@ namespace ActorsCP.dotNET.ViewPorts
         private void OnStateTimer(object sender, EventArgs e)
             {
             TimerSwitch = !TimerSwitch;
+            _currentExecutionStatistics = _viewPort.СurrentExecutionStatistics;
             SetTitle();
+            SetStatistics(); // OnStateTimer
+            }
+
+        /// <summary>
+        /// Получить дополнительный текст для статистики
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string GetAdditionalStatisticsText()
+            {
+            return null;
+            }
+
+        /// <summary>
+        /// Обновить статистику
+        /// </summary>
+        private void SetStatistics()
+            {
+            if (_currentExecutionStatistics != _lastSavedExecutionStatistics)
+                {
+                _lastSavedExecutionStatistics = _currentExecutionStatistics;
+                string statistics = _lastSavedExecutionStatistics.GetStatistics();
+
+                string additionalStatisticsText = GetAdditionalStatisticsText();
+                if (!string.IsNullOrEmpty(additionalStatisticsText))
+                    {
+                    statistics = statistics + ", " + additionalStatisticsText;
+                    }
+
+                if (!StatisticsLabel.Text.Equals(statistics, StringComparison.OrdinalIgnoreCase))
+                    {
+                    StatisticsLabel.Text = statistics;
+                    }
+                }
             }
         }
     }

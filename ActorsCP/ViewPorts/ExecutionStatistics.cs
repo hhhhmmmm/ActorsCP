@@ -132,6 +132,55 @@ namespace ActorsCP.ViewPorts
         #region Свойства
 
         /// <summary>
+        /// Добавить кусок статистики
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="prefix"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        private void AddStatistics(StringBuilder sb, string prefix, string name, int value)
+            {
+            if (value == 0)
+                {
+                return;
+                }
+            if (!string.IsNullOrEmpty(prefix))
+                {
+                sb.Append(prefix);
+                sb.Append(" ");
+                }
+            sb.Append(name);
+            sb.Append(" - ");
+            sb.Append(value);
+            }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public string GetStatistics()
+            {
+            var sb = new StringBuilder();
+            sb.Append("Рабочих объектов: ");
+
+            AddStatistics(sb, "", "привязано", TotalBoundObjects);
+            AddStatistics(sb, ",", "запущено", StartedObjects);
+            AddStatistics(sb, ",", "работают", RunningObjects);
+            AddStatistics(sb, ",", "остановлено", StoppedObjects);
+            AddStatistics(sb, ",", "завершено", TerminatedObjects);
+            AddStatistics(sb, ",", "отвязано", TotalUnboundObjects);
+
+            AddStatistics(sb, ",", "исключений", Exceptions);
+            AddStatistics(sb, ",", "ошибок", Errors);
+
+            AddStatistics(sb, ",", "изменений состояния", StateChanged);
+            AddStatistics(sb, ",", "БС: добавлено", BufferedAddedMessages);
+            AddStatistics(sb, ",", "БС: обработано", BufferedProcessedMessages);
+
+            return sb.ToString();
+            }
+
+        /// <summary>
         /// Статистика в виде текста
         /// </summary>
         public string TextStatistics

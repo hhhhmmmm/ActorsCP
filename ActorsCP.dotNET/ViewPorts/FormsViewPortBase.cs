@@ -137,40 +137,96 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         private void SetTitle()
             {
-            string title = _baseCaption;
+            var percentCompleted = _lastSavedExecutionStatistics.PercentCompleted;
+
+            #region Отменен
+
+            if (Actor.IsCancellationRequested)
+                {
+                InvokeSetText(percentCompleted + _baseCaption + " - отменен");
+                return;
+                }
+
+            #endregion Отменен
+
+            #region Ошибка
+
+            if (Actor.AnErrorOccurred)
+                {
+                InvokeSetText(percentCompleted + _baseCaption + " - ошибка, время: " + Actor.ExecutionTime.ShortTimeInterval);
+                return;
+                }
+
+            #endregion Ошибка
+
+            #region Завершен
+
+            if (Actor.IsTerminated)
+                {
+                string title1 = null;
+                if (_lastSavedExecutionStatistics.PercentCompleted100) // завершено строго 100%
+                    {
+                    title1 = percentCompleted + _baseCaption + " - завершено, время: " + Actor.ExecutionTime.ShortTimeInterval;
+                    }
+                else
+                    {
+                    title1 = _baseCaption + " - завершено, время: " + Actor.ExecutionTime.ShortTimeInterval;
+                    }
+
+                InvokeSetText(title1);
+
+                return;
+                }
+
+            #endregion Завершен
+
+            var title2 = _baseCaption;
             switch (_actor.State)
                 {
                 case ActorState.Pending:
                     {
-                    title = _baseCaption + "- ожидание";
-                    break;
-                    }
-                case ActorState.Running:
-                    {
-                    title = _baseCaption + "- работает";
+                    title2 = percentCompleted + _baseCaption + " - ожидание";
                     break;
                     }
                 case ActorState.Started:
                     {
-                    title = _baseCaption + "- запущен";
+                    if (!_executionTime.HasStartDate)
+                        {
+                        _executionTime.SetStartDate();
+                        }
+                    _executionTime.SetEndDate();
+                    title2 = percentCompleted + _baseCaption + " - запущен";
+                    break;
+                    }
+                case ActorState.Running:
+                    {
+                    if (!_executionTime.HasStartDate)
+                        {
+                        _executionTime.SetStartDate();
+                        }
+                    _executionTime.SetEndDate();
+                    title2 = percentCompleted + _baseCaption + " - работает, время: " + _executionTime.ShortTimeInterval;
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    title = _baseCaption + "- остановлен";
+                    if (!_executionTime.HasStartDate)
+                        {
+                        _executionTime.SetStartDate();
+                        }
+                    _executionTime.SetEndDate();
+                    title2 = _baseCaption + " - остановлен";
                     break;
                     }
-                case ActorState.Terminated:
+
+                default:
                     {
-                    title = _baseCaption + "- завершен";
-                    break;
+                    InvokeSetText(percentCompleted + _baseCaption);
+                    return;
                     }
                 }
 
-            if (!Text.Equals(title))
-                {
-                InvokeSetText(title);
-                }
+            InvokeSetText(title2);
             }
 
         #region Реализация интерфейса IGuCancellationSource
@@ -235,6 +291,7 @@ namespace ActorsCP.dotNET.ViewPorts
         private void OnLoad(object sender, EventArgs e)
             {
             _resizer.ApplyAndSaveSizeAndPositionFromRegistry();
+            SetStatistics(); // OnLoad
             InternalOnLoad(sender, e);
             }
 
@@ -252,7 +309,7 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="sender">Отправитель</param>
         /// <param name="e"></param>
-        protected void OnFormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
             {
             if (Actor.State != ActorState.Terminated)
             //if (Actor.State == ActorState.Started || Actor.State == ActorState.Running || Actor.State == ActorState.Stopped)
@@ -326,6 +383,10 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="text"></param>
         private void InvokeSetText(string text)
             {
+            if (Text.Equals(text))
+                {
+                return;
+                }
             if (InvokeRequired)
                 {
                 Invoke(new MethodInvoker(delegate
