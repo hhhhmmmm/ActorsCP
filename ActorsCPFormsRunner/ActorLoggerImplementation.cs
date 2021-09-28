@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+
 using ActorsCP.Logger;
+
 using NLog;
 
-namespace ActorsCPConsoleRunner
+namespace ActorsCPFormsRunner
     {
     /// <summary>
     /// Реализация логгера

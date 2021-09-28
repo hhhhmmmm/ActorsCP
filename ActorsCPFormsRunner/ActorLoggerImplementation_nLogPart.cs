@@ -13,7 +13,7 @@ using NLog.Layouts;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 
-namespace ActorsCPConsoleRunner
+namespace ActorsCPFormsRunner
     {
     /// <summary>
     /// Релизация логгера через NLog

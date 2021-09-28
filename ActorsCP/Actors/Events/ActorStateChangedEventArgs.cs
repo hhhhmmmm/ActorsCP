@@ -8,7 +8,7 @@ namespace ActorsCP.Actors.Events
     /// <summary>
     ///
     /// </summary>
-    [DebuggerDisplay("N = {N}, State = {State}")]
+    [DebuggerDisplay("AEA = {AEA}, State = {State}")]
     public class ActorStateChangedEventArgs : ActorEventArgs
         {
         #region Конструкторы

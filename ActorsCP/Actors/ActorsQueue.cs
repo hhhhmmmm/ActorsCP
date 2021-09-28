@@ -19,7 +19,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return "Очередь " + N; // остальные - медленно
+                return "Очередь_" + ABN; // остальные - медленно
                 }
             }
 

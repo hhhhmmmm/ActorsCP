@@ -1,5 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿// #define DEBUG_RAISE_EVENT
+
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -33,15 +34,31 @@ namespace ActorsCP.Actors
             }
 
         /// <summary>
+        /// Событие ActorState.Terminated отправлено
+        /// По идее после него не должно быть ни одного сообщения
+        /// </summary>
+        private bool _terminateEventRaised;
+
+        /// <summary>
         /// Выкинуть событие - изменилось состояние объекта
         /// </summary>
         /// <param name="actorStateChangedEventArgs">Событие</param>
         protected void RaiseActorStateChanged(ActorStateChangedEventArgs actorStateChangedEventArgs)
             {
+            if (_terminateEventRaised)
+                {
+                throw new InvalidOperationException("Событие ActorStateChangedEventArgs(ActorState.Terminated) уже было отправлено");
+                }
+
 #if DEBUG_RAISE_EVENT
-            Debug.WriteLine($"RaiseActorStateChanged({actorStateChangedEventArgs})");
+            Debug.WriteLine($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
 #endif // DEBUG_RAISE_EVENT
             _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
+
+            if (actorStateChangedEventArgs.State == ActorState.Terminated)
+                {
+                _terminateEventRaised = true;
+                }
             }
 
         /// <summary>

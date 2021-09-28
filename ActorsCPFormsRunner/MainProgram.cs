@@ -4,6 +4,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
+using ActorsCP.Logger;
+
 namespace ActorsCPFormsRunner
     {
     internal static class MainProgram
@@ -43,6 +45,15 @@ namespace ActorsCPFormsRunner
 
             MainForm mf = new MainForm();
             mf.Icon = MainIcon;
+
+            var logger = ActorLoggerImplementation.GetInstance();
+            logger.InitLog("ActorsCPFormsRunner");
+            logger.SetLogLevel(ActorLogLevel.Debug);
+            ActorLoggerImplementation.ConfigureNLogGlobally(logger);
+
+            GlobalActorLogger.SetGlobalLoggerInstance(logger);
+
+            logger.LogInfo("Настройка логгера завершена");
 
             Application.Run(mf);
             }

@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 using ActorsCP.Tests.TestActors;
 
 using NUnit.Framework;
@@ -229,6 +232,32 @@ namespace ActorsCP.Unit.Test
                 }
             Assert.IsTrue(actor.DisposeManagedResources_Called);
             Assert.IsTrue(actor.DisposeUnmanagedResources_Called);
+            }
+
+        [Test]
+        [TestCase(1, TestName = "70. 1 - порядок событий")]
+        [TestCase(10, TestName = "71. 10 - порядок событий")]
+        [TestCase(100, TestName = "72. 100 - порядок событий")]
+        [TestCase(1000, TestName = "73. 1000 - порядок событий")]
+        [TestCase(1000, TestName = "74. 10000 - порядок событий")]
+        public async Task Events1(int N)
+            {
+            for (int i = 0; i < N; i++)
+                {
+                var list = new List<ActorStateChangedEventArgs>();
+
+                using (var actor = new SimpleActor())
+                    {
+                    actor.StateChangedEvents += (sender, e) => { list.Add(e); };
+                    await actor.RunAsync();
+                    }
+
+                Assert.IsTrue(list.Count == 4);
+                Assert.AreEqual(list[0], ActorStates.ActorStateChangedStarted);
+                Assert.AreEqual(list[1], ActorStates.ActorStateChangedRunning);
+                Assert.AreEqual(list[2], ActorStates.ActorStateChangedStopped);
+                Assert.AreEqual(list[3], ActorStates.ActorStateChangedTerminated);
+                }
             }
         }
     }

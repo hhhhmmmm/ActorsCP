@@ -29,7 +29,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return $"Множество объектов {N} (ActorUid = {ActorUid})";
+                return $"Множество_объектов_{ABN}";
                 }
             }
 

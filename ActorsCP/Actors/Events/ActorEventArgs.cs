@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+
 using ActorsCP.Helpers;
 
 namespace ActorsCP.Actors.Events
@@ -8,7 +9,7 @@ namespace ActorsCP.Actors.Events
     /// <summary>
     /// Базовый класс сообщений объекта
     /// </summary>
-    [DebuggerDisplay("N = {N}")]
+    [DebuggerDisplay("AEA = {AEA}")]
     public class ActorEventArgs : EventArgs
         {
         #region Глобальные внутренние объекты

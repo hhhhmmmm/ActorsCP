@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using ActorsCP.Actors;
+using ActorsCP.Logger;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -38,6 +39,17 @@ namespace ActorsCP.dotNET.ViewPorts
         #endregion Приватные мемберы
 
         #region Свойства
+
+        /// <summary>
+        /// Логгер
+        /// </summary>
+        protected IActorLogger Logger
+            {
+            get
+                {
+                return GlobalActorLogger.GetInstance();
+                }
+            }
 
         /// <summary>
         /// Возвращает объект

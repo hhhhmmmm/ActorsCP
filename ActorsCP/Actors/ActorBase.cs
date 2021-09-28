@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -11,6 +13,7 @@ namespace ActorsCP.Actors
     /// <summary>
     /// Базовый класс
     /// </summary>
+    [DebuggerDisplay("ABN = {ABN}, Name = {Name}, State = {State}")]
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
         #region Константы для задач
@@ -55,7 +58,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор последовательных номеров объектов
         /// </summary>
-        private static int s_N_global = 0;
+        private static int s_ABN_global = 0;
 
         #endregion Глобальные внутренние объекты
 
@@ -64,7 +67,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        private readonly int _N = 0;
+        private readonly int _ABN = 0;
 
         /// <summary>
         /// Родительский объект
@@ -90,9 +93,9 @@ namespace ActorsCP.Actors
         /// </summary>
         protected ActorBase()
             {
-            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
+            _ABN = Interlocked.Increment(ref s_ABN_global); // последовательный номер объекта
 
-            Name = "Объект " + N; // остальные - медленно
+            Name = "Объект_" + ABN; // остальные - медленно
             // Name = $"Объект {N} (ActorUid = {ActorUid})"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             // Name = $"Объект {N}"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
@@ -149,11 +152,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        public int N
+        public int ABN
             {
             get
                 {
-                return _N;
+                return _ABN;
                 }
             }
 
@@ -344,6 +347,8 @@ namespace ActorsCP.Actors
                 throw new InvalidOperationException($"Актор {Name} находится в состоянии Terminated, изменение состояния невозможно");
                 }
 
+            ActorState _previousState = State;
+
             State = newState;
 
             switch (State)
@@ -484,7 +489,7 @@ namespace ActorsCP.Actors
         /// <returns></returns>
         public override int GetHashCode()
             {
-            return N;
+            return ABN;
             }
 
         #endregion Методы

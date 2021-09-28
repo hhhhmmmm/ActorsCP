@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
@@ -74,6 +75,10 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="font">шрифт</param>
         private void AppendText(string text, Color color, Font font = null)
             {
+#if DEBUG
+            Logger.LogInfo($"TextViewPort:AppendText(): {text}");
+#endif // DEBUG
+
             Invoke(new MethodInvoker(delegate
             {
                 _control.SelectionStart = _control.TextLength;
