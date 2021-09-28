@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define DEBUG_ADD_TO_QUEUE
+#define DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
@@ -7,6 +10,7 @@ using System.Threading.Tasks;
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
+using ActorsCP.Logger;
 using ActorsCP.UtilityActors;
 
 namespace ActorsCP.ViewPorts
@@ -47,6 +51,17 @@ namespace ActorsCP.ViewPorts
         #endregion Приватные мемберы
 
         #region Свойства
+
+        /// <summary>
+        /// Логгер
+        /// </summary>
+        protected IActorLogger Logger
+            {
+            get
+                {
+                return GlobalActorLogger.GetInstance();
+                }
+            }
 
         /// <summary>
         /// Использовать очередь для буфера
@@ -123,7 +138,9 @@ namespace ActorsCP.ViewPorts
                 if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out ViewPortItem viewPortItem))
                     {
 #if DEBUG_PROCESSMESSAGEFROMQUEUELOOP
-                    Debug.WriteLine($"ProcessMessageFromQueueLoop(VPI = {viewPortItem.VPI}):viewPortItem (N={viewPortItem.ActorEventArgs.N}): {viewPortItem.ActorEventArgs.ToString() }");
+                    var str = $"ProcessMessageFromQueueLoop(VPI_{viewPortItem.VPI}):viewPortItem (AEA_{viewPortItem.ActorEventArgs.AEA}): {viewPortItem.ActorEventArgs.ToString() }";
+                    Logger.LogDebug(str);
+                    Debug.WriteLine(str);
 #endif // DEBUG_PROCESSMESSAGEFROMQUEUELOOP
 
                     ProcessExtractedMessage(viewPortItem);
@@ -236,7 +253,9 @@ namespace ActorsCP.ViewPorts
             _queueSemaphoreSlim.Release();
 
 #if DEBUG_ADD_TO_QUEUE
-            Debug.WriteLine($"Add(VPI = {viewPortItem.VPI})");
+            var str = $"Add(VPI_{viewPortItem.VPI}, AEA_{viewPortItem.ActorEventArgs.AEA} )";
+            Logger.LogDebug(str);
+            Debug.WriteLine(str);
 #endif // DEBUG_ADD_TO_QUEUE
             }
 

@@ -67,6 +67,8 @@ namespace ActorsCP.dotNET.ViewPorts
 
         #endregion ScrollToBottom
 
+        private object Locker = new object();
+
         /// <summary>
         /// Добавить текст в контрол
         /// </summary>
@@ -81,13 +83,16 @@ namespace ActorsCP.dotNET.ViewPorts
 
             Invoke(new MethodInvoker(delegate
             {
-                _control.SelectionStart = _control.TextLength;
-                _control.SelectionLength = 0;
-                _control.SelectionFont = font ?? NormalFont;
-                _control.SelectionColor = color;
-                _control.AppendText(text);
-                _control.SelectionColor = _control.ForeColor;
-                ScrollToBottom();
+                lock (Locker)
+                    {
+                    _control.SelectionStart = _control.TextLength;
+                    _control.SelectionLength = 0;
+                    _control.SelectionFont = font ?? NormalFont;
+                    _control.SelectionColor = color;
+                    _control.AppendText(text);
+                    _control.SelectionColor = _control.ForeColor;
+                    ScrollToBottom();
+                    }
                 }));
             }
 
@@ -183,8 +188,8 @@ namespace ActorsCP.dotNET.ViewPorts
                     throw new Exception($"Непонятный тип объекта {actorEventArgs}");
                     }
                 }
-
-            AppendText(str + Environment.NewLine, color);
+            int AEA = viewPortItem.ActorEventArgs.AEA;
+            // AppendText($" AEA_{AEA}, " + str + Environment.NewLine, color);
             }
 
         /// <summary>
@@ -218,8 +223,8 @@ namespace ActorsCP.dotNET.ViewPorts
                     throw new Exception($"Непонятный тип объекта {actorEventArgs}");
                     }
                 }
-
-            AppendText($"  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
+            int AEA = viewPortItem.ActorEventArgs.AEA;
+            AppendText($" AEA_{AEA},  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
             }
 
         #endregion Перегружаемые методы

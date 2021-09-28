@@ -13,7 +13,7 @@ namespace ActorsCP.Actors
     /// <summary>
     /// Базовый класс
     /// </summary>
-    [DebuggerDisplay("ABN = {ABN}, Name = {Name}, State = {State}")]
+    [DebuggerDisplay("ABN_{ABN}, Name = {Name}, State = {State}")]
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
         #region Константы для задач
@@ -58,7 +58,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор последовательных номеров объектов
         /// </summary>
-        private static int s_ABN_global = 0;
+        private volatile static int s_ABN_global = 0;
 
         #endregion Глобальные внутренние объекты
 

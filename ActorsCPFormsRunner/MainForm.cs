@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.Tests.TestActors;
@@ -45,8 +46,9 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnQueueTestActor_Click(object sender, EventArgs e)
             {
+            int N = int.Parse(QueueLegthTextBox.Text);
             var queue = new ActorsQueue("Очередь акторов");
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < N; i++)
                 {
                 var actor = new SimpleActor();
                 queue.Add(actor);

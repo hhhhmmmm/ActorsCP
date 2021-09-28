@@ -1,8 +1,10 @@
-﻿// #define DEBUG_RAISE_EVENT
+﻿#define DEBUG_RAISE_EVENT
 
-using System;
 using System.Globalization;
 using System.Text;
+
+using System;
+using System.Diagnostics;
 
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
@@ -28,7 +30,7 @@ namespace ActorsCP.Actors
         protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
             {
 #if DEBUG_RAISE_EVENT
-            Debug.WriteLine($"RaiseActorEvent({actorEventArgs})");
+            Logger.LogDebug($"RaiseActorEvent({actorEventArgs})");
 #endif // DEBUG_RAISE_EVENT
             _events?.Invoke(this, actorEventArgs);
             }
@@ -51,7 +53,7 @@ namespace ActorsCP.Actors
                 }
 
 #if DEBUG_RAISE_EVENT
-            Debug.WriteLine($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
+            Logger.LogDebug($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
 #endif // DEBUG_RAISE_EVENT
             _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
 

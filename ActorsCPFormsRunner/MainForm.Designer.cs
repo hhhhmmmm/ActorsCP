@@ -63,16 +63,16 @@ namespace ActorsCPFormsRunner
             // 
             // QueueLegthTextBox
             // 
-            this.QueueLegthTextBox.Location = new System.Drawing.Point(117, 53);
+            this.QueueLegthTextBox.Location = new System.Drawing.Point(112, 19);
             this.QueueLegthTextBox.Name = "QueueLegthTextBox";
             this.QueueLegthTextBox.Size = new System.Drawing.Size(77, 20);
             this.QueueLegthTextBox.TabIndex = 40;
-            this.QueueLegthTextBox.Text = "10";
+            this.QueueLegthTextBox.Text = "1";
             // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(23, 53);
+            this.label23.Location = new System.Drawing.Point(18, 19);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(87, 13);
             this.label23.TabIndex = 39;
@@ -80,7 +80,7 @@ namespace ActorsCPFormsRunner
             // 
             // SleepTimeTextBox
             // 
-            this.SleepTimeTextBox.Location = new System.Drawing.Point(117, 17);
+            this.SleepTimeTextBox.Location = new System.Drawing.Point(117, 114);
             this.SleepTimeTextBox.Name = "SleepTimeTextBox";
             this.SleepTimeTextBox.Size = new System.Drawing.Size(77, 20);
             this.SleepTimeTextBox.TabIndex = 38;
@@ -89,7 +89,7 @@ namespace ActorsCPFormsRunner
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(23, 19);
+            this.label22.Location = new System.Drawing.Point(23, 116);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(82, 13);
             this.label22.TabIndex = 37;

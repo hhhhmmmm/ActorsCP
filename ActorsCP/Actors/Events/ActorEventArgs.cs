@@ -9,7 +9,7 @@ namespace ActorsCP.Actors.Events
     /// <summary>
     /// Базовый класс сообщений объекта
     /// </summary>
-    [DebuggerDisplay("AEA = {AEA}")]
+    [DebuggerDisplay("AEA_{AEA}")]
     public class ActorEventArgs : EventArgs
         {
         #region Глобальные внутренние объекты
@@ -17,7 +17,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Генератор последовательных номеров объектов
         /// </summary>
-        private static int s_AEA_global = 0;
+        private volatile static int s_AEA_global = 0;
 
         #endregion Глобальные внутренние объекты
 
@@ -94,6 +94,15 @@ namespace ActorsCP.Actors.Events
             {
             var _stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
             return _stringEventDate;
+            }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            {
+            return $"ActorEventArgs(AEA_{AEA})";
             }
         }
     }
