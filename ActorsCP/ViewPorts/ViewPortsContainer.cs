@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
 namespace ActorsCP.ViewPorts
@@ -144,7 +145,7 @@ namespace ActorsCP.ViewPorts
 
             var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             DecrementBoundViewPortsCounter();
-            actorBindEventsHandler?.Actor_ViewPortUnbound(_parentActor);
+            actorBindEventsHandler?.Actor_ViewPortBoundUnbound(_parentActor, ActorViewPortBoundEventArgs.UnboundInstance);
 
             //#if DEBUG_BIND_UNBIND
             //            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
@@ -169,7 +170,7 @@ namespace ActorsCP.ViewPorts
 
             var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             IncrementBoundViewPortsCounter();
-            actorBindEventsHandler?.Actor_ViewPortBound(_parentActor);
+            actorBindEventsHandler?.Actor_ViewPortBoundUnbound(_parentActor, ActorViewPortBoundEventArgs.BoundInstance);
 
             //#if DEBUG_BIND_UNBIND
             //            _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortAndNotify, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");

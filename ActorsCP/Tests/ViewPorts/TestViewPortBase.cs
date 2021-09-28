@@ -58,22 +58,23 @@ namespace ActorsCP.Tests.ViewPorts
         #region Реализация интерфейса IActorBindViewPortHandler
 
         /// <summary>
-        /// Вызывается, когда объект подписан на события
+        /// Вызывается, когда объект подписан на события или отписан от них
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        protected override void InternalActor_ViewPortBound(ActorBase actor)
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        protected override void InternalActor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs)
             {
-            _Counter_Actor_EventHandlersBound++;
+            if (actorViewPortBoundEventArgs.Bound)
+                {
+                _Counter_Actor_EventHandlersBound++;
+                }
+            else
+                {
+                _Counter_Actor_EventHandlersUnbound++;
+                }
             }
 
-        /// <summary>
-        /// Вызывается, когда объект отписан от событий
-        /// </summary>
-        /// <param name="actor">Объект типа ActorBase</param>
-        protected override void InternalActor_ViewPortUnbound(ActorBase actor)
-            {
-            _Counter_Actor_EventHandlersUnbound++;
-            }
+        #endregion Реализация интерфейса IActorBindViewPortHandler
 
         /// <summary>
         /// Счетчик событий  Actor_Event()
@@ -94,7 +95,5 @@ namespace ActorsCP.Tests.ViewPorts
         /// Счетчик событий Actor_EventHandlersUnbound
         /// </summary>
         public int _Counter_Actor_EventHandlersUnbound;
-
-        #endregion Реализация интерфейса IActorBindViewPortHandler
         } // end class TestViewPortBase
     } // end namespace ActorsCP.Tests.ViewPorts
