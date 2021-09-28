@@ -173,7 +173,10 @@ namespace ActorsCP.ViewPorts
         /// </summary>
         private void InternalTerminateAsQueue()
             {
-            _queueTask.Wait();
+            if (!_queueTask.IsFaulted)
+                {
+                _queueTask.Wait();
+                }
             _queueTask.Dispose();
             _queueTask = null;
             _queueSemaphoreSlim?.Dispose();
@@ -288,6 +291,21 @@ namespace ActorsCP.ViewPorts
             }
 
         #endregion Перегружаемые методы IActorEventsHandler
+
+        #region Перегружаемые методы IActorBindViewPortHandler
+
+        /// <summary>
+        /// Вызывается, когда объект подписан на события или отписан от них
+        /// </summary>
+        /// <param name="actor">Объект типа ActorBase</param>
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        protected override void InternalActor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs)
+            {
+            var viewPortItem = new ViewPortItem(actor, actorViewPortBoundEventArgs);
+            Add(viewPortItem);
+            }
+
+        #endregion Перегружаемые методы IActorBindViewPortHandler
 
         #region Обработка сообщений
 

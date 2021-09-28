@@ -67,7 +67,7 @@ namespace ActorsCPFormsRunner
             this.QueueLegthTextBox.Name = "QueueLegthTextBox";
             this.QueueLegthTextBox.Size = new System.Drawing.Size(77, 20);
             this.QueueLegthTextBox.TabIndex = 40;
-            this.QueueLegthTextBox.Text = "1";
+            this.QueueLegthTextBox.Text = "10";
             // 
             // label23
             // 

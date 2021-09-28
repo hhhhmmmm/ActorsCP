@@ -83,6 +83,10 @@ namespace ActorsCP.dotNET.ViewPorts
 
             Invoke(new MethodInvoker(delegate
             {
+                if (_control.Handle == IntPtr.Zero)
+                    {
+                    return;
+                    }
                 //  lock (Locker)
                 //      {
                 _control.SelectionStart = _control.TextLength;
@@ -118,6 +122,27 @@ namespace ActorsCP.dotNET.ViewPorts
             _control.BorderStyle = BorderStyle.FixedSingle;
 
             return _control;
+            }
+
+        /// <summary>
+        /// Обработать как ActorViewPortBoundEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected override void InternalProcessAsActorViewPortBoundEventArgs(ViewPortItem viewPortItem)
+            {
+            Color color = Color.Orchid;
+            var actorEventArgs = viewPortItem.ActorEventArgs as ActorViewPortBoundEventArgs;
+            var actor = viewPortItem.Sender;
+            var str = actorEventArgs.EventDateAsString + " ";
+            if (actorEventArgs.Bound)
+                {
+                str = str + $"Объект '{actor.Name}' привязан к вьюпорту";
+                }
+            else
+                {
+                str = str + $"Объект '{actor.Name}' отвязан от вьюпорта";
+                }
+            AppendText(str + Environment.NewLine, color);
             }
 
         /// <summary>

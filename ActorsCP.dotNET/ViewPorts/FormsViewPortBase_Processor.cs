@@ -61,6 +61,11 @@ namespace ActorsCP.dotNET.ViewPorts
                 ProcessAsActorStateChangedEventArgs(viewPortItem);
                 }
             else
+            if (viewPortItem.ActorEventArgs is ActorViewPortBoundEventArgs)
+                {
+                ProcessAsActorViewPortBoundEventArgs(viewPortItem);
+                }
+            else
             if (viewPortItem.ActorEventArgs is ActorEventArgs)
                 {
                 ProcessAsActorEventArgs(viewPortItem);
@@ -72,6 +77,15 @@ namespace ActorsCP.dotNET.ViewPorts
             }
 
         #endregion Реализация интерфейса IViewPortItemProcessor
+
+        /// <summary>
+        /// Обработать как ActorViewPortBoundEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        private void ProcessAsActorViewPortBoundEventArgs(ViewPortItem viewPortItem)
+            {
+            InternalProcessAsActorViewPortBoundEventArgs(viewPortItem);
+            }
 
         /// <summary>
         /// Обработать как ActorEventArgs
@@ -92,6 +106,14 @@ namespace ActorsCP.dotNET.ViewPorts
             }
 
         #region Перегружаемые методы
+
+        /// <summary>
+        /// Обработать как ActorViewPortBoundEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected virtual void InternalProcessAsActorViewPortBoundEventArgs(ViewPortItem viewPortItem)
+            {
+            }
 
         /// <summary>
         /// Обработать как ActorEventArgs

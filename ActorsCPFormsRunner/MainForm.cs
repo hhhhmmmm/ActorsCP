@@ -77,7 +77,7 @@ namespace ActorsCPFormsRunner
         private void OnCrowdTestActorClick(object sender, EventArgs e)
             {
             int sleepTime = int.Parse(SleepTimeTextBox.Text);
-            int N = int.Parse(QueueLegthTextBox.Text);
+            int N = int.Parse(CrowdLengthTextBox.Text);
             var crowd = new ActorsCrowd("Толпа акторов");
             for (int i = 0; i < N; i++)
                 {
