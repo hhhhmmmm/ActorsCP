@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 
+using ActorsCP.Helpers;
+
 namespace ActorsCP.ViewPorts
     {
     /// <summary>
@@ -67,14 +69,9 @@ namespace ActorsCP.ViewPorts
         #region Буферизованный вьюпорт
 
         /// <summary>
-        /// Количество добавленных сообщений
+        /// Статистика буфера
         /// </summary>
-        public volatile int BufferedAddedMessages;
-
-        /// <summary>
-        /// Количество обработанных сообщений
-        /// </summary>
-        public volatile int BufferedProcessedMessages;
+        public QueueBufferStatistics BufferStatistics;
 
         #endregion Буферизованный вьюпорт
 
@@ -101,8 +98,8 @@ namespace ActorsCP.ViewPorts
                     Exceptions == c.Exceptions &&
                     Errors == c.Errors &&
                     StateChanged == c.StateChanged &&
-                    BufferedAddedMessages == c.BufferedAddedMessages &&
-                    BufferedProcessedMessages == c.BufferedProcessedMessages
+                    BufferStatistics.AddedMessages == c.BufferStatistics.AddedMessages &&
+                    BufferStatistics.ProcessedMessages == c.BufferStatistics.ProcessedMessages
                     ;
                 }
 
@@ -174,8 +171,8 @@ namespace ActorsCP.ViewPorts
             AddStatistics(sb, ",", "ошибок", Errors);
 
             AddStatistics(sb, ",", "изменений состояния", StateChanged);
-            AddStatistics(sb, ",", "БС: добавлено", BufferedAddedMessages);
-            AddStatistics(sb, ",", "БС: обработано", BufferedProcessedMessages);
+            AddStatistics(sb, ",", "БС: добавлено", BufferStatistics.AddedMessages);
+            AddStatistics(sb, ",", "БС: обработано", BufferStatistics.ProcessedMessages);
 
             return sb.ToString();
             }
@@ -201,14 +198,14 @@ namespace ActorsCP.ViewPorts
                 sb.Append($"изменений состояния - {StateChanged}" + nl);
                 sb.Append($"====================================" + nl);
 
-                if (BufferedAddedMessages != 0)
+                if (BufferStatistics.AddedMessages != 0)
                     {
-                    sb.AppendLine($"Буфер сообщений: добавлено сообщений  - {BufferedAddedMessages}");
+                    sb.AppendLine($"Буфер сообщений: добавлено сообщений  - {BufferStatistics.AddedMessages}");
                     }
 
-                if (BufferedProcessedMessages != 0)
+                if (BufferStatistics.ProcessedMessages != 0)
                     {
-                    sb.AppendLine($"Буфер сообщений: обработано сообщений - {BufferedProcessedMessages}");
+                    sb.AppendLine($"Буфер сообщений: обработано сообщений - {BufferStatistics.ProcessedMessages}");
                     }
 
                 return sb.ToString();
@@ -322,9 +319,9 @@ namespace ActorsCP.ViewPorts
                 throw new Exception($"Не все объекты остановлены - RunningObjects = {RunningObjects}");
                 }
 
-            if (BufferedAddedMessages != BufferedProcessedMessages)
+            if (BufferStatistics.AddedMessages != BufferStatistics.ProcessedMessages)
                 {
-                var str = $"BufferedAddedMessages!= BufferedProcessedMessages({ BufferedAddedMessages } != {BufferedProcessedMessages})";
+                var str = $"BufferStatistics.AddedMessages!= BufferStatistics.ProcessedMessages({ BufferStatistics.AddedMessages } != {BufferStatistics.ProcessedMessages})";
                 throw new Exception(str);
                 }
             }

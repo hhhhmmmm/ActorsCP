@@ -25,6 +25,35 @@ namespace ActorsCPFormsRunner
             set;
             }
 
+        #region Вспомогательные методы
+
+        /// <summary>
+        /// Опции запуска
+        /// </summary>
+        /// <returns></returns>
+        private RunOptions GetRunOptions()
+            {
+            var options = new RunOptions();
+            options.sleepTime = int.Parse(SleepTimeTextBox.Text);
+            options.QueueLegth = int.Parse(QueueLegthTextBox.Text);
+            options.CrowdLength = int.Parse(CrowdLengthTextBox.Text);
+            return options;
+            }
+
+        /// <summary>
+        /// Создать вьюпорт
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private void CreateAndShowViewPort(ActorBase actor, string name)
+            {
+            var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+            form.Show();
+            }
+
+        #endregion Вспомогательные методы
+
         /// <summary>
         /// TestActor_Single
         /// </summary>
@@ -35,8 +64,7 @@ namespace ActorsCPFormsRunner
             var actor = new SimpleActor();
             //actor.SetVerbosity(ActorVerbosity.Off);
             CreatedActor = actor;
-            var form = new TextViewPort(actor, "Одиночка", MainProgram.MainIcon);
-            form.Show();
+            CreateAndShowViewPort(actor, "Одиночка");
             }
 
         /// <summary>
@@ -46,18 +74,18 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnQueueTestActor_Click(object sender, EventArgs e)
             {
-            int sleepTime = int.Parse(SleepTimeTextBox.Text);
-            int N = int.Parse(QueueLegthTextBox.Text);
+            var runOptions = GetRunOptions();
+
             var queue = new ActorsQueue("Очередь акторов");
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < runOptions.QueueLegth; i++)
                 {
                 var actor = new WaitActor();
-                actor.Interval = sleepTime;
+                actor.Interval = runOptions.sleepTime;
                 queue.Add(actor);
                 }
             CreatedActor = queue;
-            var form = new TextViewPort(queue, "Очередь акторов", MainProgram.MainIcon);
-            form.Show();
+
+            CreateAndShowViewPort(queue, "Очередь акторов");
             }
 
         /// <summary>
@@ -76,18 +104,17 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnCrowdTestActorClick(object sender, EventArgs e)
             {
-            int sleepTime = int.Parse(SleepTimeTextBox.Text);
-            int N = int.Parse(CrowdLengthTextBox.Text);
+            var runOptions = GetRunOptions();
+
             var crowd = new ActorsCrowd("Толпа акторов");
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < runOptions.CrowdLength; i++)
                 {
                 var actor = new WaitActor();
-                actor.Interval = sleepTime;
+                actor.Interval = runOptions.sleepTime;
                 crowd.Add(actor);
                 }
             CreatedActor = crowd;
-            var form = new TextViewPort(crowd, "Очередь акторов", MainProgram.MainIcon);
-            form.Show();
+            CreateAndShowViewPort(crowd, "Очередь акторов");
             }
 
         /// <summary>

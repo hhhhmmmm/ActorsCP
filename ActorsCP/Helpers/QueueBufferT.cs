@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,9 +41,14 @@ namespace ActorsCP.Helpers
         private SemaphoreSlim _queueSemaphoreSlim;
 
         /// <summary>
-        /// Вьюпорт находится в состоянии завершения
+        /// Очередь находится в состоянии завершения
         /// </summary>
-        private bool _isTerminating;
+        private ManualResetEventSlim _terminatingEvent = new ManualResetEventSlim();
+
+        /// <summary>
+        /// Очередь завершена
+        /// </summary>
+        private bool _isTerminated;
 
         /// <summary>
         /// Задача-обработчик очереди сообщений
@@ -62,7 +68,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Внешний обработчик сообщений
         /// </summary>
-        private Action<T> _processExtractedMessage;
+        private Action<T> _externalMessageHandler;
 
         #endregion Приватные мемберы
 
@@ -98,6 +104,32 @@ namespace ActorsCP.Helpers
                 }
             }
 
+        /// <summary>
+        /// Очередь находится в состоянии завершения
+        /// </summary>
+        public bool IsTerminating
+            {
+            get
+                {
+                if (_terminatingEvent == null)
+                    {
+                    return false;
+                    }
+                return _terminatingEvent.IsSet;
+                }
+            }
+
+        /// <summary>
+        /// Очередь завершена
+        /// </summary>
+        public bool IsTerminated
+            {
+            get
+                {
+                return _isTerminated;
+                }
+            }
+
         #endregion Свойства
 
         #region Конструкторы
@@ -105,14 +137,89 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Конструктор
         /// </summary>
-        public QueueBufferT()
+        /// <param name="externalMessageHandler">Внешний обработчик сообщений</param>
+        public QueueBufferT(Action<T> externalMessageHandler)
             {
+            if (externalMessageHandler == null)
+                {
+                throw new ArgumentNullException($"{nameof(externalMessageHandler)} не может быть null");
+                }
+
+            _externalMessageHandler = externalMessageHandler;
             _queue = new ConcurrentQueue<T>();
-            _queueSemaphoreSlim = new SemaphoreSlim(1, int.MaxValue);
+
+            _queueSemaphoreSlim = new SemaphoreSlim(0, int.MaxValue);
+            //_queueSemaphoreSlim = new SemaphoreSlim(1, int.MaxValue);
+            // _queueSemaphoreSlim = new SemaphoreSlim(int.MaxValue, int.MaxValue); // Adding the specified count to the semaphore would cause it to exceed its maximum count
             _queueTask = Task.Run(ProcessMessageFromQueueLoop);
             }
 
         #endregion Конструкторы
+
+        private readonly object Locker = new object();
+
+        /// <summary>
+        /// Цикл обработки сообщений
+        /// </summary>
+        private void ProcessMessageFromQueueLoop()
+            {
+            int nDebugCounter = 0;
+
+            var waitHandles = new WaitHandle[2];
+            waitHandles[0] = _terminatingEvent.WaitHandle;
+            waitHandles[1] = _queueSemaphoreSlim.AvailableWaitHandle;
+
+            while (true)
+                {
+                int waitResult = WaitHandle.WaitAny(waitHandles);
+
+                var str = $"_queue.Count ={_queue.Count}, _queueSemaphoreSlim.CurrentCount = {_queueSemaphoreSlim.CurrentCount}";
+                Debug.WriteLine(str);
+
+                switch (waitResult)
+                    {
+                    case 0: // _terminatingEvent
+                        {
+                        if (_queue.IsEmpty)
+                            {
+                            return;
+                            }
+                        break;
+                        }
+                    case 1: // _queueSemaphoreSlim
+                        {
+                        lock (Locker)
+                            {
+                            if (_queue.IsEmpty)
+                                {
+                                nDebugCounter++;
+                                //Debug.WriteLine($"nDebugCounter = {nDebugCounter}, _queue.IsEmpty но семафор сработал - такого быть не должно");
+                                throw new Exception("_queue.IsEmpty но семафор сработал - такого быть не должно");
+                                }
+
+                            //_queueSemaphoreSlim.Release();
+                            T item;
+                            bool bres = _queue.TryDequeue(out item);
+                            if (!bres)
+                                {
+                                // nDebugCounter++;
+                                // Debug.WriteLine("nDebugCounter = {nDebugCounter}, Ошибка извлечения из очереди");
+                                _queueSemaphoreSlim.Release();
+                                continue;
+                                // throw new Exception("Ошибка извлечения из очереди");
+                                }
+
+                            //if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out T item))
+                                {
+                                _externalMessageHandler.Invoke(item);
+                                Interlocked.Increment(ref _queueBufferStatistics.ProcessedMessages);
+                                }
+                            } // end lock  Locker
+                        break;
+                        }
+                    }
+                }
+            }
 
         #region Добавление сообщений
 
@@ -133,11 +240,14 @@ namespace ActorsCP.Helpers
                 throw new InvalidOperationException("_queue == null");
                 }
 
-            _queue.Enqueue(item);
+            lock (Locker)
+                {
+                _queue.Enqueue(item);
 
-            Interlocked.Increment(ref _queueBufferStatistics.AddedMessages);
+                Interlocked.Increment(ref _queueBufferStatistics.AddedMessages);
 
-            _queueSemaphoreSlim.Release();
+                _queueSemaphoreSlim.Release();
+                }
             }
 
         #endregion Добавление сообщений
@@ -149,17 +259,78 @@ namespace ActorsCP.Helpers
         /// </summary>
         protected override void DisposeManagedResources()
             {
-            InternalTerminate();
+            Terminate();
             base.DisposeManagedResources();
             }
 
         #endregion Реализация вызываемых методов интерфейса IDisposable
 
+        #region Ожидание и остановка
+
         /// <summary>
-        ///
+        /// Ожидание опустошения очереди
         /// </summary>
-        private void InternalTerminate()
+        /// <returns></returns>
+        public async Task WaitAsync()
             {
+            if (IsTerminated)
+                {
+                return;
+                }
+
+            while (true)
+                {
+                if (_queue.IsEmpty)
+                    {
+                    return;
+                    }
+                await Task.Delay(_queueTimeout);
+                }
+            }
+
+        /// <summary>
+        /// Ожидание опустошения очереди
+        /// </summary>
+        public void Wait()
+            {
+            if (IsTerminated)
+                {
+                return;
+                }
+            WaitAsync().Wait();
+            }
+
+        /// <summary>
+        /// Завершение очереди
+        /// </summary>
+        public void Terminate()
+            {
+            TerminateAsync().Wait();
+            }
+
+        /// <summary>
+        /// Завершение очереди
+        /// </summary>
+        /// <returns></returns>
+        public async Task TerminateAsync()
+            {
+            if (IsTerminated)
+                {
+                return;
+                }
+
+            _terminatingEvent.Set();
+            await WaitAsync(); // ожидание опустошения очереди
+
+            if (_queueTask.IsFaulted)
+                {
+                var exception = _queueTask.Exception;
+                if (exception != null)
+                    {
+                    throw exception;
+                    }
+                }
+
             if (!_queueTask.IsFaulted)
                 {
                 _queueTask.Wait();
@@ -169,42 +340,20 @@ namespace ActorsCP.Helpers
             _queueSemaphoreSlim?.Dispose();
             _queueSemaphoreSlim = null;
 
+            _terminatingEvent?.Dispose();
+            _terminatingEvent = null;
+
             if (!_queue.IsEmpty)
                 {
                 throw new Exception($"В очереди осталось {_queue.Count} сообщений");
                 }
 
             _queue = null;
+            _externalMessageHandler = null;
 
-            _processExtractedMessage = null;
+            _isTerminated = true;
             }
 
-        /// <summary>
-        /// Цикл обработки сообщений
-        /// </summary>
-        private void ProcessMessageFromQueueLoop()
-            {
-            while (true)
-                {
-                _queueSemaphoreSlim.Wait(QueueTimeout);
-
-                if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out T item))
-                    {
-                    _processExtractedMessage?.Invoke(item);
-
-                    Interlocked.Increment(ref _queueBufferStatistics.ProcessedMessages);
-                    }
-                else
-                    {
-                    if (_isTerminating)
-                        {
-                        if (_queue.IsEmpty)
-                            {
-                            return;
-                            }
-                        }
-                    }
-                }
-            }
+        #endregion Ожидание и остановка
         } // end class QueueBufferT
     } // end namespace ActorsCP.Helpers

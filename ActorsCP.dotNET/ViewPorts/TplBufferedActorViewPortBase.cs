@@ -305,7 +305,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 throw new ArgumentNullException(nameof(viewPortItem), "data не может быть null");
                 }
 
-            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedAddedMessages);
+            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferStatistics.AddedMessages);
 
             if (UseQueueForBuffering)
                 {
@@ -371,7 +371,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem не может быть null");
                 }
 
-            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedProcessedMessages);
+            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferStatistics.ProcessedMessages);
 
             if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs stateEvent)
                 {
