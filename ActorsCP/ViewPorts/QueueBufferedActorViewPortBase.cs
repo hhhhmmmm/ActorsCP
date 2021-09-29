@@ -95,14 +95,14 @@ namespace ActorsCP.ViewPorts
         /// Инициализация вьюпорта
         /// </summary>
         /// <param name="additionalText">Заголовок</param>
-        protected override void InternalInit(string additionalText)
+        protected override async void InternalInit(string additionalText)
             {
             if (IsInitialized)
                 {
                 return;
                 }
 
-            _queue = new QueueBufferT<ViewPortItem>(ProcessExtractedMessage);
+            _queue = QueueBufferT<ViewPortItem>.Create(ProcessExtractedMessage);
 
             base.InternalInit(additionalText);
             }

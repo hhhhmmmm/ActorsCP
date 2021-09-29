@@ -138,7 +138,7 @@ namespace ActorsCP.Helpers
         /// Конструктор
         /// </summary>
         /// <param name="externalMessageHandler">Внешний обработчик сообщений</param>
-        public QueueBufferT(Action<T> externalMessageHandler)
+        private QueueBufferT(Action<T> externalMessageHandler)
             {
             if (externalMessageHandler == null)
                 {
@@ -151,7 +151,8 @@ namespace ActorsCP.Helpers
             _queueSemaphoreSlim = new SemaphoreSlim(0, int.MaxValue);
             //_queueSemaphoreSlim = new SemaphoreSlim(1, int.MaxValue);
             // _queueSemaphoreSlim = new SemaphoreSlim(int.MaxValue, int.MaxValue); // Adding the specified count to the semaphore would cause it to exceed its maximum count
-            _queueTask = Task.Run(ProcessMessageFromQueueLoop);
+
+            //await _queueTask;
             }
 
         #endregion Конструкторы
@@ -161,64 +162,122 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Цикл обработки сообщений
         /// </summary>
-        private void ProcessMessageFromQueueLoop()
+        private async void ProcessMessageFromQueueLoop()
             {
-            int nDebugCounter = 0;
-
-            var waitHandles = new WaitHandle[2];
-            waitHandles[0] = _terminatingEvent.WaitHandle;
-            waitHandles[1] = _queueSemaphoreSlim.AvailableWaitHandle;
-
-            while (true)
+            try
                 {
-                int waitResult = WaitHandle.WaitAny(waitHandles);
-
-                var str = $"_queue.Count ={_queue.Count}, _queueSemaphoreSlim.CurrentCount = {_queueSemaphoreSlim.CurrentCount}";
-                Debug.WriteLine(str);
-
-                switch (waitResult)
+                while (true)
                     {
-                    case 0: // _terminatingEvent
+                    if (IsTerminated)
                         {
-                        if (_queue.IsEmpty)
-                            {
-                            return;
-                            }
-                        break;
+                        return;
                         }
-                    case 1: // _queueSemaphoreSlim
+
+                    var hasData = await _queueSemaphoreSlim.WaitAsync(1000).ConfigureAwait(false);
+                    if (!hasData)
                         {
-                        lock (Locker)
+                        if (_terminatingEvent.IsSet)
                             {
                             if (_queue.IsEmpty)
                                 {
-                                nDebugCounter++;
-                                //Debug.WriteLine($"nDebugCounter = {nDebugCounter}, _queue.IsEmpty но семафор сработал - такого быть не должно");
-                                throw new Exception("_queue.IsEmpty но семафор сработал - такого быть не должно");
+                                return;
                                 }
-
-                            //_queueSemaphoreSlim.Release();
-                            T item;
-                            bool bres = _queue.TryDequeue(out item);
-                            if (!bres)
-                                {
-                                // nDebugCounter++;
-                                // Debug.WriteLine("nDebugCounter = {nDebugCounter}, Ошибка извлечения из очереди");
-                                _queueSemaphoreSlim.Release();
-                                continue;
-                                // throw new Exception("Ошибка извлечения из очереди");
-                                }
-
-                            //if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out T item))
-                                {
-                                _externalMessageHandler.Invoke(item);
-                                Interlocked.Increment(ref _queueBufferStatistics.ProcessedMessages);
-                                }
-                            } // end lock  Locker
-                        break;
+                            }
+                        continue;
                         }
+                    // данные есть
+                    T item;
+                    bool bres = _queue.TryDequeue(out item);
+                    if (!bres) // извлечь не удалось
+                        {
+                        _queueSemaphoreSlim.Release();
+                        // throw new Exception("Ошибка извлечения из очереди");
+                        continue;
+                        }
+
+                    _externalMessageHandler.Invoke(item);
+                    Interlocked.Increment(ref _queueBufferStatistics.ProcessedMessages);
                     }
+                } // end try
+            catch (Exception ex)
+                {
                 }
+
+            #region xxx
+
+            //int nDebugCounter = 0;
+
+            //var waitHandles = new WaitHandle[2];
+            //waitHandles[0] = _terminatingEvent.WaitHandle;
+            //waitHandles[1] = _queueSemaphoreSlim.AvailableWaitHandle;
+
+            //while (true)
+            //    {
+            //    int waitResult = WaitHandle.WaitAny(waitHandles);
+
+            //    var str = $"_queue.Count ={_queue.Count}, _queueSemaphoreSlim.CurrentCount = {_queueSemaphoreSlim.CurrentCount}";
+            //    Debug.WriteLine(str);
+
+            //    switch (waitResult)
+            //        {
+            //        case 0: // _terminatingEvent
+            //            {
+            //            if (_queue.IsEmpty)
+            //                {
+            //                return;
+            //                }
+            //            break;
+            //            }
+            //        case 1: // _queueSemaphoreSlim
+            //            {
+            //            lock (Locker)
+            //                {
+            //                if (_queue.IsEmpty)
+            //                    {
+            //                    nDebugCounter++;
+            //                    //Debug.WriteLine($"nDebugCounter = {nDebugCounter}, _queue.IsEmpty но семафор сработал - такого быть не должно");
+            //                    throw new Exception("_queue.IsEmpty но семафор сработал - такого быть не должно");
+            //                    }
+
+            //                //_queueSemaphoreSlim.Release();
+            //                T item;
+            //                bool bres = _queue.TryDequeue(out item);
+            //                if (!bres)
+            //                    {
+            //                    // nDebugCounter++;
+            //                    // Debug.WriteLine("nDebugCounter = {nDebugCounter}, Ошибка извлечения из очереди");
+            //                    _queueSemaphoreSlim.Release();
+            //                    continue;
+            //                    // throw new Exception("Ошибка извлечения из очереди");
+            //                    }
+
+            //                //if ((!(_queue.IsEmpty)) && _queue.TryDequeue(out T item))
+            //                    {
+            //                    _externalMessageHandler.Invoke(item);
+            //                    Interlocked.Increment(ref _queueBufferStatistics.ProcessedMessages);
+            //                    }
+            //                } // end lock  Locker
+            //            break;
+            //            }
+            //        }
+            //    }
+
+            #endregion xxx
+            }
+
+        public void Initialize()
+            {
+            _queueTask = Task.Run(() =>
+            {
+                ProcessMessageFromQueueLoop();
+            });
+            }
+
+        public static QueueBufferT<T> Create(Action<T> externalMessageHandler)
+            {
+            var ret = new QueueBufferT<T>(externalMessageHandler);
+            ret.Initialize();
+            return ret;
             }
 
         #region Добавление сообщений
@@ -228,7 +287,7 @@ namespace ActorsCP.Helpers
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public void Add(T item)
+        public async void Add(T item)
             {
             if (item == null)
                 {
@@ -240,7 +299,7 @@ namespace ActorsCP.Helpers
                 throw new InvalidOperationException("_queue == null");
                 }
 
-            lock (Locker)
+            //  lock (Locker)
                 {
                 _queue.Enqueue(item);
 
