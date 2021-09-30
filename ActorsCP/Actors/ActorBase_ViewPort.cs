@@ -73,14 +73,12 @@ namespace ActorsCP.Actors
             {
             if (iViewPort == null)
                 {
-                throw new ArgumentNullException(nameof(iViewPort), "iViewPort не может быть null");
+                throw new ArgumentNullException($"{nameof(iViewPort)} не может быть null");
                 }
 
             #region Привязываем события объекта к их получателю
 
-            var actorEventsHandler = iViewPort as IActorEventsHandler;
-
-            if (actorEventsHandler != null)
+            if (iViewPort is IActorEventsHandler actorEventsHandler)
                 {
                 Events += actorEventsHandler.Actor_Event;
                 StateChangedEvents += actorEventsHandler.Actor_StateChangedEvent;
@@ -107,14 +105,12 @@ namespace ActorsCP.Actors
             {
             if (iViewPort == null)
                 {
-                throw new ArgumentNullException(nameof(iViewPort), "iViewPort не может быть null");
+                throw new ArgumentNullException($"{nameof(iViewPort)} не может быть null");
                 }
 
             #region Отвязываем события объекта от их получателя
 
-            var actorEventsHandler = iViewPort as IActorEventsHandler;
-
-            if (actorEventsHandler != null)
+            if (iViewPort is IActorEventsHandler actorEventsHandler)
                 {
                 Events -= actorEventsHandler.Actor_Event;
                 StateChangedEvents -= actorEventsHandler.Actor_StateChangedEvent;

@@ -88,7 +88,7 @@ namespace ActorsCP.dotNET.ViewPorts
             {
             if (actor == null)
                 {
-                throw new ArgumentNullException(nameof(actor), "actor не может быть null");
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
 
             _actor = actor;
@@ -173,7 +173,7 @@ namespace ActorsCP.dotNET.ViewPorts
 
             if (Actor.IsTerminated)
                 {
-                string title1 = null;
+                string title1;
                 if (_lastSavedExecutionStatistics.PercentCompleted100) // завершено строго 100%
                     {
                     title1 = percentCompleted + _baseCaption + " - завершено, время: " + Actor.ExecutionTime.ShortTimeInterval;
@@ -190,7 +190,7 @@ namespace ActorsCP.dotNET.ViewPorts
 
             #endregion Завершен
 
-            var title2 = _baseCaption;
+            string title2;
             switch (_actor.State)
                 {
                 case ActorState.Pending:

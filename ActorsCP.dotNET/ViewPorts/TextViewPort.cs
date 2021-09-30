@@ -25,12 +25,12 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <summary>
         /// Нормальный шрифт
         /// </summary>
-        private Font NormalFont = new Font("Courier New Cyr", 12);
+        private readonly Font NormalFont = new Font("Courier New Cyr", 12);
 
         /// <summary>
         ///
         /// </summary>
-        private Font SmallFont = new Font("Courier New Cyr", 10);
+        private readonly Font SmallFont = new Font("Courier New Cyr", 10);
 
         #endregion Приватные мемберы
 
@@ -108,18 +108,20 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="rectangle">Элемент - образец</param>
         protected override Control InternalCreateChildControl(Rectangle rectangle)
             {
-            _control = new RichTextBox();
-            _control.Location = new Point(rectangle.X, rectangle.Y);
-            _control.Multiline = true;
-            _control.Name = "RichTextBox1";
-            _control.Size = new Size(rectangle.Width, rectangle.Height);
-            _control.TabIndex = 3;
-            _control.Font = new Font("Courier New Cyr", 12);
-            _control.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
-            _control.ScrollBars = RichTextBoxScrollBars.Both;
-            _control.WordWrap = false;
-            _control.HideSelection = false;//Hide selection so that AppendText will auto scroll to the end
-            _control.BorderStyle = BorderStyle.FixedSingle;
+            _control = new RichTextBox
+                {
+                Location = new Point(rectangle.X, rectangle.Y),
+                Multiline = true,
+                Name = "RichTextBox1",
+                Size = new Size(rectangle.Width, rectangle.Height),
+                TabIndex = 3,
+                Font = new Font("Courier New Cyr", 12),
+                Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
+                ScrollBars = RichTextBoxScrollBars.Both,
+                WordWrap = false,
+                HideSelection = false,//Hide selection so that AppendText will auto scroll to the end
+                BorderStyle = BorderStyle.FixedSingle
+                };
 
             return _control;
             }
@@ -136,11 +138,11 @@ namespace ActorsCP.dotNET.ViewPorts
             var str = actorEventArgs.EventDateAsString + " ";
             if (actorEventArgs.Bound)
                 {
-                str = str + $"Объект '{actor.Name}' привязан к вьюпорту";
+                str += $"Объект '{actor.Name}' привязан к вьюпорту";
                 }
             else
                 {
-                str = str + $"Объект '{actor.Name}' отвязан от вьюпорта";
+                str += $"Объект '{actor.Name}' отвязан от вьюпорта";
                 }
             AppendText(str + Environment.NewLine, color);
             }
@@ -153,9 +155,9 @@ namespace ActorsCP.dotNET.ViewPorts
             {
             Color color = Color.Black;
 
-            string str = null;
+            string str;
             var actorEventArgs = viewPortItem.ActorEventArgs;
-            var actor = viewPortItem.Sender;
+            //var actor = viewPortItem.Sender;
 
             str = actorEventArgs.EventDateAsString + " ";
             switch (actorEventArgs)
@@ -226,7 +228,7 @@ namespace ActorsCP.dotNET.ViewPorts
             {
             Color color = Color.Blue;
 
-            string str = null;
+            string str;
             var actorEventArgs = viewPortItem.ActorEventArgs;
             var actor = viewPortItem.Sender;
 

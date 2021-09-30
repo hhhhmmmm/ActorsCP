@@ -50,7 +50,7 @@ namespace ActorsCP.ViewPorts
             {
             if (parentActor == null)
                 {
-                throw new ArgumentNullException(nameof(parentActor));
+                throw new ArgumentNullException($"{nameof(parentActor)} не может быть null");
                 }
             _parentActor = parentActor;
             }
@@ -185,7 +185,7 @@ namespace ActorsCP.ViewPorts
             {
             if (childActor == null)
                 {
-                throw new ArgumentNullException(nameof(childActor));
+                throw new ArgumentNullException($"{nameof(childActor)} не может быть null");
                 }
 
             if (childActor.Parent != _parentActor)

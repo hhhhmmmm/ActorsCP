@@ -15,7 +15,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор имени
         /// </summary>
-        private string _NameGenerator
+        private string NameGenerator
             {
             get
                 {
@@ -28,7 +28,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsQueue()
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ActorsCP.Actors
         /// <param name="parentActor">Родительский объект</param>
         public ActorsQueue(ActorBase parentActor) : this(null, parentActor)
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace ActorsCP.Actors
 
             var array = WaitingList.ToArray();
 
-            RaiseActorsSetChanged(this);
+            RaiseActorsSetChanged();
             foreach (var actor in array)
                 {
                 ThrowIfCancellationRequested();
@@ -85,7 +85,6 @@ namespace ActorsCP.Actors
                     bresult = false;
                     }
                 }
-            // RaiseActorsSetChanged(this);
             return bresult;
             }
 

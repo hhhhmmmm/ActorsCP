@@ -31,12 +31,12 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Статический объект
         /// </summary>
-        public static ActorViewPortBoundEventArgs BoundInstance = new ActorViewPortBoundEventArgs(true);
+        public readonly static ActorViewPortBoundEventArgs BoundInstance = new ActorViewPortBoundEventArgs(true);
 
         /// <summary>
         ///
         /// </summary>
-        public static ActorViewPortBoundEventArgs UnboundInstance = new ActorViewPortBoundEventArgs(false);
+        public readonly static ActorViewPortBoundEventArgs UnboundInstance = new ActorViewPortBoundEventArgs(false);
 
         #endregion Статические объекты
         }

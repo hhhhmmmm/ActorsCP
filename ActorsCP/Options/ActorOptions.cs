@@ -22,7 +22,7 @@ namespace ActorsCP.Options
             {
             if (string.IsNullOrEmpty(key))
                 {
-                throw new ArgumentNullException(nameof(key), "Значение key не может быть null или пустой строкой");
+                throw new ArgumentNullException(nameof(key), $"Значение {nameof(key)} не может быть null или пустой строкой");
                 }
             _bag.AddOrUpdate(key, newValue, (_key, oldValue) => newValue);
             }
@@ -63,8 +63,7 @@ namespace ActorsCP.Options
             boolValue = false;
 
             bool bres;
-            object value;
-            bres = Get(key, out value);
+            bres = Get(key, out object value);
             if (!bres)
                 {
                 return false;
@@ -90,8 +89,8 @@ namespace ActorsCP.Options
             intValue = 0;
 
             bool bres;
-            object value;
-            bres = Get(key, out value);
+
+            bres = Get(key, out object value);
             if (!bres)
                 {
                 return false;
@@ -135,8 +134,8 @@ namespace ActorsCP.Options
             stringValue = null;
 
             bool bres;
-            object value;
-            bres = Get(key, out value);
+
+            bres = Get(key, out object value);
             if (!bres)
                 {
                 return false;

@@ -37,7 +37,7 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Логгер
         /// </summary>
-        protected IActorLogger Logger
+        protected static IActorLogger Logger
             {
             get
                 {
@@ -94,7 +94,7 @@ namespace ActorsCP.ViewPorts
         /// Инициализация вьюпорта
         /// </summary>
         /// <param name="additionalText">Заголовок</param>
-        protected override async void InternalInit(string additionalText)
+        protected override void InternalInit(string additionalText)
             {
             if (IsInitialized)
                 {
@@ -136,7 +136,7 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "data не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
                 }
 
             if (_queue == null)
@@ -204,12 +204,12 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
                 }
 
             if (viewPortItem.ActorEventArgs == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem.ActorEventArgs не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem.ActorEventArgs)} не может быть null");
                 }
 
             _iViewPortItemProcessor?.ProcessViewPortItem(viewPortItem);

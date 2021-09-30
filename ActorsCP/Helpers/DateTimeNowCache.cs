@@ -63,7 +63,7 @@ namespace ActorsCP.Helpers
                 {
                 _recentUtcTime = curUtcTime;
                 _recentLocalTime = _recentUtcTime.ToLocalTime();
-                _newCounter = 0;
+                _counter = 0;
                 }
 
             return _recentLocalTime;

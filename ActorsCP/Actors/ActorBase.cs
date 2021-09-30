@@ -397,7 +397,7 @@ namespace ActorsCP.Actors
             {
             if (string.IsNullOrEmpty(name))
                 {
-                throw new ArgumentNullException(name, "Имя объекта нужно указать");
+                throw new ArgumentNullException($"{nameof(name)} не может быть null");
                 }
 
             if (this.Name != null)

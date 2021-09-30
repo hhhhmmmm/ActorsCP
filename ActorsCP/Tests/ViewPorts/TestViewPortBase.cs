@@ -16,17 +16,15 @@ namespace ActorsCP.Tests.ViewPorts
         /// <summary>
         /// Канал сообщений
         /// </summary>
-        private readonly IMessageChannel _messageChannel;
+        //private readonly IMessageChannel _messageChannel;
 
         #region Конструкторы
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="messageChannel">Канал сообщений</param>
-        public TestViewPortBase(IMessageChannel messageChannel)
+        public TestViewPortBase()
             {
-            _messageChannel = messageChannel;
             }
 
         #endregion Конструкторы

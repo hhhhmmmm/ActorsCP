@@ -46,12 +46,12 @@ namespace ActorsCP.Executors
             {
             if (actor == null)
                 {
-                throw new ArgumentNullException(nameof(actor), "actor не может быть null");
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
 
             if (iViewPort == null)
                 {
-                throw new ArgumentNullException(nameof(iViewPort), "iViewPort не может быть null");
+                throw new ArgumentNullException($"{nameof(iViewPort)} не может быть null");
                 }
 
             Actor = actor;

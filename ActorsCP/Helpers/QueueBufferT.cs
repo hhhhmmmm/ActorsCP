@@ -37,22 +37,22 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// В опциях включена отладка
         /// </summary>
-        private bool _isDebugging;
+        private readonly bool _isDebugging;
 
         /// <summary>
         /// Очередь сообщения
         /// </summary>
-        private ConcurrentQueue<T> _queue;
+        private readonly ConcurrentQueue<T> _queue;
 
         /// <summary>
         /// Семафор для очереди
         /// </summary>
-        private SemaphoreSlim _queueSemaphoreSlim;
+        private readonly SemaphoreSlim _queueSemaphoreSlim;
 
         /// <summary>
         /// Очередь находится в состоянии завершения
         /// </summary>
-        private ManualResetEventSlim _terminatingEvent = new ManualResetEventSlim();
+        private readonly ManualResetEventSlim _terminatingEvent = new ManualResetEventSlim();
 
         /// <summary>
         /// Очередь завершена
@@ -72,22 +72,22 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Источник отмены задачи
         /// </summary>
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
         /// Таймаут ожидания очереди, ms
         /// </summary>
-        private int _queueTimeout = 1000;
+        private int _queueTimeout = 10;
 
         /// <summary>
         /// Внешний обработчик сообщений
         /// </summary>
-        private Action<T> _externalMessageHandler;
+        private readonly Action<T> _externalMessageHandler;
 
         /// <summary>
         /// Логгер
         /// </summary>
-        private IActorLogger _logger;
+        private readonly IActorLogger _logger;
 
         #endregion Приватные мемберы
 
@@ -249,8 +249,8 @@ namespace ActorsCP.Helpers
                     continue;
                     }
                 // данные есть
-                T item;
-                bool bres = _queue.TryDequeue(out item);
+
+                bool bres = _queue.TryDequeue(out T item);
                 if (!bres) // извлечь не удалось
                     {
                     _queueSemaphoreSlim.Release();

@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+
 using Microsoft.Win32;
 
 namespace ActorsCP.dotNET.ViewPorts
@@ -37,24 +38,9 @@ namespace ActorsCP.dotNET.ViewPorts
         #endregion Константы
 
         /// <summary>
-        /// Имя файла конфигурации сборки, например GosUslugiProxy.dll.config
-        /// </summary>
-        private string AssemblyConfigFileName;
-
-        /// <summary>
-        /// Полное имя файла конфигурации сборки, например D:\ГИС ЖКХ\CSharp\GosUslugi\GosUslugiApp\bin\Debug\GosUslugiProxy.dll.config
-        /// </summary>
-        private string FullAssemblyConfigFileName;
-
-        /// <summary>
         /// Имя файла сборки, например GosUslugiProxy.dll
         /// </summary>
         private string AssemblyFileName;
-
-        /// <summary>
-        /// Путь к файлу сборки, например D:\ГИС ЖКХ\CSharp\GosUslugi\GosUslugiApp\bin\Debug
-        /// </summary>
-        private string AssemblyDirectoryName;
 
         /// <summary>
         /// Уникальный идентификатор экземпляра класса
@@ -84,11 +70,11 @@ namespace ActorsCP.dotNET.ViewPorts
 
             if (ControlledForm == null)
                 {
-                throw new ArgumentNullException("ControlledForm", "ControlledForm не может быть null");
+                throw new ArgumentNullException($"{nameof(ControlledForm)} не может быть null");
                 }
             if (string.IsNullOrEmpty(ResizeControlUID))
                 {
-                throw new ArgumentNullException("ResizeControlUID", "ResizeControlUID не может быть null");
+                throw new ArgumentNullException($"{nameof(ResizeControlUID)} не может быть null");
                 }
 
             GetAssemblyNames();
@@ -153,9 +139,6 @@ namespace ActorsCP.dotNET.ViewPorts
             string AssemblyLocation = ExecutingAssembly.Location;
 
             AssemblyFileName = Path.GetFileName(AssemblyLocation);
-            AssemblyDirectoryName = Path.GetDirectoryName(AssemblyLocation);
-            AssemblyConfigFileName = AssemblyFileName + ".config";
-            FullAssemblyConfigFileName = Path.Combine(AssemblyDirectoryName, AssemblyConfigFileName);
             ApplicationName = AssemblyFileName;
             }
 
@@ -167,11 +150,11 @@ namespace ActorsCP.dotNET.ViewPorts
             {
             if (string.IsNullOrEmpty(ResizeControlUID))
                 {
-                throw new ArgumentNullException(nameof(ResizeControlUID), "ResizeControlUID не может быть null");
+                throw new ArgumentNullException($"{nameof(ResizeControlUID)} не может быть null");
                 }
             if (string.IsNullOrEmpty(ApplicationName))
                 {
-                throw new ArgumentNullException(nameof(ApplicationName), "ApplicationName не может быть null");
+                throw new ArgumentNullException($"{nameof(ApplicationName)} не может быть null");
                 }
 
             string s = string.Format("Software\\Inary Technologies\\{0}\\Resize control\\{1}", ApplicationName, ResizeControlUID);
@@ -213,8 +196,7 @@ namespace ActorsCP.dotNET.ViewPorts
                 return false;
                 }
 
-            Rect WindowRect;
-            if (!GetWindowRect(new HandleRef(ControlledForm, ControlledForm.Handle), out WindowRect))
+            if (!GetWindowRect(new HandleRef(ControlledForm, ControlledForm.Handle), out Rect WindowRect))
                 {
                 return false;
                 }

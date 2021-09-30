@@ -13,7 +13,7 @@ namespace ActorsCP.Tests.TestActors
     /// </summary>
     public class TestActorsBuilder
         {
-        private IMessageChannel _messageChannel;
+        private readonly IMessageChannel _messageChannel;
 
         #region Конструкторы
 
@@ -94,7 +94,7 @@ namespace ActorsCP.Tests.TestActors
             var list = new List<ActorBase>();
             for (int i = 1; i <= nCount; i++)
                 {
-                ActorBase actor = null;
+                ActorBase actor;
                 switch (type)
                     {
                     case ' ':
@@ -190,7 +190,7 @@ namespace ActorsCP.Tests.TestActors
         /// <returns></returns>
         public TestViewPortBase CreateViewPort()
             {
-            var v = new TestViewPortBase(_messageChannel);
+            var v = new TestViewPortBase();
             return v;
             }
         } // end class TestActorsBuilder

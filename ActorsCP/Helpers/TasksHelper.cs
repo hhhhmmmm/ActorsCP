@@ -21,7 +21,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Опции задачи по умолчанию
         /// </summary>
-        public static TaskCreationOptions DefaultTaskCreationOptions = TaskCreationOptions.PreferFairness;
+        public readonly static TaskCreationOptions DefaultTaskCreationOptions = TaskCreationOptions.PreferFairness;
 
         /// <summary>
         /// Создать TaskCompletionSource
@@ -45,7 +45,7 @@ namespace ActorsCP.Helpers
             {
             if (action == null)
                 {
-                throw new ArgumentNullException(nameof(action), "action не может быть null");
+                throw new ArgumentNullException($"{nameof(action)} не может быть null");
                 }
 
             var task = new Task(action, DefaultTaskCreationOptions);
@@ -80,7 +80,7 @@ namespace ActorsCP.Helpers
             {
             if (action == null)
                 {
-                throw new ArgumentNullException(nameof(action));
+                throw new ArgumentNullException($"{nameof(action)} не может быть null");
                 }
 
             if (maxDegreeOfParallelism.HasValue)

@@ -66,7 +66,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// События объекта
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
+
         private event EventHandler<ActorEventArgs> _events;
+
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// События объекта
@@ -86,7 +90,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// События объекта
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
+
         private event EventHandler<ActorStateChangedEventArgs> _stateChangedEvents;
+
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// События - изменилось состояние объекта

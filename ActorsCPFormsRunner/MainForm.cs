@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
+using ActorsCP.Helpers;
 using ActorsCP.Tests.TestActors;
 
 namespace ActorsCPFormsRunner
@@ -14,6 +15,13 @@ namespace ActorsCPFormsRunner
         public MainForm()
             {
             InitializeComponent();
+
+            OneItem[] items = new OneItem[] {
+                new OneItem("Текст","TextViewPort"),
+               new OneItem("Дерево", "TreeViewViewPort")
+            };
+
+            ViewportTypeComboBox.DataSource = items;
             }
 
         /// <summary>
@@ -48,8 +56,27 @@ namespace ActorsCPFormsRunner
         /// <returns></returns>
         private void CreateAndShowViewPort(ActorBase actor, string name)
             {
-            var form = new TextViewPort(actor, name, MainProgram.MainIcon);
-            form.Show();
+            var item = (OneItem)ViewportTypeComboBox.SelectedItem;
+
+            switch (item.Value)
+                {
+                case "TextViewPort":
+                    {
+                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    form.Show();
+                    break;
+                    }
+                case "TreeViewViewPort":
+                    {
+                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    form.Show();
+                    break;
+                    }
+                default:
+                    {
+                    throw new Exception($"{item.Value} - ?");
+                    }
+                }
             }
 
         #endregion Вспомогательные методы

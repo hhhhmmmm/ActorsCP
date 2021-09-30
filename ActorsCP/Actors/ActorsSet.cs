@@ -25,7 +25,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор имени
         /// </summary>
-        private string _NameGenerator
+        private string NameGenerator
             {
             get
                 {
@@ -38,7 +38,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsSet()
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace ActorsCP.Actors
         /// <param name="parentActor">Родительский объект</param>
         public ActorsSet(ActorBase parentActor) : this(null, parentActor)
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -320,8 +320,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отправить событие о том, что состояние набора изменилось
         /// </summary>
-        /// <param name="actor">Объект вызвавший изменение</param>
-        protected void RaiseActorsSetChanged(ActorBase actor)
+        protected void RaiseActorsSetChanged()
             {
             if (_lastSentEvent != null && (ActorsSetChangedMessagesInterval > 0))
                 {
@@ -347,7 +346,7 @@ namespace ActorsCP.Actors
 
         protected override void AfterStateChanged()
             {
-            RaiseActorsSetChanged(this);
+            RaiseActorsSetChanged();
             }
 
         /// <summary>
@@ -592,7 +591,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -611,11 +610,6 @@ namespace ActorsCP.Actors
 
                 if (_waiting.Contains(actor)) // Contains() очень медленная для списка
                     {
-                    //    //if (raiseActorsSetChangedEvent)
-                    //    //    {
-                    //    //    RaiseActorsSetChanged(actor);
-                    //    //    }
-                    //    return;
                     }
 
                 CheckActorsSetState();
@@ -628,7 +622,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -644,7 +638,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -666,10 +660,6 @@ namespace ActorsCP.Actors
 
                 if (_running.Contains(actor)) // уже есть в списке выполняющихся
                     {
-                    //if (raiseActorsSetChangedEvent)
-                    //    {
-                    //    RaiseActorsSetChanged(actor);
-                    //    }
                     return;
                     }
 
@@ -681,7 +671,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -697,7 +687,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -711,10 +701,6 @@ namespace ActorsCP.Actors
 
                 if (_completed.Contains(actor))
                     {
-                    //if (raiseActorsSetChangedEvent)
-                    //    {
-                    //    RaiseActorsSetChanged(actor);
-                    //    }
                     return;
                     }
 
@@ -731,7 +717,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -748,7 +734,7 @@ namespace ActorsCP.Actors
             {
             if (actor == null)
                 {
-                throw new ArgumentNullException(nameof(actor));
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
 
             actor.SetParent(this);

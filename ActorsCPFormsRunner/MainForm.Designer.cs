@@ -42,11 +42,13 @@ namespace ActorsCPFormsRunner
             this.CrowdTestActorButton = new System.Windows.Forms.Button();
             this.TestActor_QueueOfCrowdsButton = new System.Windows.Forms.Button();
             this.RunActorButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ViewportTypeComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // CrowdLengthTextBox
             // 
-            this.CrowdLengthTextBox.Location = new System.Drawing.Point(117, 81);
+            this.CrowdLengthTextBox.Location = new System.Drawing.Point(147, 117);
             this.CrowdLengthTextBox.Name = "CrowdLengthTextBox";
             this.CrowdLengthTextBox.Size = new System.Drawing.Size(77, 20);
             this.CrowdLengthTextBox.TabIndex = 42;
@@ -55,7 +57,7 @@ namespace ActorsCPFormsRunner
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(23, 81);
+            this.label24.Location = new System.Drawing.Point(53, 117);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(77, 13);
             this.label24.TabIndex = 41;
@@ -63,7 +65,7 @@ namespace ActorsCPFormsRunner
             // 
             // QueueLegthTextBox
             // 
-            this.QueueLegthTextBox.Location = new System.Drawing.Point(112, 19);
+            this.QueueLegthTextBox.Location = new System.Drawing.Point(142, 55);
             this.QueueLegthTextBox.Name = "QueueLegthTextBox";
             this.QueueLegthTextBox.Size = new System.Drawing.Size(77, 20);
             this.QueueLegthTextBox.TabIndex = 40;
@@ -72,7 +74,7 @@ namespace ActorsCPFormsRunner
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(18, 19);
+            this.label23.Location = new System.Drawing.Point(48, 55);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(87, 13);
             this.label23.TabIndex = 39;
@@ -80,7 +82,7 @@ namespace ActorsCPFormsRunner
             // 
             // SleepTimeTextBox
             // 
-            this.SleepTimeTextBox.Location = new System.Drawing.Point(117, 114);
+            this.SleepTimeTextBox.Location = new System.Drawing.Point(147, 150);
             this.SleepTimeTextBox.Name = "SleepTimeTextBox";
             this.SleepTimeTextBox.Size = new System.Drawing.Size(77, 20);
             this.SleepTimeTextBox.TabIndex = 38;
@@ -89,7 +91,7 @@ namespace ActorsCPFormsRunner
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(23, 116);
+            this.label22.Location = new System.Drawing.Point(53, 152);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(82, 13);
             this.label22.TabIndex = 37;
@@ -97,7 +99,7 @@ namespace ActorsCPFormsRunner
             // 
             // SingleTestActorButton
             // 
-            this.SingleTestActorButton.Location = new System.Drawing.Point(254, 19);
+            this.SingleTestActorButton.Location = new System.Drawing.Point(284, 55);
             this.SingleTestActorButton.Name = "SingleTestActorButton";
             this.SingleTestActorButton.Size = new System.Drawing.Size(194, 23);
             this.SingleTestActorButton.TabIndex = 43;
@@ -107,7 +109,7 @@ namespace ActorsCPFormsRunner
             // 
             // QueueTestActorButton
             // 
-            this.QueueTestActorButton.Location = new System.Drawing.Point(254, 53);
+            this.QueueTestActorButton.Location = new System.Drawing.Point(284, 89);
             this.QueueTestActorButton.Name = "QueueTestActorButton";
             this.QueueTestActorButton.Size = new System.Drawing.Size(194, 23);
             this.QueueTestActorButton.TabIndex = 44;
@@ -117,7 +119,7 @@ namespace ActorsCPFormsRunner
             // 
             // CombinedQueueActorButton
             // 
-            this.CombinedQueueActorButton.Location = new System.Drawing.Point(254, 82);
+            this.CombinedQueueActorButton.Location = new System.Drawing.Point(284, 118);
             this.CombinedQueueActorButton.Name = "CombinedQueueActorButton";
             this.CombinedQueueActorButton.Size = new System.Drawing.Size(194, 23);
             this.CombinedQueueActorButton.TabIndex = 45;
@@ -127,7 +129,7 @@ namespace ActorsCPFormsRunner
             // 
             // CrowdTestActorButton
             // 
-            this.CrowdTestActorButton.Location = new System.Drawing.Point(254, 111);
+            this.CrowdTestActorButton.Location = new System.Drawing.Point(284, 147);
             this.CrowdTestActorButton.Name = "CrowdTestActorButton";
             this.CrowdTestActorButton.Size = new System.Drawing.Size(194, 23);
             this.CrowdTestActorButton.TabIndex = 46;
@@ -137,7 +139,7 @@ namespace ActorsCPFormsRunner
             // 
             // TestActor_QueueOfCrowdsButton
             // 
-            this.TestActor_QueueOfCrowdsButton.Location = new System.Drawing.Point(256, 141);
+            this.TestActor_QueueOfCrowdsButton.Location = new System.Drawing.Point(286, 177);
             this.TestActor_QueueOfCrowdsButton.Name = "TestActor_QueueOfCrowdsButton";
             this.TestActor_QueueOfCrowdsButton.Size = new System.Drawing.Size(192, 23);
             this.TestActor_QueueOfCrowdsButton.TabIndex = 47;
@@ -147,7 +149,7 @@ namespace ActorsCPFormsRunner
             // 
             // RunActorButton
             // 
-            this.RunActorButton.Location = new System.Drawing.Point(520, 18);
+            this.RunActorButton.Location = new System.Drawing.Point(551, 53);
             this.RunActorButton.Name = "RunActorButton";
             this.RunActorButton.Size = new System.Drawing.Size(159, 23);
             this.RunActorButton.TabIndex = 48;
@@ -155,11 +157,30 @@ namespace ActorsCPFormsRunner
             this.RunActorButton.UseVisualStyleBackColor = true;
             this.RunActorButton.Click += new System.EventHandler(this.RunActorButtonClick);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(51, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 13);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "Тип вьюпорта:";
+            // 
+            // ViewportTypeComboBox
+            // 
+            this.ViewportTypeComboBox.FormattingEnabled = true;
+            this.ViewportTypeComboBox.Location = new System.Drawing.Point(147, 11);
+            this.ViewportTypeComboBox.Name = "ViewportTypeComboBox";
+            this.ViewportTypeComboBox.Size = new System.Drawing.Size(331, 21);
+            this.ViewportTypeComboBox.TabIndex = 50;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.ViewportTypeComboBox);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.RunActorButton);
             this.Controls.Add(this.QueueTestActorButton);
             this.Controls.Add(this.CombinedQueueActorButton);
@@ -193,6 +214,8 @@ namespace ActorsCPFormsRunner
         private System.Windows.Forms.Button CrowdTestActorButton;
         private System.Windows.Forms.Button TestActor_QueueOfCrowdsButton;
         private System.Windows.Forms.Button RunActorButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox ViewportTypeComboBox;
         }
     }
 

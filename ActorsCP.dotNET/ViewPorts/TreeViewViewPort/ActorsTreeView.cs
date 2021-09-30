@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
 
 namespace ActorsCP.dotNET.ViewPorts.TreeViewViewPort
@@ -106,15 +107,15 @@ namespace ActorsCP.dotNET.ViewPorts.TreeViewViewPort
 
             #region Метод добавления узла в дерево
 
-            Action ADD = () =>
-        {
-            ParentNode.Add(ActorNode);
-            ActorNode.AddActionsNode();
-            if (ParentActor == null)
+            void ADD()
                 {
-                ActorNode.Expand();
+                ParentNode.Add(ActorNode);
+                ActorNode.AddActionsNode();
+                if (ParentActor == null)
+                    {
+                    ActorNode.Expand();
+                    }
                 }
-        };
 
             #endregion Метод добавления узла в дерево
 

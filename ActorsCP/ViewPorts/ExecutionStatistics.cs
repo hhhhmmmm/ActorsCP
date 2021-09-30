@@ -86,9 +86,8 @@ namespace ActorsCP.ViewPorts
         /// <returns></returns>
         public override bool Equals(object obj)
             {
-            if (obj is ExecutionStatistics)
+            if (obj is ExecutionStatistics c)
                 {
-                ExecutionStatistics c = (ExecutionStatistics)obj;
                 return
                     TotalBoundObjects == c.TotalBoundObjects &&
                     TotalUnboundObjects == c.TotalUnboundObjects &&
@@ -132,10 +131,10 @@ namespace ActorsCP.ViewPorts
         /// Добавить кусок статистики
         /// </summary>
         /// <param name="sb"></param>
-        /// <param name="prefix"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        private void AddStatistics(StringBuilder sb, string prefix, string name, int value)
+        /// <param name="prefix">Префикс</param>
+        /// <param name="name">Название</param>
+        /// <param name="value">Значение</param>
+        private static void AddStatistics(StringBuilder sb, string prefix, string name, int value)
             {
             if (value == 0)
                 {
@@ -144,7 +143,7 @@ namespace ActorsCP.ViewPorts
             if (!string.IsNullOrEmpty(prefix))
                 {
                 sb.Append(prefix);
-                sb.Append(" ");
+                sb.Append(' ');
                 }
             sb.Append(name);
             sb.Append(" - ");
