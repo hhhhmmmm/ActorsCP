@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 
+using ActorsCP.Helpers;
+
 namespace ActorsCP.ViewPorts
     {
     /// <summary>
@@ -67,14 +69,9 @@ namespace ActorsCP.ViewPorts
         #region Буферизованный вьюпорт
 
         /// <summary>
-        /// Количество добавленных сообщений
+        /// Статистика буфера
         /// </summary>
-        public volatile int BufferedAddedMessages;
-
-        /// <summary>
-        /// Количество обработанных сообщений
-        /// </summary>
-        public volatile int BufferedProcessedMessages;
+        public QueueBufferStatistics BufferStatistics;
 
         #endregion Буферизованный вьюпорт
 
@@ -89,9 +86,8 @@ namespace ActorsCP.ViewPorts
         /// <returns></returns>
         public override bool Equals(object obj)
             {
-            if (obj is ExecutionStatistics)
+            if (obj is ExecutionStatistics c)
                 {
-                ExecutionStatistics c = (ExecutionStatistics)obj;
                 return
                     TotalBoundObjects == c.TotalBoundObjects &&
                     TotalUnboundObjects == c.TotalUnboundObjects &&
@@ -101,8 +97,8 @@ namespace ActorsCP.ViewPorts
                     Exceptions == c.Exceptions &&
                     Errors == c.Errors &&
                     StateChanged == c.StateChanged &&
-                    BufferedAddedMessages == c.BufferedAddedMessages &&
-                    BufferedProcessedMessages == c.BufferedProcessedMessages
+                    BufferStatistics.AddedMessages == c.BufferStatistics.AddedMessages &&
+                    BufferStatistics.ProcessedMessages == c.BufferStatistics.ProcessedMessages
                     ;
                 }
 
@@ -132,6 +128,55 @@ namespace ActorsCP.ViewPorts
         #region Свойства
 
         /// <summary>
+        /// Добавить кусок статистики
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="prefix">Префикс</param>
+        /// <param name="name">Название</param>
+        /// <param name="value">Значение</param>
+        private static void AddStatistics(StringBuilder sb, string prefix, string name, int value)
+            {
+            if (value == 0)
+                {
+                return;
+                }
+            if (!string.IsNullOrEmpty(prefix))
+                {
+                sb.Append(prefix);
+                sb.Append(' ');
+                }
+            sb.Append(name);
+            sb.Append(" - ");
+            sb.Append(value);
+            }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public string GetStatistics()
+            {
+            var sb = new StringBuilder();
+            sb.Append("Рабочих объектов: ");
+
+            AddStatistics(sb, "", "привязано", TotalBoundObjects);
+            AddStatistics(sb, ",", "запущено", StartedObjects);
+            AddStatistics(sb, ",", "работают", RunningObjects);
+            AddStatistics(sb, ",", "остановлено", StoppedObjects);
+            AddStatistics(sb, ",", "завершено", TerminatedObjects);
+            AddStatistics(sb, ",", "отвязано", TotalUnboundObjects);
+
+            AddStatistics(sb, ",", "исключений", Exceptions);
+            AddStatistics(sb, ",", "ошибок", Errors);
+
+            AddStatistics(sb, ",", "изменений состояния", StateChanged);
+            AddStatistics(sb, ",", "БС: добавлено", BufferStatistics.AddedMessages);
+            AddStatistics(sb, ",", "БС: обработано", BufferStatistics.ProcessedMessages);
+
+            return sb.ToString();
+            }
+
+        /// <summary>
         /// Статистика в виде текста
         /// </summary>
         public string TextStatistics
@@ -152,14 +197,14 @@ namespace ActorsCP.ViewPorts
                 sb.Append($"изменений состояния - {StateChanged}" + nl);
                 sb.Append($"====================================" + nl);
 
-                if (BufferedAddedMessages != 0)
+                if (BufferStatistics.AddedMessages != 0)
                     {
-                    sb.AppendLine($"Буфер сообщений: добавлено сообщений  - {BufferedAddedMessages}");
+                    sb.AppendLine($"Буфер сообщений: добавлено сообщений  - {BufferStatistics.AddedMessages}");
                     }
 
-                if (BufferedProcessedMessages != 0)
+                if (BufferStatistics.ProcessedMessages != 0)
                     {
-                    sb.AppendLine($"Буфер сообщений: обработано сообщений - {BufferedProcessedMessages}");
+                    sb.AppendLine($"Буфер сообщений: обработано сообщений - {BufferStatistics.ProcessedMessages}");
                     }
 
                 return sb.ToString();
@@ -273,9 +318,9 @@ namespace ActorsCP.ViewPorts
                 throw new Exception($"Не все объекты остановлены - RunningObjects = {RunningObjects}");
                 }
 
-            if (BufferedAddedMessages != BufferedProcessedMessages)
+            if (BufferStatistics.AddedMessages != BufferStatistics.ProcessedMessages)
                 {
-                var str = $"BufferedAddedMessages!= BufferedProcessedMessages({ BufferedAddedMessages } != {BufferedProcessedMessages})";
+                var str = $"BufferStatistics.AddedMessages!= BufferStatistics.ProcessedMessages({ BufferStatistics.AddedMessages } != {BufferStatistics.ProcessedMessages})";
                 throw new Exception(str);
                 }
             }

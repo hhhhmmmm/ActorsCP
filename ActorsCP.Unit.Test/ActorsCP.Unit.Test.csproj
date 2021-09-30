@@ -42,6 +42,7 @@
     <Compile Include="ActorsSetTests.cs" />
     <Compile Include="CancellationTokenTests.cs" />
     <Compile Include="ExternalObjectsTests.cs" />
+    <Compile Include="QueueBufferTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="ActorTests.cs" />
     <Compile Include="TplViewPortTests.cs" />

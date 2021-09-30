@@ -232,7 +232,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// Сообщение
         /// </summary>
         /// <param name="text"></param>
-        protected void WriteWarningMessage(string text)
+        protected static void WriteWarningMessage(string text)
             {
             var mstat = ConsoleViewPortStatics.CreateWarningMessage(text);
             ConsoleViewPortStatics.WriteLineToConsole(mstat);
@@ -242,7 +242,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// Сообщение
         /// </summary>
         /// <param name="text"></param>
-        protected void WriteErrorMessage(string text)
+        protected static void WriteErrorMessage(string text)
             {
             var mstat = ConsoleViewPortStatics.CreateErrorMessage(text);
             ConsoleViewPortStatics.WriteLineToConsole(mstat);

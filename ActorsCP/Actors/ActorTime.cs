@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+
 using ActorsCP.Helpers;
 
 namespace ActorsCP.Actors
@@ -111,11 +112,6 @@ namespace ActorsCP.Actors
                 return 0;
                 }
             }
-
-        /// <summary>
-        /// Минимально видимый интервал
-        /// </summary>
-        private const int MinimalVisibleInterval = 1;
 
         /// <summary>
         /// Нулевое время выполнения

@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 using ActorsCP.Tests.TestActors;
 
 using NUnit.Framework;
@@ -36,17 +39,42 @@ namespace ActorsCP.Unit.Test
             // стоп
             bres = await a.StopAsync();
             Assert.IsTrue(bres);
-            Assert.AreEqual(ActorState.Stopped, a.State);
+            if (a.RunOnlyOnce)
+                {
+                Assert.AreEqual(ActorState.Terminated, a.State);
+                }
+            else
+                {
+                Assert.AreEqual(ActorState.Stopped, a.State);
+                }
 
             // старт
-            bres = await a.StartAsync();
-            Assert.IsTrue(bres);
-            Assert.AreEqual(ActorState.Started, a.State);
+            if (!a.RunOnlyOnce)
+                {
+                bres = await a.StartAsync();
+                Assert.IsTrue(bres);
+                Assert.AreEqual(ActorState.Started, a.State);
+                }
+            else
+                {
+                bres = await a.StartAsync();
+                Assert.IsFalse(bres);
+                Assert.AreEqual(ActorState.Terminated, a.State);
+                }
 
             // выполнение
-            bres = await a.RunAsync();
-            Assert.IsTrue(bres);
-            Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+            if (!a.RunOnlyOnce)
+                {
+                bres = await a.RunAsync();
+                Assert.IsTrue(bres);
+                Assert.AreEqual(ActorState.Terminated, a.State); // после завершения
+                }
+            else
+                {
+                bres = await a.RunAsync();
+                Assert.IsFalse(bres);
+                Assert.AreEqual(ActorState.Terminated, a.State);
+                }
             }
 
         [Test]
@@ -91,11 +119,17 @@ namespace ActorsCP.Unit.Test
 
             // Cleanup
             var exCleanup = new ExceptionActor();
-            exCleanup.ExceptionOnRunCleanupBeforeTerminationAsync = true;
-            bres = await exCleanup.RunAsync();
-            Assert.IsFalse(bres);
-            Assert.AreEqual(exCleanup.State, ActorState.Terminated);
-            Assert.IsTrue(exCleanup.AnErrorOccurred);
+            try
+                {
+                exCleanup.ExceptionOnRunCleanupBeforeTerminationAsync = true;
+                bres = await exCleanup.RunAsync();
+                Assert.IsFalse(bres);
+                Assert.AreEqual(exCleanup.State, ActorState.Terminated);
+                Assert.IsTrue(exCleanup.AnErrorOccurred);
+                }
+            catch (Exception)
+                {
+                }
             }
 
         [Test]
@@ -186,7 +220,7 @@ namespace ActorsCP.Unit.Test
 
             bres = await a.StopAsync();
             Assert.IsTrue(bres);
-            Assert.AreEqual(ActorState.Stopped, a.State);
+            Assert.AreEqual(ActorState.Terminated, a.State);
 
             await a.CancelAsync();
             Assert.IsTrue(a.IsCancellationRequested);
@@ -229,6 +263,32 @@ namespace ActorsCP.Unit.Test
                 }
             Assert.IsTrue(actor.DisposeManagedResources_Called);
             Assert.IsTrue(actor.DisposeUnmanagedResources_Called);
+            }
+
+        [Test]
+        [TestCase(1, TestName = "70. 1 - порядок событий")]
+        [TestCase(10, TestName = "71. 10 - порядок событий")]
+        [TestCase(100, TestName = "72. 100 - порядок событий")]
+        [TestCase(1000, TestName = "73. 1000 - порядок событий")]
+        [TestCase(1000, TestName = "74. 10000 - порядок событий")]
+        public async Task Events1(int N)
+            {
+            for (int i = 0; i < N; i++)
+                {
+                var list = new List<ActorStateChangedEventArgs>();
+
+                using (var actor = new SimpleActor())
+                    {
+                    actor.StateChangedEvents += (sender, e) => { list.Add(e); };
+                    await actor.RunAsync();
+                    }
+
+                Assert.IsTrue(list.Count == 4);
+                Assert.AreEqual(list[0], ActorStates.ActorStateChangedStarted);
+                Assert.AreEqual(list[1], ActorStates.ActorStateChangedRunning);
+                Assert.AreEqual(list[2], ActorStates.ActorStateChangedStopped);
+                Assert.AreEqual(list[3], ActorStates.ActorStateChangedTerminated);
+                }
             }
         }
     }

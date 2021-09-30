@@ -93,25 +93,23 @@ namespace ActorsCP.ViewPorts
         #region Реализация интерфейса IActorBindViewPortHandler
 
         /// <summary>
-        /// Вызывается, когда объект подписан на события
+        /// Вызывается, когда объект подписан на события или отписан от них
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_ViewPortBound(ActorBase actor)
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        public void Actor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs)
             {
-            Interlocked.Increment(ref _сurrentExecutionStatistics.TotalBoundObjects);
-            Interlocked.Increment(ref _сurrentExecutionStatistics.BoundObjects);
-            InternalActor_ViewPortBound(actor);
-            }
-
-        /// <summary>
-        /// Вызывается, когда объект отписан от событий
-        /// </summary>
-        /// <param name="actor">Объект типа ActorBase</param>
-        public void Actor_ViewPortUnbound(ActorBase actor)
-            {
-            Interlocked.Increment(ref _сurrentExecutionStatistics.TotalUnboundObjects);
-            Interlocked.Decrement(ref _сurrentExecutionStatistics.BoundObjects);
-            InternalActor_ViewPortUnbound(actor);
+            if (actorViewPortBoundEventArgs.Bound)
+                {
+                Interlocked.Increment(ref _сurrentExecutionStatistics.TotalBoundObjects);
+                Interlocked.Increment(ref _сurrentExecutionStatistics.BoundObjects);
+                }
+            else
+                {
+                Interlocked.Increment(ref _сurrentExecutionStatistics.TotalUnboundObjects);
+                Interlocked.Decrement(ref _сurrentExecutionStatistics.BoundObjects);
+                }
+            InternalActor_ViewPortBoundUnbound(actor, actorViewPortBoundEventArgs);
             }
 
         #endregion Реализация интерфейса IActorBindViewPortHandler
@@ -119,18 +117,11 @@ namespace ActorsCP.ViewPorts
         #region Перегружаемые методы IActorBindViewPortHandler
 
         /// <summary>
-        /// Вызывается, когда объект подписан на события
+        /// Вызывается, когда объект подписан на события или отписан от них
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        protected virtual void InternalActor_ViewPortBound(ActorBase actor)
-            {
-            }
-
-        /// <summary>
-        /// Вызывается, когда объект отписан от событий
-        /// </summary>
-        /// <param name="actor">Объект типа ActorBase</param>
-        protected virtual void InternalActor_ViewPortUnbound(ActorBase actor)
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        protected virtual void InternalActor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs)
             {
             }
 

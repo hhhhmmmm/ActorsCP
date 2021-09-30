@@ -34,7 +34,7 @@ namespace ActorsCP.Actors
             {
             get
                 {
-                return "Толпа " + N; // остальные - медленно
+                return "Толпа_" + ABN; // остальные - медленно
                 }
             }
 

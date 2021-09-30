@@ -1,6 +1,10 @@
-﻿using System;
+﻿// #define DEBUG_RAISE_EVENT
+
 using System.Globalization;
 using System.Text;
+
+using System;
+using System.Diagnostics;
 
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
@@ -25,8 +29,17 @@ namespace ActorsCP.Actors
         /// <param name="actorEventArgs">Событие</param>
         protected void RaiseActorEvent(ActorEventArgs actorEventArgs)
             {
+            //#if DEBUG_RAISE_EVENT
+            //            Logger.LogDebug($"RaiseActorEvent({actorEventArgs})");
+            //#endif // DEBUG_RAISE_EVENT
             _events?.Invoke(this, actorEventArgs);
             }
+
+        /// <summary>
+        /// Событие ActorState.Terminated отправлено
+        /// По идее после него не должно быть ни одного сообщения
+        /// </summary>
+        private bool _terminateEventRaised;
 
         /// <summary>
         /// Выкинуть событие - изменилось состояние объекта
@@ -34,13 +47,30 @@ namespace ActorsCP.Actors
         /// <param name="actorStateChangedEventArgs">Событие</param>
         protected void RaiseActorStateChanged(ActorStateChangedEventArgs actorStateChangedEventArgs)
             {
+            if (_terminateEventRaised)
+                {
+                throw new InvalidOperationException("Событие ActorStateChangedEventArgs(ActorState.Terminated) уже было отправлено");
+                }
+
+            //#if DEBUG_RAISE_EVENT
+            //            Logger.LogDebug($"Name = {Name}, RaiseActorStateChanged({actorStateChangedEventArgs})");
+            //#endif // DEBUG_RAISE_EVENT
             _stateChangedEvents?.Invoke(this, actorStateChangedEventArgs);
+
+            if (actorStateChangedEventArgs.State == ActorState.Terminated)
+                {
+                _terminateEventRaised = true;
+                }
             }
 
         /// <summary>
         /// События объекта
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
+
         private event EventHandler<ActorEventArgs> _events;
+
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// События объекта
@@ -60,7 +90,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// События объекта
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
+
         private event EventHandler<ActorStateChangedEventArgs> _stateChangedEvents;
+
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// События - изменилось состояние объекта

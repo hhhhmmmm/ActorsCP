@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 
 namespace ActorsCP.ViewPorts
     {
@@ -13,15 +14,10 @@ namespace ActorsCP.ViewPorts
     public interface IActorBindViewPortHandler
         {
         /// <summary>
-        /// Вызывается, когда объект подписан на события
+        /// Вызывается, когда объект подписан на события или отписан от них
         /// </summary>
         /// <param name="actor">Объект типа ActorBase</param>
-        void Actor_ViewPortBound(ActorBase actor);
-
-        /// <summary>
-        /// Вызывается, когда объект отписан от событий
-        /// </summary>
-        /// <param name="actor">Объект типа ActorBase</param>
-        void Actor_ViewPortUnbound(ActorBase actor);
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        void Actor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs);
         } // end interface IActorBindViewPortHandler
     } // end namespace ActorsCP.ViewPorts

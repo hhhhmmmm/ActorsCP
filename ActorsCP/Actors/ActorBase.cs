@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -11,6 +13,7 @@ namespace ActorsCP.Actors
     /// <summary>
     /// Базовый класс
     /// </summary>
+    [DebuggerDisplay("ABN_{ABN}, Name = {Name}, State = {State}")]
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
         #region Константы для задач
@@ -55,7 +58,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор последовательных номеров объектов
         /// </summary>
-        private static int s_N_global = 0;
+        private volatile static int s_ABN_global = 0;
 
         #endregion Глобальные внутренние объекты
 
@@ -64,7 +67,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        private int _N = 0;
+        private readonly int _ABN = 0;
 
         /// <summary>
         /// Родительский объект
@@ -90,9 +93,9 @@ namespace ActorsCP.Actors
         /// </summary>
         protected ActorBase()
             {
-            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
+            _ABN = Interlocked.Increment(ref s_ABN_global); // последовательный номер объекта
 
-            Name = "Объект " + N; // остальные - медленно
+            Name = "Объект_" + ABN; // остальные - медленно
             // Name = $"Объект {N} (ActorUid = {ActorUid})"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             // Name = $"Объект {N}"; // // SetName($"Объект {N} (ActorUid = {ActorUid})");
             SetPreDisposeHandler(PreDisposeHandler);
@@ -149,11 +152,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        public int N
+        public int ABN
             {
             get
                 {
-                return _N;
+                return _ABN;
                 }
             }
 
@@ -332,7 +335,7 @@ namespace ActorsCP.Actors
         /// Установить новое состояние объекта
         /// </summary>
         /// <param name="newState">новое состояние объекта</param>
-        protected void SetActorState(ActorState newState)
+        protected async void SetActorState(ActorState newState)
             {
             if (State == newState)
                 {
@@ -350,33 +353,31 @@ namespace ActorsCP.Actors
                 {
                 case ActorState.Pending:
                     {
-                    RaiseActorEvent(ActorStates.Pending);
-                    RaiseActorStateChanged(ActorStates.Pending);
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedPending);
                     break;
                     }
                 case ActorState.Started:
                     {
-                    RaiseActorEvent(ActorStates.Started);
-                    RaiseActorStateChanged(ActorStates.Started);
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedStarted);
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    RaiseActorEvent(ActorStates.Stopped);
-                    RaiseActorStateChanged(ActorStates.Stopped);
-
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedStopped);
+                    if (RunOnlyOnce) // если объект запускается только один раз, то нужно его сразу завершить
+                        {
+                        await TerminateAsync().ConfigureAwait(false);
+                        }
                     break;
                     }
                 case ActorState.Running:
                     {
-                    RaiseActorEvent(ActorStates.Running);
-                    RaiseActorStateChanged(ActorStates.Running);
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedRunning);
                     break;
                     }
                 case ActorState.Terminated:
                     {
-                    RaiseActorEvent(ActorStates.Terminated);
-                    RaiseActorStateChanged(ActorStates.Terminated);
+                    RaiseActorStateChanged(ActorStates.ActorStateChangedTerminated);
                     UnbindAllViewPorts();
                     ClearViewPortHelper(); // В SetActorState(Terminated); // отвязываем все порты так как перешли в состояние Terminated и больше сообщений посылать не будем
                     break;
@@ -396,7 +397,7 @@ namespace ActorsCP.Actors
             {
             if (string.IsNullOrEmpty(name))
                 {
-                throw new ArgumentNullException(name, "Имя объекта нужно указать");
+                throw new ArgumentNullException($"{nameof(name)} не может быть null");
                 }
 
             if (this.Name != null)
@@ -484,7 +485,7 @@ namespace ActorsCP.Actors
         /// <returns></returns>
         public override int GetHashCode()
             {
-            return N;
+            return ABN;
             }
 
         #endregion Методы

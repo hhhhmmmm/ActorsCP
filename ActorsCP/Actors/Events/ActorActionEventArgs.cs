@@ -66,7 +66,7 @@ namespace ActorsCP.Actors.Events
         /// <returns></returns>
         public override string ToString()
             {
-            return $"{ActionEventType} '{MessageText}' ";
+            return $"ActorActionEventArgs: EventType={ActionEventType}, MessageText='{MessageText}' ";
             }
 
         #endregion Перегружаемые методы

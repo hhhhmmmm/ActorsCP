@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
+﻿// #define DEBUG_ADD_TO_QUEUE
+// #define DEBUG_PROCESSMESSAGEFROMQUEUELOOP
+
+using System;
+using System.Diagnostics;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
+using ActorsCP.Logger;
 using ActorsCP.UtilityActors;
 
 namespace ActorsCP.ViewPorts
@@ -21,57 +23,36 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Очередь сообщения
         /// </summary>
-        private ConcurrentQueue<ViewPortItem> _queue;
+        private QueueBufferT<ViewPortItem> _queue;
 
         /// <summary>
-        /// Семафор для очереди
+        /// Обработчик элемента ViewPortItem
         /// </summary>
-        private SemaphoreSlim _queueSemaphoreSlim;
-
-        /// <summary>
-        /// Вьюпорт находится в состоянии завершения
-        /// </summary>
-        private bool _isTerminating;
-
-        /// <summary>
-        /// Задача-обработчик очереди сообщений
-        /// </summary>
-        private Task _queueTask;
+        private IViewPortItemProcessor _iViewPortItemProcessor;
 
         #endregion Приватные мемберы
 
         #region Свойства
 
         /// <summary>
-        /// Использовать очередь для буфера
+        /// Логгер
         /// </summary>
-        public bool UseQueueForBuffering
-            {
-            get;
-            set;
-            } = true;
-
-        /// <summary>
-        /// Таймаут ожидания очереди, ms
-        /// </summary>
-        private int _queueTimeout = 100;
-
-        /// <summary>
-        /// Таймаут ожидания очереди, ms
-        /// </summary>
-        public int QueueTimeout
+        protected static IActorLogger Logger
             {
             get
                 {
-                return _queueTimeout;
+                return GlobalActorLogger.GetInstance();
                 }
-            set
+            }
+
+        /// <summary>
+        /// Внутренняя статистика буфера
+        /// </summary>
+        public QueueBufferStatistics BufferStatistics
+            {
+            get
                 {
-                if (value < 0)
-                    {
-                    throw new ArgumentException("Значение должно быть больше 0");
-                    }
-                _queueTimeout = value;
+                return _queue.Statistics;
                 }
             }
 
@@ -94,64 +75,18 @@ namespace ActorsCP.ViewPorts
 
         #endregion Реализация интерфейса IDisposable
 
-        #region Очередь
+        #region Обработчик IViewPortItemProcessor
 
         /// <summary>
-        /// Цикл обработки сообщений
+        /// Установить обработчик IViewPortItemProcessor
         /// </summary>
-        private void ProcessMessageFromQueueLoop()
+        /// <param name="iViewPortItemProcessor">Обработчик элемента ViewPortItem</param>
+        public void SetIViewPortItemProcessor(IViewPortItemProcessor iViewPortItemProcessor)
             {
-            while (true)
-                {
-                _queueSemaphoreSlim.Wait(QueueTimeout);
-
-                if (!(_queue.IsEmpty) && _queue.TryDequeue(out ViewPortItem viewPortItem))
-                    {
-                    ProcessExtractedMessage(viewPortItem);
-                    }
-                else
-                    {
-                    if (_isTerminating)
-                        {
-                        if (_queue.IsEmpty)
-                            {
-                            return;
-                            }
-                        }
-                    }
-                }
+            _iViewPortItemProcessor = iViewPortItemProcessor;
             }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void InternalInitAsQueue()
-            {
-            _queue = new ConcurrentQueue<ViewPortItem>();
-            _queueSemaphoreSlim = new SemaphoreSlim(1, int.MaxValue);
-            _queueTask = Task.Run(() => { ProcessMessageFromQueueLoop(); });
-            }
-
-        /// <summary>
-        ///
-        /// </summary>
-        private void InternalTerminateAsQueue()
-            {
-            _queueTask.Wait();
-            _queueTask.Dispose();
-            _queueTask = null;
-            _queueSemaphoreSlim?.Dispose();
-            _queueSemaphoreSlim = null;
-
-            if (!_queue.IsEmpty)
-                {
-                throw new Exception($"В очереди осталось {_queue.Count} сообщений");
-                }
-
-            _queue = null;
-            }
-
-        #endregion Очередь
+        #endregion Обработчик IViewPortItemProcessor
 
         #region Инициализация/Завершение
 
@@ -166,7 +101,7 @@ namespace ActorsCP.ViewPorts
                 return;
                 }
 
-            InternalInitAsQueue();
+            _queue = QueueBufferT<ViewPortItem>.Create(ProcessExtractedMessage);
 
             base.InternalInit(additionalText);
             }
@@ -174,16 +109,16 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Завершение вьюпорта
         /// </summary>
-        protected override void InternalTerminate()
+        protected override async void InternalTerminate()
             {
             if (IsTerminated)
                 {
                 return;
                 }
 
-            _isTerminating = true;
-
-            InternalTerminateAsQueue();
+            await _queue.WaitAsync();
+            await _queue.TerminateAsync();
+            _iViewPortItemProcessor = null;
 
             base.InternalTerminate();
             }
@@ -201,18 +136,17 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "data не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
                 }
-
-            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedAddedMessages);
 
             if (_queue == null)
                 {
                 throw new InvalidOperationException("_queue == null");
                 }
 
-            _queue.Enqueue(viewPortItem);
-            _queueSemaphoreSlim.Release();
+            _queue.Add(viewPortItem);
+
+            _сurrentExecutionStatistics.BufferStatistics = _queue.Statistics;
             }
 
         #endregion Добавление сообщений
@@ -245,6 +179,21 @@ namespace ActorsCP.ViewPorts
 
         #endregion Перегружаемые методы IActorEventsHandler
 
+        #region Перегружаемые методы IActorBindViewPortHandler
+
+        /// <summary>
+        /// Вызывается, когда объект подписан на события или отписан от них
+        /// </summary>
+        /// <param name="actor">Объект типа ActorBase</param>
+        /// <param name="actorViewPortBoundEventArgs">Событие - объект привязан или отвязан</param>
+        protected override void InternalActor_ViewPortBoundUnbound(ActorBase actor, ActorViewPortBoundEventArgs actorViewPortBoundEventArgs)
+            {
+            var viewPortItem = new ViewPortItem(actor, actorViewPortBoundEventArgs);
+            Add(viewPortItem);
+            }
+
+        #endregion Перегружаемые методы IActorBindViewPortHandler
+
         #region Обработка сообщений
 
         /// <summary>
@@ -255,22 +204,24 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
                 }
 
             if (viewPortItem.ActorEventArgs == null)
                 {
-                throw new ArgumentNullException(nameof(viewPortItem), "viewPortItem.ActorEventArgs не может быть null");
+                throw new ArgumentNullException($"{nameof(viewPortItem.ActorEventArgs)} не может быть null");
                 }
 
-            Interlocked.Increment(ref _сurrentExecutionStatistics.BufferedProcessedMessages);
+            _iViewPortItemProcessor?.ProcessViewPortItem(viewPortItem);
+
+            _сurrentExecutionStatistics.BufferStatistics = _queue.Statistics;
 
             if (viewPortItem.ActorEventArgs is ActorStateChangedEventArgs)
                 {
                 ProcessAsActorStateChangedEventArgs(viewPortItem);
                 }
             else
-            if (viewPortItem.ActorEventArgs is ActorEventArgs)
+            if (viewPortItem.ActorEventArgs != null)
                 {
                 ProcessAsActorEventArgs(viewPortItem);
                 }
@@ -337,7 +288,7 @@ namespace ActorsCP.ViewPorts
 
             var ea = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseDebug
             }
 
         /// <summary>
@@ -352,7 +303,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseMessage
             }
 
         /// <summary>
@@ -367,7 +318,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseWarning
             }
 
         /// <summary>
@@ -382,7 +333,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseError
             }
 
         /// <summary>
@@ -397,7 +348,7 @@ namespace ActorsCP.ViewPorts
                 }
             var ea = new ActorExceptionEventArgs(exception);
             var viewPortItem = new ViewPortItem(EmptyActor.Value, ea);
-            Add(viewPortItem);
+            Add(viewPortItem); // RaiseException
             }
 
         #endregion Реализация интерфейса IMessageChannel

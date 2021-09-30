@@ -17,7 +17,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Счетчик
         /// </summary>
-        private ActorTime _actorTime = default(ActorTime);
+        private ActorTime _actorTime = default;
 
         /// <summary>
         /// Делегат который будет вызван по завершении жизни
@@ -60,12 +60,12 @@ namespace ActorsCP.Actors
             {
             if (counterName == null)
                 {
-                throw new ArgumentNullException(nameof(counterName), "CounterName не может быть null");
+                throw new ArgumentNullException($"{nameof(counterName)} не может быть null");
                 }
 
             if (_delegate == null)
                 {
-                throw new ArgumentNullException(nameof(Delegate), "Delegate не может быть null");
+                throw new ArgumentNullException($"{nameof(_delegate)} не может быть null");
                 }
 
             SuppressOutput = suppressOutput;

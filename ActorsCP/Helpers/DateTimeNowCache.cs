@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace ActorsCP.Helpers
     {
@@ -18,6 +19,16 @@ namespace ActorsCP.Helpers
         private const double MinDiffMs = 40; // 20 кадров в секунду
 
         /// <summary>
+        /// Шаг квантования, итераций
+        /// </summary>
+        private const double MaxSpins = 40;
+
+        /// <summary>
+        /// Счетчик вызовов
+        /// </summary>
+        private static volatile int _counter = 0;
+
+        /// <summary>
         /// Последнее запомненное время
         /// </summary>
         private static DateTime _recentUtcTime = DateTime.UtcNow;
@@ -32,10 +43,27 @@ namespace ActorsCP.Helpers
             var diff = curUtcTime.Subtract(_recentUtcTime);
             var diffMs = diff.TotalMilliseconds; // разница в ms
 
+            var _newCounter = Interlocked.Increment(ref _counter);
+
+            bool conditionReached = false;
+
             if (diffMs >= MinDiffMs)
+                {
+                conditionReached = true;
+                }
+            else
+                {
+                if (_newCounter >= MaxSpins)
+                    {
+                    conditionReached = true;
+                    }
+                }
+
+            if (conditionReached)
                 {
                 _recentUtcTime = curUtcTime;
                 _recentLocalTime = _recentUtcTime.ToLocalTime();
+                _counter = 0;
                 }
 
             return _recentLocalTime;

@@ -16,7 +16,7 @@ namespace ActorsCP.Helpers
         /// <param name="obj">Ссылка на объект</param>
         public static void DeleteWeakReference(List<WeakReference> list, object obj)
             {
-            int foundItem = -1;
+            int foundItem;
 
             for (; ; )
                 {

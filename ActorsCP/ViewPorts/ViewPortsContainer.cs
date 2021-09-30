@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
 namespace ActorsCP.ViewPorts
@@ -48,7 +50,7 @@ namespace ActorsCP.ViewPorts
             {
             if (parentActor == null)
                 {
-                throw new ArgumentNullException(nameof(parentActor));
+                throw new ArgumentNullException($"{nameof(parentActor)} не может быть null");
                 }
             _parentActor = parentActor;
             }
@@ -143,11 +145,11 @@ namespace ActorsCP.ViewPorts
 
             var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             DecrementBoundViewPortsCounter();
-            actorBindEventsHandler?.Actor_ViewPortUnbound(_parentActor);
+            actorBindEventsHandler?.Actor_ViewPortBoundUnbound(_parentActor, ActorViewPortBoundEventArgs.UnboundInstance);
 
-#if DEBUG_BIND_UNBIND
-            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
-#endif // DEBUG_BIND_UNBIND
+            //#if DEBUG_BIND_UNBIND
+            //            _parentActor.RaiseOnActorActionDebug($"Вызван UnbindChild, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
+            //#endif // DEBUG_BIND_UNBIND
 
             #endregion Окончательное уведомление
 
@@ -168,11 +170,11 @@ namespace ActorsCP.ViewPorts
 
             var actorBindEventsHandler = iViewPort as IActorBindViewPortHandler;
             IncrementBoundViewPortsCounter();
-            actorBindEventsHandler?.Actor_ViewPortBound(_parentActor);
+            actorBindEventsHandler?.Actor_ViewPortBoundUnbound(_parentActor, ActorViewPortBoundEventArgs.BoundInstance);
 
-#if DEBUG_BIND_UNBIND
-            _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortAndNotify, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
-#endif // DEBUG_BIND_UNBIND
+            //#if DEBUG_BIND_UNBIND
+            //            _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortAndNotify, _bindEventsHandlerCounter = {BindEventsHandlerCounter}");
+            //#endif // DEBUG_BIND_UNBIND
             }
 
         /// <summary>
@@ -183,7 +185,7 @@ namespace ActorsCP.ViewPorts
             {
             if (childActor == null)
                 {
-                throw new ArgumentNullException(nameof(childActor));
+                throw new ArgumentNullException($"{nameof(childActor)} не может быть null");
                 }
 
             if (childActor.Parent != _parentActor)
@@ -205,9 +207,9 @@ namespace ActorsCP.ViewPorts
 
             Interlocked.Increment(ref _bindViewPortsToChildActorCounter);
 
-#if DEBUG_BIND_UNBIND
-                _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortsToChildActor, BindViewPortsToChildActorCounter = {BindViewPortsToChildActorCounter}");
-#endif // DEBUG_BIND_UNBIND
+            //#if DEBUG_BIND_UNBIND
+            //                _parentActor.RaiseOnActorActionDebug($"Вызван BindViewPortsToChildActor, BindViewPortsToChildActorCounter = {BindViewPortsToChildActorCounter}");
+            //#endif // DEBUG_BIND_UNBIND
             }
 
         /// <summary>

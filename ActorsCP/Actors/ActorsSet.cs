@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Linq;
 
-#if DEBUG
+// #if DEBUG
 // #define DEBUG_TRACK_MOVES
-#endif // DEBUG
+// #endif // DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -25,11 +25,11 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор имени
         /// </summary>
-        private string _NameGenerator
+        private string NameGenerator
             {
             get
                 {
-                return $"Множество объектов {N} (ActorUid = {ActorUid})";
+                return $"Множество_объектов_{ABN}";
                 }
             }
 
@@ -38,7 +38,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsSet()
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace ActorsCP.Actors
         /// <param name="parentActor">Родительский объект</param>
         public ActorsSet(ActorBase parentActor) : this(null, parentActor)
             {
-            SetName(_NameGenerator);
+            SetName(NameGenerator);
             }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actors">Входящий массив вида HashSet<ActorBase></param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(HashSet<ActorBase> actors)
             {
             var tmp = new ActorBase[actors.Count];
             actors.CopyTo(tmp, 0);
@@ -291,7 +291,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="actors">Входящий массив вида ConcurrentContainerT<ActorBase></param>
         /// <returns></returns>
-        protected ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
+        protected static ActorBase[] GetCopyOf(ConcurrentContainerT<ActorBase> actors)
             {
             var tmp = actors.Items.ToArray();
             return tmp;
@@ -320,8 +320,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Отправить событие о том, что состояние набора изменилось
         /// </summary>
-        /// <param name="actor">Объект вызвавший изменение</param>
-        protected void RaiseActorsSetChanged(ActorBase actor)
+        protected void RaiseActorsSetChanged()
             {
             if (_lastSentEvent != null && (ActorsSetChangedMessagesInterval > 0))
                 {
@@ -347,28 +346,8 @@ namespace ActorsCP.Actors
 
         protected override void AfterStateChanged()
             {
-            RaiseActorsSetChanged(this);
+            RaiseActorsSetChanged();
             }
-
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <returns></returns>
-        //protected override Task<bool> InternalStartAsync()
-        //    {
-        //    //RaiseActorsSetChanged(this);
-        //    return CompletedTaskBoolTrue;
-        //    }
-
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <returns></returns>
-        //protected override Task<bool> InternalStopAsync()
-        //    {
-        //    //RaiseActorsSetChanged(this);
-        //    return CompletedTaskBoolTrue;
-        //    }
 
         /// <summary>
         /// Полная и окончательная остановка
@@ -546,7 +525,7 @@ namespace ActorsCP.Actors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
+        private void Actor_StateChangedEvents(object sender, Events.ActorStateChangedEventArgs e)
             {
             if (e is ActorSetCountChangedEventArgs) // события изменения состояния набора не интересны
                 {
@@ -579,21 +558,7 @@ namespace ActorsCP.Actors
                     }
                 case ActorState.Stopped:
                     {
-                    if (actor.RunOnlyOnce)
-                        {
-                        if (!_completed.Contains(actor))
-                            {
-                            if (actor.State != ActorState.Terminated)
-                                {
-                                await actor.TerminateAsync().ConfigureAwait(false);
-                                }
-                            else
-                                {
-                                MoveToCompleted(actor);
-                                }
-                            }
-                        }
-                    else
+                    if (!actor.RunOnlyOnce)
                         {
                         MoveToWaiting(actor);
                         }
@@ -626,7 +591,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -645,11 +610,6 @@ namespace ActorsCP.Actors
 
                 if (_waiting.Contains(actor)) // Contains() очень медленная для списка
                     {
-                    //    //if (raiseActorsSetChangedEvent)
-                    //    //    {
-                    //    //    RaiseActorsSetChanged(actor);
-                    //    //    }
-                    //    return;
                     }
 
                 CheckActorsSetState();
@@ -662,7 +622,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -678,7 +638,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -700,10 +660,6 @@ namespace ActorsCP.Actors
 
                 if (_running.Contains(actor)) // уже есть в списке выполняющихся
                     {
-                    //if (raiseActorsSetChangedEvent)
-                    //    {
-                    //    RaiseActorsSetChanged(actor);
-                    //    }
                     return;
                     }
 
@@ -715,7 +671,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -731,7 +687,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException(nameof(actor));
+                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -745,10 +701,6 @@ namespace ActorsCP.Actors
 
                 if (_completed.Contains(actor))
                     {
-                    //if (raiseActorsSetChangedEvent)
-                    //    {
-                    //    RaiseActorsSetChanged(actor);
-                    //    }
                     return;
                     }
 
@@ -765,7 +717,7 @@ namespace ActorsCP.Actors
 
                 if (raiseActorsSetChangedEvent)
                     {
-                    RaiseActorsSetChanged(actor);
+                    RaiseActorsSetChanged();
                     }
                 } // end lock
             }
@@ -782,7 +734,7 @@ namespace ActorsCP.Actors
             {
             if (actor == null)
                 {
-                throw new ArgumentNullException(nameof(actor));
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
 
             actor.SetParent(this);

@@ -114,7 +114,7 @@ namespace ActorsCP.Actors
             {
             if (tokenSource == null)
                 {
-                throw new ArgumentNullException(nameof(tokenSource));
+                throw new ArgumentNullException($"{nameof(tokenSource)} не может быть null");
                 }
 
             SetCancellationToken(tokenSource.Token);

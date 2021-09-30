@@ -149,7 +149,7 @@ namespace ActorsCP.Unit.Test
 
         [Test]
         [TestCase(1, true, false, TestName = "14.1. 1TF смешанный набор акторов (FailureOnRun)")]
-        [TestCase(2, true, true, TestName = "14.2. 2TT смешанный набор акторов (FailureOnRun)")]
+        [TestCase(2, false, true, TestName = "14.2. 2TT смешанный набор акторов (FailureOnRun)")]
         public async Task MixedQueueTimes(int nCount, bool expectedResult, bool anErrorOccurred)
             {
             var queue = new ActorsQueue();

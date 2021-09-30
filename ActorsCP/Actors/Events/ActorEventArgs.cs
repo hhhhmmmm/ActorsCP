@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
+
 using ActorsCP.Helpers;
 
 namespace ActorsCP.Actors.Events
@@ -7,6 +9,7 @@ namespace ActorsCP.Actors.Events
     /// <summary>
     /// Базовый класс сообщений объекта
     /// </summary>
+    [DebuggerDisplay("AEA_{AEA}")]
     public class ActorEventArgs : EventArgs
         {
         #region Глобальные внутренние объекты
@@ -14,7 +17,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Генератор последовательных номеров объектов
         /// </summary>
-        private static int s_N_global = 0;
+        private volatile static int s_AEA_global = 0;
 
         #endregion Глобальные внутренние объекты
 
@@ -23,7 +26,7 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        private readonly int _N = 0;
+        private readonly int _AEA = 0;
 
         /// <summary>
         /// Дата события в виде строки
@@ -39,7 +42,7 @@ namespace ActorsCP.Actors.Events
         /// </summary>
         public ActorEventArgs()
             {
-            _N = Interlocked.Increment(ref s_N_global); // последовательный номер объекта
+            _AEA = Interlocked.Increment(ref s_AEA_global); // последовательный номер объекта
             EventDate = DateTimeNowCache.GetDateTime();
             }
 
@@ -50,11 +53,11 @@ namespace ActorsCP.Actors.Events
         /// <summary>
         /// Уникальный последовательный номер объекта
         /// </summary>
-        public int N
+        public int AEA
             {
             get
                 {
-                return _N;
+                return _AEA;
                 }
             }
 
@@ -91,6 +94,15 @@ namespace ActorsCP.Actors.Events
             {
             var _stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
             return _stringEventDate;
+            }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            {
+            return $"ActorEventArgs(AEA_{AEA})";
             }
         }
     }

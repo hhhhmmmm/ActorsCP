@@ -75,9 +75,9 @@ namespace ActorsCP.Unit.Test
 
                 var stat = viewport.СurrentExecutionStatistics;
 
-                Assert.AreEqual(stat.BufferedAddedMessages, stat.BufferedProcessedMessages);
-                Assert.AreEqual(N, stat.BufferedAddedMessages);
-                Assert.AreEqual(N, stat.BufferedProcessedMessages);
+                Assert.AreEqual(stat.BufferStatistics.AddedMessages, stat.BufferStatistics.ProcessedMessages);
+                Assert.AreEqual(N, stat.BufferStatistics.AddedMessages);
+                Assert.AreEqual(N, stat.BufferStatistics.ProcessedMessages);
                 viewport.ValidateStatistics();
                 }
             }

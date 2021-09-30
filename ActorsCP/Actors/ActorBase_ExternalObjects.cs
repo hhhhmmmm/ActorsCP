@@ -18,7 +18,6 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Список для хранения внешних объектов
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public ConcurrentDictionary<string, WeakReference> ExternalObjects
             {
             get
