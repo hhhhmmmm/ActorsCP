@@ -13,5 +13,10 @@ namespace ActorsCP.Options
         /// Отладка сообщений вьюпорта об изменении состояния набора
         /// </summary>
         public const string ViewPort_DebugStateChangedEvent = "ViewPort_DebugStateChangedEvent";
+
+        /// <summary>
+        /// Отладка очереди сообщений
+        /// </summary>
+        public const string QueueBufferT_Debug = "QueueBufferT_Debug";
         }
     }

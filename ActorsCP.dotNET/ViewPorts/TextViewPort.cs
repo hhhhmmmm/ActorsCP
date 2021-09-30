@@ -77,9 +77,9 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="font">шрифт</param>
         private void AppendText(string text, Color color, Font font = null)
             {
-            //#if DEBUG
-            //            Logger.LogInfo($"TextViewPort:AppendText(): {text}");
-            //#endif // DEBUG
+            if (!_control.IsHandleCreated)
+                {
+                }
 
             Invoke(new MethodInvoker(delegate
             {

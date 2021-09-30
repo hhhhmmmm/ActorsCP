@@ -69,6 +69,10 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="e"></param>
         private void OnStateTimer(object sender, EventArgs e)
             {
+            if (_viewPort == null)
+                {
+                return;
+                }
             TimerSwitch = !TimerSwitch;
             _currentExecutionStatistics = _viewPort.СurrentExecutionStatistics;
             SetTitle();

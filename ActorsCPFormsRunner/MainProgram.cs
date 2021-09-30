@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 
 using ActorsCP.Logger;
+using ActorsCP.Options;
 
 namespace ActorsCPFormsRunner
     {
@@ -54,6 +55,9 @@ namespace ActorsCPFormsRunner
             GlobalActorLogger.SetGlobalLoggerInstance(logger);
 
             logger.LogInfo("Настройка логгера завершена");
+
+            var debugOptions = GlobalActorDebugOptions.GetInstance();
+            debugOptions.AddOrUpdate(ActorDebugKeywords.QueueBufferT_Debug, true);
 
             Application.Run(mf);
             }

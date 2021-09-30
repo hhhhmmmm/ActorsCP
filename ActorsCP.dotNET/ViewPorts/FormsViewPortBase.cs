@@ -103,6 +103,11 @@ namespace ActorsCP.dotNET.ViewPorts
             Controls.Add(_childControl);
             _childControl?.Show();
 
+            //while (!_childControl.IsHandleCreated)
+            //    {
+            //    Thread.Sleep(100);
+            //    }
+
             _resizer = new Resizer(this, "ViewPortBase");
 
             SetTitle();
@@ -113,10 +118,15 @@ namespace ActorsCP.dotNET.ViewPorts
                 InvokeSetIcon(NormalIcon);
                 }
 
-            CreateViewPort();
+            //BeginInvoke(new Action(AfterConsructor));
             }
 
         #endregion Конструкторы
+
+        //private void AfterConsructor()
+        //    {
+        //
+        //    }
 
         /// <summary>
         /// Посчитать размеры дочернего контрола
@@ -293,6 +303,7 @@ namespace ActorsCP.dotNET.ViewPorts
             _resizer.ApplyAndSaveSizeAndPositionFromRegistry();
             SetStatistics(); // OnLoad
             InternalOnLoad(sender, e);
+            CreateViewPort();
             }
 
         /// <summary>
@@ -337,7 +348,10 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="rectangle">Прямоугольник - место для элемента</param>
         private Control CreateChildControl(Rectangle rectangle)
             {
-            return InternalCreateChildControl(rectangle);
+            var control = InternalCreateChildControl(rectangle);
+            control.Show();
+            control.Update();
+            return control;
             }
 
         /// <summary>

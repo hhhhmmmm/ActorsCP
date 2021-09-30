@@ -39,7 +39,7 @@ namespace ActorsCP.dotNET.ViewPorts
         private void TerminateViewPort()
             {
             // Actor.UnbindViewPort(_viewPort);
-            _viewPort.Terminate();
+            _viewPort?.Terminate();
             }
 
         #endregion Создание/удаление вьюпорта
