@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
@@ -49,7 +48,7 @@ namespace ActorsCP.ViewPorts
         /// <summary>
         /// Внутренняя статистика буфера
         /// </summary>
-        public QueueBufferStatistics Statistics
+        public QueueBufferStatistics BufferStatistics
             {
             get
                 {
@@ -76,7 +75,7 @@ namespace ActorsCP.ViewPorts
 
         #endregion Реализация интерфейса IDisposable
 
-        #region Очередь
+        #region Обработчик IViewPortItemProcessor
 
         /// <summary>
         /// Установить обработчик IViewPortItemProcessor
@@ -87,7 +86,7 @@ namespace ActorsCP.ViewPorts
             _iViewPortItemProcessor = iViewPortItemProcessor;
             }
 
-        #endregion Очередь
+        #endregion Обработчик IViewPortItemProcessor
 
         #region Инициализация/Завершение
 
@@ -117,6 +116,7 @@ namespace ActorsCP.ViewPorts
                 return;
                 }
 
+            await _queue.WaitAsync();
             await _queue.TerminateAsync();
             _iViewPortItemProcessor = null;
 

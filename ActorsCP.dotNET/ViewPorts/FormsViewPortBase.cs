@@ -239,26 +239,6 @@ namespace ActorsCP.dotNET.ViewPorts
             InvokeSetText(title2);
             }
 
-        #region Реализация интерфейса IGuCancellationSource
-
-        /// <summary>
-        /// Источник отмены задачи
-        /// </summary>
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-        /// <summary>
-        /// Источник отмены выполнения
-        /// </summary>
-        public CancellationTokenSource TokenSource
-            {
-            get
-                {
-                return _cancellationTokenSource;
-                }
-            }
-
-        #endregion Реализация интерфейса IGuCancellationSource
-
         #region Реализация интерфейса IDisposable
 
         /// <summary>
@@ -271,7 +251,6 @@ namespace ActorsCP.dotNET.ViewPorts
                 {
                 components.Dispose();
 
-                _cancellationTokenSource?.Dispose();
                 _childControl?.Dispose();
                 _actor?.Dispose();
 
@@ -330,7 +309,6 @@ namespace ActorsCP.dotNET.ViewPorts
                 return;
                 }
 
-            //TokenSource.Cancel();
             _resizer.SaveSizeAndPositionInRegistry();
             KillStateTimer();
             TerminateViewPort();

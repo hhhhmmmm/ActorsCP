@@ -13,6 +13,7 @@ namespace ActorsCP.Helpers
     /// <summary>
     /// Внутренняя статистика буфера
     /// </summary>
+    [DebuggerDisplay("Messages: Added  = {AddedMessages}, Processed = {ProcessedMessages}")]
     public struct QueueBufferStatistics
         {
         /// <summary>

@@ -38,7 +38,6 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         private void TerminateViewPort()
             {
-            // Actor.UnbindViewPort(_viewPort);
             _viewPort?.Terminate();
             }
 

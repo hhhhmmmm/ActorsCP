@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ActorsCP.Actors;
 using System.Windows.Forms;
+
+using ActorsCP.Actors;
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts
@@ -75,6 +74,8 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             TimerSwitch = !TimerSwitch;
             _currentExecutionStatistics = _viewPort.СurrentExecutionStatistics;
+            _currentExecutionStatistics.BufferStatistics = _viewPort.BufferStatistics;
+
             SetTitle();
             SetStatistics(); // OnStateTimer
             }
