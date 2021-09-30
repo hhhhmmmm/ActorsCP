@@ -36,7 +36,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// В опциях включена отладка
         /// </summary>
-        private bool IsDebugging;
+        private bool _isDebugging;
 
         /// <summary>
         /// Очередь сообщения
@@ -59,11 +59,6 @@ namespace ActorsCP.Helpers
         private bool _isTerminated;
 
         /// <summary>
-        /// Цикл обработки сообщений завершен
-        /// </summary>
-        private bool _loopFinished;
-
-        /// <summary>
         /// Задача-обработчик очереди сообщений
         /// </summary>
         private Task _queueTask;
@@ -81,7 +76,7 @@ namespace ActorsCP.Helpers
         /// <summary>
         /// Таймаут ожидания очереди, ms
         /// </summary>
-        private int _queueTimeout = 100;
+        private int _queueTimeout = 1000;
 
         /// <summary>
         /// Внешний обработчик сообщений
@@ -96,6 +91,17 @@ namespace ActorsCP.Helpers
         #endregion Приватные мемберы
 
         #region Свойства
+
+        /// <summary>
+        /// В опциях включена отладка
+        /// </summary>
+        public bool IsDebugging
+            {
+            get
+                {
+                return _isDebugging;
+                }
+            }
 
         /// <summary>
         ///
@@ -182,7 +188,7 @@ namespace ActorsCP.Helpers
             #region Отладка
 
             var debugOptions = GlobalActorDebugOptions.GetInstance();
-            debugOptions.GetBool(ActorDebugKeywords.QueueBufferT_Debug, out IsDebugging);
+            debugOptions.GetBool(ActorDebugKeywords.QueueBufferT_Debug, out _isDebugging);
 
             #endregion Отладка
 
@@ -229,7 +235,7 @@ namespace ActorsCP.Helpers
                     return;
                     }
 
-                var hasData = await _queueSemaphoreSlim.WaitAsync(1000, _cancellationTokenSource.Token).ConfigureAwait(false);
+                var hasData = await _queueSemaphoreSlim.WaitAsync(_queueTimeout, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (!hasData)
                     {
                     if (_terminatingEvent.IsSet)
@@ -266,18 +272,9 @@ namespace ActorsCP.Helpers
                 LogDebug("Начало InternalClearMessageLoop()");
                 }
 
-            if (_queueTask.IsFaulted)
-                {
-                var exception = _queueTask.Exception;
-                if (exception != null)
-                    {
-                    throw exception;
-                    }
-                }
-
             if (!_queue.IsEmpty)
                 {
-                throw new Exception($"В очереди осталось {_queue.Count} сообщений");
+                throw new Exception($"В очереди осталось {_queue.Count} сообщений - нехорошо");
                 }
 
             //_queueSemaphoreSlim.Dispose();
@@ -329,8 +326,6 @@ namespace ActorsCP.Helpers
                     {
                     LogDebug("После InternalClearMessageLoop()");
                     }
-
-                _loopFinished = true;
 
                 if (IsDebugging)
                     {
@@ -404,6 +399,21 @@ namespace ActorsCP.Helpers
         #region Ожидание и остановка
 
         /// <summary>
+        /// Выкинуть исключения если они есть
+        /// </summary>
+        private void ThrowExceptionsIfAny()
+            {
+            if (_queueTask.IsFaulted)
+                {
+                var exception = _queueTask.Exception;
+                if (exception != null)
+                    {
+                    throw exception;
+                    }
+                }
+            }
+
+        /// <summary>
         /// Ожидание опустошения очереди
         /// </summary>
         /// <returns></returns>
@@ -415,12 +425,15 @@ namespace ActorsCP.Helpers
                 }
             try
                 {
+                if (IsTerminated || IsTerminating)
+                    {
+                    return;
+                    }
+
                 while (true)
                     {
-                    if (_queueTask.Exception != null)
-                        {
-                        throw _queueTask.Exception;
-                        }
+                    ThrowExceptionsIfAny();
+
                     if (_queue.IsEmpty && _queueSemaphoreSlim.CurrentCount == 0)
                         {
                         return;
@@ -435,11 +448,6 @@ namespace ActorsCP.Helpers
                     LogDebug("Конец WaitAsync()");
                     }
                 } // end finally
-
-            if (IsTerminated || IsTerminating)
-                {
-                return;
-                }
             }
 
         /// <summary>
@@ -453,10 +461,6 @@ namespace ActorsCP.Helpers
                 }
             try
                 {
-                if (IsTerminated || IsTerminating)
-                    {
-                    return;
-                    }
                 WaitAsync().Wait();
                 }
             finally
@@ -473,7 +477,15 @@ namespace ActorsCP.Helpers
         /// </summary>
         public void Terminate()
             {
+            if (IsDebugging)
+                {
+                LogDebug("Начало Terminate()");
+                }
             TerminateAsync().Wait();
+            if (IsDebugging)
+                {
+                LogDebug("Конец Terminate()");
+                }
             }
 
         /// <summary>
@@ -489,6 +501,9 @@ namespace ActorsCP.Helpers
 
             _terminatingEvent.Set();
             await WaitAsync(); // ожидание опустошения очереди
+
+            // здесь по идее нужно дропнуть внутренние объекты
+            _cancellationTokenSource?.Dispose();
 
             _isTerminated = true;
             }

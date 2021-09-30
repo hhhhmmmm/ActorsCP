@@ -51,14 +51,10 @@ namespace ActorsCP.Unit.Test
                 queue.Add(obj);
                 }
 
-            Assert.IsFalse(queue.IsTerminating);
-
             await queue.WaitAsync();
-            bool IsTerminating = queue.IsTerminating;
             await queue.TerminateAsync();
 
-            // Assert.IsFalse(queue.IsTerminating);
-            // Assert.IsTrue(queue.IsTerminated);
+            Assert.IsTrue(queue.IsTerminated);
 
             var statistics = queue.Statistics;
             Assert.AreEqual(statistics.AddedMessages, N);
