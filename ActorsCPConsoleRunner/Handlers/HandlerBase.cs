@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using ActorsCP.Actors;
-using ActorsCP.dotNET.ViewPorts.ConsoleViewPort;
+using ActorsCP.dotNET.ViewPorts.Console;
 using ActorsCP.Helpers;
 using ActorsCP.Logger;
 using ActorsCP.Options;
@@ -148,7 +148,7 @@ namespace ActorsCPConsoleRunner.Handlers
             else
             if (ViewportType.Equals("Tpl", StringComparison.OrdinalIgnoreCase))
                 {
-                var vp = new BufferedConsoleActorViewPort();
+                var vp = new ConsoleViewPort();
                 vp.UseQueueForBuffering = false;
                 DefaultViewPort = vp;
                 vp.Init();
@@ -159,7 +159,7 @@ namespace ActorsCPConsoleRunner.Handlers
             else
             if (ViewportType.Equals("queue", StringComparison.OrdinalIgnoreCase))
                 {
-                var vp = new BufferedConsoleActorViewPort();
+                var vp = new ConsoleViewPort();
                 vp.UseQueueForBuffering = true;
                 DefaultViewPort = vp;
                 vp.Init();
@@ -170,7 +170,7 @@ namespace ActorsCPConsoleRunner.Handlers
             else
             if (string.IsNullOrEmpty(ViewportType))
                 {
-                var vp = new BufferedConsoleActorViewPort();
+                var vp = new ConsoleViewPort();
                 vp.UseQueueForBuffering = true;
                 DefaultViewPort = vp;
                 vp.Init();

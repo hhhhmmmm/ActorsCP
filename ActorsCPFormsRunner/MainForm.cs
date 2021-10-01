@@ -5,6 +5,8 @@ using System.Windows.Forms;
 
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
+using ActorsCP.dotNET.ViewPorts.Rtf;
+using ActorsCP.dotNET.ViewPorts.Tree;
 using ActorsCP.Helpers;
 using ActorsCP.Tests.TestActors;
 
@@ -17,8 +19,8 @@ namespace ActorsCPFormsRunner
             InitializeComponent();
 
             OneItem[] items = new OneItem[] {
-                new OneItem("Текст","TextViewPort"),
-               new OneItem("Дерево", "TreeViewViewPort")
+                new OneItem("Дерево", "TreeViewPort"),
+                new OneItem("RTF текст","RtfTextViewPort")
             };
 
             ViewportTypeComboBox.DataSource = items;
@@ -60,15 +62,15 @@ namespace ActorsCPFormsRunner
 
             switch (item.Value)
                 {
-                case "TextViewPort":
+                case "RtfTextViewPort":
                     {
-                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    var form = new RtfTextViewPort(actor, name, MainProgram.MainIcon);
                     form.Show();
                     break;
                     }
-                case "TreeViewViewPort":
+                case "TreeViewPort":
                     {
-                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    var form = new TreeViewPort(actor, name, MainProgram.MainIcon);
                     form.Show();
                     break;
                     }

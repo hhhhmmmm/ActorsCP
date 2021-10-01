@@ -10,37 +10,31 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
     /// </summary>
     public sealed class TreeViewActorNode : TreeNode
         {
+        #region Приватные мемберы
+
         /// <summary>
-        /// Слабая ссылка на объект типа GuActor
+        /// Слабая ссылка на объект типа ActorBase
         /// </summary>
-        private readonly WeakReference m_ActorWR;
+        private readonly WeakReference _actorWeakReference;
 
         /// <summary>
         /// Узел дерева 'События'
         /// </summary>
-        private TreeNode m_ActionsNode;
+        private TreeNode _actionsTreeNode;
+
+        #endregion Приватные мемберы
 
         #region Конструктор
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="oActor">Объект</param>
-        public TreeViewActorNode(ActorBase oActor)
+        /// <param name="actor">Объект</param>
+        public TreeViewActorNode(ActorBase actor)
             {
-            m_ActorWR = new WeakReference(oActor);
-
-            //if (string.IsNullOrEmpty(Actor.Description))
-            //    {
-            //    this.Text = Actor.Name;
-            //    this.ToolTipText = Actor.Description;
-            //    }
-            //else
-            //    {
-            //    this.Text = string.Format("{0} ({1})", Actor.Name, Actor.Description.Trim());
-            //    }
-
-            FastTreeView.SetImage(this, TreeViewImage.ActorWaiting);
+            _actorWeakReference = new WeakReference(actor);
+            ActorsTreeView.SetImage(this, TreeViewImage.ActorWaiting);
+            Text = actor.Name;
             }
 
         #endregion Конструктор
@@ -50,25 +44,24 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         public void AddActionsNode()
             {
-            m_ActionsNode = new TreeNode("События");
+            _actionsTreeNode = new TreeNode("События");
 
-            ActorsTreeView.SetImage(m_ActionsNode, TreeViewImage.ActionNode);
-
-            Nodes.Add(m_ActionsNode);
+            // ActorsTreeView.SetImage(_actionsTreeNode, TreeViewImage.ActionNode);
+            Nodes.Add(_actionsTreeNode);
             }
 
         /// <summary>
         /// Установить иконку
         /// </summary>
-        /// <param name="Image">Иконка</param>
-        public void SetImage(TreeViewImage Image)
+        /// <param name="image">Иконка</param>
+        public void SetImage(TreeViewImage image)
             {
             if (TreeView == null)
                 {
                 return;
                 }
 
-            ActorsTreeView.SetImage(this, Image);
+            ActorsTreeView.SetImage(this, image);
             }
 
         #region Работа с узлом 'События'
@@ -76,36 +69,36 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <summary>
         /// Добавить запись в узел 'События'
         /// </summary>
-        /// <param name="Text">Текст</param>
-        public void AddAction(string Text)
+        /// <param name="text">Текст</param>
+        public void AddAction(string text)
             {
-            AddAction(Text, TreeViewImage.ActionSystemNeutral);
+            AddAction(text, TreeViewImage.ActionSystemNeutral);
             }
 
         /// <summary>
         /// Добавить запись в узел 'События'
         /// </summary>
-        /// <param name="Text">Текст</param>
-        /// <param name="Image">Иконка</param>
-        public void AddAction(string Text, TreeViewImage Image)
+        /// <param name="text">Текст</param>
+        /// <param name="image">Иконка</param>
+        public void AddAction(string text, TreeViewImage image)
             {
-            if (m_ActionsNode == null || m_ActionsNode.TreeView == null)
-                {
-                return;
-                }
+            //if (_actionsTreeNode?.TreeView == null)
+            //    {
+            //    return;
+            //    }
 
-            if (m_ActionsNode.TreeView.IsDisposed)
+            if (_actionsTreeNode.TreeView.IsDisposed)
                 {
                 return;
                 }
 
             DateTime now = DateTime.Now;
-            string ResultingText = string.Format(CultureInfo.CurrentCulture, "{0:00}:{1:00}:{2:00}.{3:000} - {4}", now.Hour, now.Minute, now.Second, now.Millisecond, Text);
+            var resultingText = string.Format(CultureInfo.CurrentCulture, "{0:00}:{1:00}:{2:00}.{3:000} - {4}", now.Hour, now.Minute, now.Second, now.Millisecond, text);
 
-            TreeNode ac = new TreeNode(ResultingText);
+            var ac = new TreeNode(resultingText);
 
-            m_ActionsNode.Nodes.Add(ac);
-            ActorsTreeView.SetImage(ac, Image);
+            _actionsTreeNode.Nodes.Add(ac);
+            ActorsTreeView.SetImage(ac, image);
             }
 
         /// <summary>
@@ -132,7 +125,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
             {
             get
                 {
-                ActorBase a = m_ActorWR.Target as ActorBase;
+                ActorBase a = _actorWeakReference.Target as ActorBase;
                 return a;
                 }
             }

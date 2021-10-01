@@ -63,28 +63,31 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\Resizer.cs" />
-    <Compile Include="ViewPorts\TextViewPort.cs">
+    <Compile Include="ViewPorts\Rtf\TextViewPort.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\TplBufferedActorViewPortBase.cs" />
-    <Compile Include="ViewPorts\ConsoleViewPort\BufferedConsoleActorViewPort.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\ActorsTreeView.cs">
+    <Compile Include="ViewPorts\Console\ConsoleViewPort.cs" />
+    <Compile Include="ViewPorts\Tree\ActorsTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\BufferedTreeViewViewPort.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.cs">
+    <Compile Include="ViewPorts\Tree\BufferedTreeViewViewPort.cs" />
+    <Compile Include="ViewPorts\Tree\FastTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.Designer.cs">
+    <Compile Include="ViewPorts\Tree\FastTreeView.Designer.cs">
       <DependentUpon>FastTreeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewActorNode.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewImage.cs" />
+    <Compile Include="ViewPorts\Tree\TreeViewActorNode.cs" />
+    <Compile Include="ViewPorts\Tree\TreeViewImage.cs" />
     <Compile Include="ViewPorts\FormsViewPortBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\FormsViewPortBase.Designer.cs">
       <DependentUpon>FormsViewPortBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewPorts\Tree\TreeViewPort.cs">
+      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -102,5 +105,6 @@
       <DependentUpon>FormsViewPortBase.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
 
 namespace ActorsCP.dotNET.ViewPorts.Tree
@@ -12,6 +13,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
     /// </summary>
     public sealed class TreeViewPort : FormsViewPortBase
         {
+        private const string POINTER_TO_ACTOR_NODE = "PointerToActorNode";
+
         #region Приватные мемберы
 
         /// <summary>
@@ -59,14 +62,14 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 Name = "FastTreeView1",
                 Size = new Size(rectangle.Width, rectangle.Height),
                 TabIndex = 0,
-                Font = new Font("Courier New Cyr", 12),
+                // Font = new Font("Courier New Cyr", 12),
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                 Scrollable = true,
                 ImageIndex = 0,
                 SelectedImageIndex = 0,
                 ShowNodeToolTips = true,
                 HideSelection = false,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.Fixed3D
                 };
 
             return _control;
@@ -78,19 +81,43 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="viewPortItem">Данные</param>
         protected override void InternalProcessAsActorViewPortBoundEventArgs(ViewPortItem viewPortItem)
             {
-            //Color color = Color.Orchid;
-            //var actorEventArgs = viewPortItem.ActorEventArgs as ActorViewPortBoundEventArgs;
-            //var actor = viewPortItem.Sender;
-            //var str = actorEventArgs.EventDateAsString + " ";
-            //if (actorEventArgs.Bound)
-            //    {
-            //    str += $"Объект '{actor.Name}' привязан к вьюпорту";
-            //    }
-            //else
-            //    {
-            //    str += $"Объект '{actor.Name}' отвязан от вьюпорта";
-            //    }
-            //AppendText(str + Environment.NewLine, color);
+            var actorEventArgs = viewPortItem.ActorEventArgs as ActorViewPortBoundEventArgs;
+            var actor = viewPortItem.Sender;
+
+            if (actor == null)
+                {
+                return;
+                }
+
+            if (actorEventArgs == null)
+                {
+                return;
+                }
+
+            if (actorEventArgs.Bound)
+                {
+                var actorNode = new TreeViewActorNode(actor);
+
+                actor.ExternalObjects?.TryAdd(POINTER_TO_ACTOR_NODE, new WeakReference(actorNode));
+
+                TreeViewActorNode parentTreeNode = null;
+                if (Actor.Parent != null)
+                    {
+                    actor.Parent.ExternalObjects.TryGetValue(POINTER_TO_ACTOR_NODE, out WeakReference ww);
+
+                    if (ww?.IsAlive == true)
+                        {
+                        parentTreeNode = ww.Target as TreeViewActorNode;
+                        }
+                    }
+
+                _control.AddActorNodeToTree(actorNode, parentTreeNode);
+                }
+            else
+                {
+                WeakReference ww;
+                actor.Parent?.ExternalObjects?.TryRemove(POINTER_TO_ACTOR_NODE, out ww);
+                }
             }
 
         /// <summary>

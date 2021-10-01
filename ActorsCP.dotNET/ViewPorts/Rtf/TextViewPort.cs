@@ -20,7 +20,7 @@ namespace ActorsCP.dotNET.ViewPorts.Rtf
         /// <summary>
         ///
         /// </summary>
-        private RichTextBox _control = new RichTextBox();
+        private RichTextBox _control;
 
         /// <summary>
         /// Нормальный шрифт
