@@ -305,8 +305,9 @@ namespace ActorsCP.Actors
                 TerminateAsync().Wait(); // await работает медленно
                 }
 
-            _externalObjects?.Clear();
-            _externalObjects = null;
+            // внешние ссылки не очищаем так как не мы их туда добавляли
+            // _externalObjects?.Clear();
+            // _externalObjects = null;
 
             if (_cancellationTokenSource != null)
                 {

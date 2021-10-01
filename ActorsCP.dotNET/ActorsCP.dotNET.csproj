@@ -68,15 +68,15 @@
     </Compile>
     <Compile Include="ViewPorts\TplBufferedActorViewPortBase.cs" />
     <Compile Include="ViewPorts\Console\ConsoleViewPort.cs" />
-    <Compile Include="ViewPorts\Tree\ActorsTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ViewPorts\Tree\BufferedTreeViewViewPort.cs" />
+    <Compile Include="ViewPorts\Tree\ActorBaseExtensions.cs" />
     <Compile Include="ViewPorts\Tree\FastTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ViewPorts\Tree\FastTreeView.Designer.cs">
       <DependentUpon>FastTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewPorts\Tree\FastTreeView_ActorsPart.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ViewPorts\Tree\TreeViewActorNode.cs" />
     <Compile Include="ViewPorts\Tree\TreeViewImage.cs" />

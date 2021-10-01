@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
@@ -13,24 +14,12 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
     /// </summary>
     public sealed class TreeViewPort : FormsViewPortBase
         {
-        private const string POINTER_TO_ACTOR_NODE = "PointerToActorNode";
-
         #region Приватные мемберы
 
         /// <summary>
         ///
         /// </summary>
         private FastTreeView _control;
-
-        /// <summary>
-        /// Нормальный шрифт
-        /// </summary>
-        private readonly Font NormalFont = new Font("Courier New Cyr", 12);
-
-        /// <summary>
-        ///
-        /// </summary>
-        private readonly Font SmallFont = new Font("Courier New Cyr", 10);
 
         #endregion Приватные мемберы
 
@@ -62,7 +51,6 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 Name = "FastTreeView1",
                 Size = new Size(rectangle.Width, rectangle.Height),
                 TabIndex = 0,
-                // Font = new Font("Courier New Cyr", 12),
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                 Scrollable = true,
                 ImageIndex = 0,
@@ -86,37 +74,21 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
 
             if (actor == null)
                 {
-                return;
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
 
             if (actorEventArgs == null)
                 {
-                return;
+                throw new ArgumentNullException($"{nameof(actorEventArgs)} не может быть null");
                 }
 
             if (actorEventArgs.Bound)
                 {
-                var actorNode = new TreeViewActorNode(actor);
-
-                actor.ExternalObjects?.TryAdd(POINTER_TO_ACTOR_NODE, new WeakReference(actorNode));
-
-                TreeViewActorNode parentTreeNode = null;
-                if (Actor.Parent != null)
-                    {
-                    actor.Parent.ExternalObjects.TryGetValue(POINTER_TO_ACTOR_NODE, out WeakReference ww);
-
-                    if (ww?.IsAlive == true)
-                        {
-                        parentTreeNode = ww.Target as TreeViewActorNode;
-                        }
-                    }
-
-                _control.AddActorNodeToTree(actorNode, parentTreeNode);
+                actor.TreeViewBind(_control);
                 }
             else
                 {
-                WeakReference ww;
-                actor.Parent?.ExternalObjects?.TryRemove(POINTER_TO_ACTOR_NODE, out ww);
+                actor.TreeViewUnbind(_control);
                 }
             }
 
@@ -126,71 +98,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="viewPortItem">Данные</param>
         protected override void InternalProcessAsActorEventArgs(ViewPortItem viewPortItem)
             {
-            //Color color = Color.Black;
-
-            //string str;
-            //var actorEventArgs = viewPortItem.ActorEventArgs;
-            ////var actor = viewPortItem.Sender;
-
-            //str = actorEventArgs.EventDateAsString + " ";
-            //switch (actorEventArgs)
-            //    {
-            //    case ActorExceptionEventArgs exception:
-            //        {
-            //        color = Color.Red;
-            //        str = str + "Исключение: " + exception.Exception.ToString();
-            //        break;
-            //        }
-            //    case ActorActionEventArgs action:
-            //        {
-            //        #region Тип события
-
-            //        switch (action.ActionEventType)
-            //            {
-            //            case ActorActionEventType.Debug:
-            //                {
-            //                color = Color.Gray;
-            //                str = str + "Отладка: " + action.MessageText;
-            //                break;
-            //                }
-            //            case ActorActionEventType.Error:
-            //                {
-            //                color = Color.Red;
-            //                str = str + "Ошибка: " + action.MessageText;
-            //                break;
-            //                }
-            //            case ActorActionEventType.Exception:
-            //                {
-            //                color = Color.Red;
-            //                str = str + "Исключение: " + action.MessageText;
-            //                break;
-            //                }
-            //            case ActorActionEventType.Neutral:
-            //                {
-            //                color = Color.Green;
-            //                str = str + " " + action.MessageText;
-            //                break;
-            //                }
-            //            case ActorActionEventType.Warning:
-            //                {
-            //                color = Color.Orange;
-            //                str = str + "Предупреждение: " + action.MessageText;
-            //                break;
-            //                }
-            //            }
-
-            //        #endregion Тип события
-
-            //        break;
-            //        }
-            //    default:
-            //        {
-            //        throw new Exception($"Непонятный тип объекта {actorEventArgs}");
-            //        }
-            //    }
-            //// int AEA = viewPortItem.ActorEventArgs.AEA;
-            //// AppendText($" AEA_{AEA}, " + str + Environment.NewLine, color);
-            //AppendText(str + Environment.NewLine, color);
+            var actorEventArgs = viewPortItem.ActorEventArgs;
+            var actor = viewPortItem.Sender;
+            actor.TreeViewAddAction(actorEventArgs);
             }
 
         /// <summary>
@@ -199,34 +109,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="viewPortItem">Данные</param>
         protected override void InternalProcessAsActorStateChangedEventArgs(ViewPortItem viewPortItem)
             {
-            //Color color = Color.Blue;
-
-            //string str;
-            //var actorEventArgs = viewPortItem.ActorEventArgs;
-            //var actor = viewPortItem.Sender;
-
-            //str = actorEventArgs.EventDateAsString + " ";
-
-            //switch (actorEventArgs)
-            //    {
-            //    case ActorSetCountChangedEventArgs c:
-            //        {
-            //        str = str + " " + $"W: {c.WaitingCount} R: {c.RunningCount} C: {c.CompletedCount} + T {c.TotalCount}";
-            //        break;
-            //        }
-            //    case ActorStateChangedEventArgs e:
-            //        {
-            //        str = str + " " + e.State;
-            //        break;
-            //        }
-            //    default:
-            //        {
-            //        throw new Exception($"Непонятный тип объекта {actorEventArgs}");
-            //        }
-            //    }
-            //// int AEA = viewPortItem.ActorEventArgs.AEA;
-            //// AppendText($" AEA_{AEA},  {actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
-            //AppendText($"{actorEventArgs.EventDateAsString}  stateChanged: '{actor}', событие: {str}" + Environment.NewLine, color, SmallFont);
+            var actorEventArgs = viewPortItem.ActorEventArgs;
+            var actor = viewPortItem.Sender;
+            actor.TreeViewProcessStateChanged(actorEventArgs);
             }
 
         #endregion Перегружаемые методы

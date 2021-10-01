@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ActorsCP.dotNET.ViewPorts.Tree;
 
 namespace ActorsCP.dotNET.ViewPorts.Tree
     {
     /// <summary>
     /// Пользовательский контрол - дерево с ускоренной перерисовкой взято отсюда: http://dev.nomad-net.info/articles/double-buffered-tree-and-list-views
     /// </summary>
-    internal sealed partial class FastTreeView : ActorsTreeView
+    internal sealed partial class FastTreeView : TreeView
         {
+        #region Константы для дерева
+
         private const int TV_FIRST = 0x1100;
+
         private const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
 
         private const int TVS_EX_DOUBLEBUFFER = 0x0004;
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        #endregion Константы для дерева
+
+        #region Конструкторы
 
         /// <summary>
         /// Конструктор
@@ -24,10 +26,12 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         public FastTreeView()
             {
             InitializeComponent();
-
+            // this.MouseMove += new MouseEventHandler(ActorsTreeView_MouseMove);
             // Enable default double buffering processing
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             }
+
+        #endregion Конструкторы
 
         /// <summary>
         /// Вспомогательная функция
@@ -52,7 +56,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
             }
 
         /// <summary>
-        /// Перегруженная функция OnHandleCreated. Вызывается один раз при создании дерева
+        /// Перегруженная функция OnHandleCreated.
+        /// Вызывается один раз при создании дерева
         /// </summary>
         /// <param name="e"></param>
         protected override void OnHandleCreated(EventArgs e)

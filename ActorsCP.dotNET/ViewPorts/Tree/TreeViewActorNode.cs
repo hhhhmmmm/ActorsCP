@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+
 using ActorsCP.Actors;
+using ActorsCP.Actors.Events;
 
 namespace ActorsCP.dotNET.ViewPorts.Tree
     {
@@ -32,36 +34,54 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="actor">Объект</param>
         public TreeViewActorNode(ActorBase actor)
             {
+            if (actor == null)
+                {
+                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
+                }
             _actorWeakReference = new WeakReference(actor);
-            ActorsTreeView.SetImage(this, TreeViewImage.ActorWaiting);
+            SetImage(TreeViewImage.ActorWaiting);
             Text = actor.Name;
+            Tag = Text;
             }
 
         #endregion Конструктор
 
+        #region Свойства
+
         /// <summary>
-        /// Добавить подузел дерева 'События'
+        /// Объект
+        /// </summary>
+        public ActorBase Actor
+            {
+            get
+                {
+                ActorBase a = _actorWeakReference.Target as ActorBase;
+                return a;
+                }
+            }
+
+        #endregion Свойства
+
+        /// <summary>
+        /// Добавить подузел дерева - 'События'
         /// </summary>
         public void AddActionsNode()
             {
             _actionsTreeNode = new TreeNode("События");
-
-            // ActorsTreeView.SetImage(_actionsTreeNode, TreeViewImage.ActionNode);
+            SetImage(TreeViewImage.ActionNode);
             Nodes.Add(_actionsTreeNode);
             }
 
         /// <summary>
-        /// Установить иконку
+        /// Установить изображение для узла дерева
         /// </summary>
-        /// <param name="image">Иконка</param>
-        public void SetImage(TreeViewImage image)
+        /// <param name="Node"></param>
+        /// <param name="Image"></param>
+        public static void SetImage(TreeViewImage image)
             {
-            if (TreeView == null)
-                {
-                return;
-                }
-
-            ActorsTreeView.SetImage(this, image);
+            //  int iIndex = (int)Image;
+            //  Node.ImageIndex = iIndex;
+            //   Node.SelectedImageIndex = iIndex;
             }
 
         #region Работа с узлом 'События'
@@ -82,23 +102,31 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="image">Иконка</param>
         public void AddAction(string text, TreeViewImage image)
             {
-            //if (_actionsTreeNode?.TreeView == null)
-            //    {
-            //    return;
-            //    }
-
             if (_actionsTreeNode.TreeView.IsDisposed)
                 {
                 return;
                 }
 
-            DateTime now = DateTime.Now;
-            var resultingText = string.Format(CultureInfo.CurrentCulture, "{0:00}:{1:00}:{2:00}.{3:000} - {4}", now.Hour, now.Minute, now.Second, now.Millisecond, text);
+            var ac = new TreeNode(text);
 
-            var ac = new TreeNode(resultingText);
+            if (_actionsTreeNode.TreeView.InvokeRequired)
+                {
+                _actionsTreeNode.TreeView.Invoke(new MethodInvoker(delegate
+                    {
+                        AddNode(_actionsTreeNode, ac);
+                        }));
+                }
+            else
+                {
+                AddNode(_actionsTreeNode, ac);
+                }
 
-            _actionsTreeNode.Nodes.Add(ac);
-            ActorsTreeView.SetImage(ac, image);
+            // FastTreeView.SetImage(ac, image);
+            }
+
+        private static void AddNode(TreeNode actionsTreeNode, TreeNode newTreeNode)
+            {
+            actionsTreeNode.Nodes.Add(newTreeNode);
             }
 
         /// <summary>
@@ -114,22 +142,71 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
             ExpandAll();
             }
 
-        #endregion Работа с узлом 'События'
-
-        #region Свойства
-
         /// <summary>
-        /// Объект
+        ///
         /// </summary>
-        public ActorBase Actor
+        /// <param name="actor"></param>
+        /// <param name="actorEventArgs"></param>
+        public void AddAction(ActorBase actor, ActorEventArgs actorEventArgs)
             {
-            get
+            TreeViewActorNode treeNode = actor.TreeViewGetNode();
+
+            string str;
+
+            str = actorEventArgs.EventDateAsString + " ";
+            switch (actorEventArgs)
                 {
-                ActorBase a = _actorWeakReference.Target as ActorBase;
-                return a;
+                case ActorExceptionEventArgs exception:
+                    {
+                    str = str + "Исключение: " + exception.Exception.ToString();
+                    break;
+                    }
+                case ActorActionEventArgs action:
+                    {
+                    #region Тип события
+
+                    switch (action.ActionEventType)
+                        {
+                        case ActorActionEventType.Debug:
+                            {
+                            str = str + "Отладка: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Error:
+                            {
+                            str = str + "Ошибка: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Exception:
+                            {
+                            str = str + "Исключение: " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Neutral:
+                            {
+                            str = str + " " + action.MessageText;
+                            break;
+                            }
+                        case ActorActionEventType.Warning:
+                            {
+                            str = str + "Предупреждение: " + action.MessageText;
+                            break;
+                            }
+                        }
+
+                    #endregion Тип события
+
+                    break;
+                    }
+                default:
+                    {
+                    throw new Exception($"Непонятный тип объекта {actorEventArgs}");
+                    }
                 }
+
+            AddAction(str);
             }
 
-        #endregion Свойства
+        #endregion Работа с узлом 'События'
         }
     }
