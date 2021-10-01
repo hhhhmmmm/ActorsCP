@@ -93,6 +93,7 @@ namespace ActorsCPFormsRunner
             {
             OnQueueTestActor_Click(this, EventArgs.Empty);
             RunActorButtonClick(this, EventArgs.Empty);
+            // Application.Exit();
             }
 
         /// <summary>
@@ -120,8 +121,8 @@ namespace ActorsCPFormsRunner
             var queue = new ActorsQueue("Очередь акторов");
             for (int i = 0; i < runOptions.QueueLegth; i++)
                 {
-                var actor = new WaitActor();
-                actor.Interval = runOptions.sleepTime;
+                var actor = new SimpleActor();
+                //actor.Interval = runOptions.sleepTime;
                 queue.Add(actor);
                 }
             CreatedActor = queue;

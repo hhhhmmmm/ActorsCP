@@ -20,7 +20,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         /// <param name="actor">Объект</param>
         /// <param name="treeView">Дерево</param>
-        internal static TreeViewActorNode TreeViewBind(this ActorBase actor, FastTreeView treeView)
+        internal static void TreeViewBind(this ActorBase actor, FastTreeView treeView)
             {
             var actorNode = new TreeViewActorNode(actor);
 
@@ -37,8 +37,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 parentTreeNode = actor.Parent.TreeViewGetNode();
                 }
 
+            treeView.SuspendLayout();
             treeView.AddActorNodeToTree(actorNode, parentTreeNode);
-            return actorNode;
+            treeView.ResumeLayout();
             }
 
         /// <summary>
@@ -81,8 +82,15 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="actorEventArgs">Действие</param>
         internal static void TreeViewAddAction(this ActorBase actor, ActorEventArgs actorEventArgs)
             {
-            TreeViewActorNode treeNode = actor.TreeViewGetNode();
-            treeNode?.AddAction(actor, actorEventArgs);
+            var treeNode = actor.TreeViewGetNode();
+            if (treeNode == null)
+                {
+                return;
+                }
+            var treeView = treeNode.TreeView;
+            treeView.SuspendLayout();
+            treeNode.AddAction(actor, actorEventArgs);
+            treeView.ResumeLayout();
             }
 
         /// <summary>
@@ -92,29 +100,15 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="actorEventArgs"></param>
         internal static void TreeViewProcessStateChanged(this ActorBase actor, ActorEventArgs actorEventArgs)
             {
-            TreeViewActorNode treeNode = actor.TreeViewGetNode();
-            treeNode?.UpdateTitleByActorState();
-            //string str;
-
-            //str = actorEventArgs.EventDateAsString + " ";
-
-            //switch (actorEventArgs)
-            //    {
-            //    case ActorSetCountChangedEventArgs c:
-            //        {
-            //        str = str + " " + $"W: {c.WaitingCount} R: {c.RunningCount} C: {c.CompletedCount} + T {c.TotalCount}";
-            //        break;
-            //        }
-            //    case ActorStateChangedEventArgs e:
-            //        {
-            //        str = str + " " + e.State;
-            //        break;
-            //        }
-            //    default:
-            //        {
-            //        throw new Exception($"Непонятный тип объекта {actorEventArgs}");
-            //        }
-            //    }
+            var treeNode = actor.TreeViewGetNode();
+            if (treeNode == null)
+                {
+                return;
+                }
+            var treeView = treeNode.TreeView;
+            treeView.SuspendLayout();
+            treeNode.UpdateTitleByActorState();
+            treeView.ResumeLayout();
             }
         } // end class ActorExtensions
     } // end namespace ActorsCP.dotNET.ViewPorts.Tree

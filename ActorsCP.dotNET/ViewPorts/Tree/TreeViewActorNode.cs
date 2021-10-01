@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 
@@ -76,47 +75,56 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 return;
                 }
 
+            string newText = string.Empty;
+            TreeViewImageIndex newIndex = TreeViewImageIndex.NoImage;
             switch (actor.State)
                 {
                 case ActorState.Pending:
                     {
-                    Text = actor.Name + " - ожидание";
-                    SetImage(this, TreeViewImageIndex.Actor_Pending);
+                    newText = actor.Name + " - ожидание";
+                    newIndex = TreeViewImageIndex.Actor_Pending;
                     break;
                     }
                 case ActorState.Started:
                     {
-                    Text = actor.Name + " - запущен";
-                    SetImage(this, TreeViewImageIndex.Actor_Started);
+                    newText = actor.Name + " - запущен";
+                    newIndex = TreeViewImageIndex.Actor_Started;
                     break;
                     }
                 case ActorState.Running:
                     {
-                    Text = actor.Name + " - работает";
-                    SetImage(this, TreeViewImageIndex.Actor_Running);
+                    newText = actor.Name + " - работает";
+                    newIndex = TreeViewImageIndex.Actor_Running;
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    Text = actor.Name + " - остановлен";
-                    SetImage(this, TreeViewImageIndex.Actor_Stopped);
+                    newText = actor.Name + " - остановлен";
+                    newIndex = TreeViewImageIndex.Actor_Stopped;
                     break;
                     }
                 case ActorState.Terminated:
                     {
                     if (actor.AnErrorOccurred)
                         {
-                        Text = actor.Name + " - завершен с ошибкой";
-                        SetImage(this, TreeViewImageIndex.Actor_Terminated_Failure);
+                        newText = actor.Name + " - завершен с ошибкой";
+                        newIndex = TreeViewImageIndex.Actor_Terminated_Failure;
                         }
                     else
                         {
-                        Text = actor.Name + " - завершен успешно";
-                        SetImage(this, TreeViewImageIndex.Actor_Terminated_OK);
+                        newText = actor.Name + " - завершен успешно";
+                        newIndex = TreeViewImageIndex.Actor_Terminated_OK;
                         }
                     break;
                     }
                 }
+
+            if (!newText.Equals(Text))
+                {
+                Text = newText;
+                }
+
+            SetImage(this, newIndex);
             }
 
         /// <summary>
@@ -132,9 +140,13 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         private void AddActionsNode()
             {
-            _actionsTreeNode = new TreeNode("События");
-            SetImage(_actionsTreeNode, TreeViewImageIndex.ActionNode);
+            TreeView.SuspendLayout();
+            //TreeView.BeginUpdate();
+            _actionsTreeNode = new TreeNode("События", (int)TreeViewImageIndex.ActionNode, (int)TreeViewImageIndex.ActionNode);
+            // SetImage(_actionsTreeNode, TreeViewImageIndex.ActionNode);
             Nodes.Add(_actionsTreeNode);
+            //TreeView.EndUpdate();
+            TreeView.ResumeLayout();
             }
 
         /// <summary>
@@ -144,8 +156,12 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="imageIndex">Индекс картинки в списке</param>
         private void SetImage(TreeNode node, TreeViewImageIndex imageIndex)
             {
-            node.ImageIndex = (int)imageIndex;
-            node.SelectedImageIndex = (int)imageIndex;
+            int iImageIndex = (int)imageIndex;
+            if (node.ImageIndex != iImageIndex)
+                {
+                node.ImageIndex = iImageIndex;
+                node.SelectedImageIndex = iImageIndex;
+                }
             }
 
         #region Работа с узлом 'События'
@@ -162,7 +178,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 return;
                 }
 
-            var ac = new TreeNode(text);
+            var ac = new TreeNode(text, (int)image, (int)image);
+            // SetImage(ac, image);
 
             if (_actionsTreeNode.TreeView.InvokeRequired)
                 {
@@ -175,8 +192,6 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 {
                 AddNode(_actionsTreeNode, ac);
                 }
-
-            SetImage(ac, image);
             }
 
         private static void AddNode(TreeNode actionsTreeNode, TreeNode newTreeNode)
