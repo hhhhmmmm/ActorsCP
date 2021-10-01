@@ -92,6 +92,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="actorEventArgs"></param>
         internal static void TreeViewProcessStateChanged(this ActorBase actor, ActorEventArgs actorEventArgs)
             {
+            TreeViewActorNode treeNode = actor.TreeViewGetNode();
+            treeNode?.UpdateTitleByActorState();
             //string str;
 
             //str = actorEventArgs.EventDateAsString + " ";

@@ -51,6 +51,12 @@ namespace ActorsCP.Tests.TestActors
         /// <returns>true если объект все выполнил успешно</returns>
         protected override async Task<bool> InternalRunAsync()
             {
+            OnActorActionDebug("что-то отладочное");
+            OnActorAction("Обычный текст");
+            OnActorActionWarning("о чем-то предупредить");
+            OnActorActionError("сообщить об ошибке");
+            var exception = new Exception("Исключение");
+            // OnActorThrownAnException(exception);
             await Task.Delay(Interval);
             return await base.InternalRunAsync();
             }

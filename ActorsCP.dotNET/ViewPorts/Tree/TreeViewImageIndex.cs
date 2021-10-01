@@ -1,64 +1,85 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ActorsCP.dotNET.ViewPorts.Tree
     {
     /// <summary>
     /// Список иконок для дерева
     /// </summary>
-    public enum TreeViewImage : int
+    public enum TreeViewImageIndex : int
         {
         /// <summary>
-        /// Объект ждет выполнения
+        /// нет картинки
         /// </summary>
-        ActorWaiting = 0,
+        NoImage = 0,
 
-        /// <summary>
-        /// Объект работает
-        /// </summary>
-        ActorWorking = 1,
-
-        /// <summary>
-        /// Объект успешно завершил работу
-        /// </summary>
-        ActorCompletedSuccessfully = 2,
-
-        /// <summary>
-        /// Объект находится в состоянии ошибки
-        /// </summary>
-        ActorError = 3,
+        #region Сообщения объекта разной важности
 
         /// <summary>
         /// Узел 'События'
         /// </summary>
-        ActionNode = 4,
+        ActionNode,
 
         /// <summary>
         /// Служебная информация, вроде 'Инициализация объекта'
         /// </summary>
-        ActionSystemNeutral = 5,
+        ActionDebug,
 
         /// <summary>
-        /// Исключение
+        /// Служебная информация, вроде 'Инициализация объекта'
         /// </summary>
-        ActionException = 6,
+        ActionSystemNeutral,
 
         /// <summary>
         /// Сообщение - нейтральное сообщение объекта
         /// </summary>
-        ActionNeutral = 7,
+        ActionNeutral,
 
         /// <summary>
         /// Сообщение - предупреждение объектв
         /// </summary>
-        ActionWarning = 8,
+        ActionWarning,
 
         /// <summary>
         /// Сообщение - ошибка объекта
         /// </summary>
-        ActionError = 9,
+        ActionError,
+
+        /// <summary>
+        /// Исключение
+        /// </summary>
+        ActionException,
+
+        #endregion Сообщения объекта разной важности
+
+        /// <summary>
+        /// Объект ждет выполнения
+        /// </summary>
+        Actor_Pending,
+
+        /// <summary>
+        /// Объект запущен
+        /// </summary>
+        Actor_Started,
+
+        /// <summary>
+        /// Объект работает
+        /// </summary>
+        Actor_Running,
+
+        /// <summary>
+        /// Объект запущен
+        /// </summary>
+        Actor_Stopped,
+
+        /// <summary>
+        /// Объект успешно завершил работу
+        /// </summary>
+        Actor_Terminated_OK,
+
+        /// <summary>
+        /// Объект находится в состоянии ошибки
+        /// </summary>
+        Actor_Terminated_Failure
         }
     }

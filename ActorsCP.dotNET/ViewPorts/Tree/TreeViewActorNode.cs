@@ -39,9 +39,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 throw new ArgumentNullException($"{nameof(actor)} не может быть null");
                 }
             _actorWeakReference = new WeakReference(actor);
-            SetImage(TreeViewImage.ActorWaiting);
-            Text = actor.Name;
-            Tag = Text;
+
+            UpdateTitleByActorState();
             }
 
         #endregion Конструктор
@@ -63,25 +62,90 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         #endregion Свойства
 
         /// <summary>
+        /// Обновить состояние в дереве по его текущему состоянию
+        /// </summary>
+        public void UpdateTitleByActorState()
+            {
+            ActorBase actor = null;
+            if (_actorWeakReference.IsAlive)
+                {
+                actor = _actorWeakReference.Target as ActorBase;
+                }
+            if (actor == null)
+                {
+                return;
+                }
+
+            switch (actor.State)
+                {
+                case ActorState.Pending:
+                    {
+                    Text = actor.Name + " - ожидание";
+                    SetImage(this, TreeViewImageIndex.Actor_Pending);
+                    break;
+                    }
+                case ActorState.Started:
+                    {
+                    Text = actor.Name + " - запущен";
+                    SetImage(this, TreeViewImageIndex.Actor_Started);
+                    break;
+                    }
+                case ActorState.Running:
+                    {
+                    Text = actor.Name + " - работает";
+                    SetImage(this, TreeViewImageIndex.Actor_Running);
+                    break;
+                    }
+                case ActorState.Stopped:
+                    {
+                    Text = actor.Name + " - остановлен";
+                    SetImage(this, TreeViewImageIndex.Actor_Stopped);
+                    break;
+                    }
+                case ActorState.Terminated:
+                    {
+                    if (actor.AnErrorOccurred)
+                        {
+                        Text = actor.Name + " - завершен с ошибкой";
+                        SetImage(this, TreeViewImageIndex.Actor_Terminated_Failure);
+                        }
+                    else
+                        {
+                        Text = actor.Name + " - завершен успешно";
+                        SetImage(this, TreeViewImageIndex.Actor_Terminated_OK);
+                        }
+                    break;
+                    }
+                }
+            }
+
+        /// <summary>
+        /// Создать необходимые доп. узлы после добавления основного узла в дерево
+        /// </summary>
+        public void Propagate()
+            {
+            AddActionsNode();
+            }
+
+        /// <summary>
         /// Добавить подузел дерева - 'События'
         /// </summary>
-        public void AddActionsNode()
+        private void AddActionsNode()
             {
             _actionsTreeNode = new TreeNode("События");
-            SetImage(TreeViewImage.ActionNode);
+            SetImage(_actionsTreeNode, TreeViewImageIndex.ActionNode);
             Nodes.Add(_actionsTreeNode);
             }
 
         /// <summary>
         /// Установить изображение для узла дерева
         /// </summary>
-        /// <param name="Node"></param>
-        /// <param name="Image"></param>
-        public static void SetImage(TreeViewImage image)
+        /// <param name="node">Узел</param>
+        /// <param name="imageIndex">Индекс картинки в списке</param>
+        private void SetImage(TreeNode node, TreeViewImageIndex imageIndex)
             {
-            //  int iIndex = (int)Image;
-            //  Node.ImageIndex = iIndex;
-            //   Node.SelectedImageIndex = iIndex;
+            node.ImageIndex = (int)imageIndex;
+            node.SelectedImageIndex = (int)imageIndex;
             }
 
         #region Работа с узлом 'События'
@@ -90,17 +154,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// Добавить запись в узел 'События'
         /// </summary>
         /// <param name="text">Текст</param>
-        public void AddAction(string text)
-            {
-            AddAction(text, TreeViewImage.ActionSystemNeutral);
-            }
-
-        /// <summary>
-        /// Добавить запись в узел 'События'
-        /// </summary>
-        /// <param name="text">Текст</param>
         /// <param name="image">Иконка</param>
-        public void AddAction(string text, TreeViewImage image)
+        private void AddActionToTree(string text, TreeViewImageIndex image)
             {
             if (_actionsTreeNode.TreeView.IsDisposed)
                 {
@@ -121,7 +176,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 AddNode(_actionsTreeNode, ac);
                 }
 
-            // FastTreeView.SetImage(ac, image);
+            SetImage(ac, image);
             }
 
         private static void AddNode(TreeNode actionsTreeNode, TreeNode newTreeNode)
@@ -151,14 +206,19 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
             {
             TreeViewActorNode treeNode = actor.TreeViewGetNode();
 
-            string str;
+            if (treeNode == null)
+                {
+                return;
+                }
 
-            str = actorEventArgs.EventDateAsString + " ";
+            var str = actorEventArgs.EventDateAsString + " ";
+
             switch (actorEventArgs)
                 {
                 case ActorExceptionEventArgs exception:
                     {
-                    str = str + "Исключение: " + exception.Exception.ToString();
+                    str = str + "Исключение: " + exception.MessageText;
+                    AddActionToTree(str, TreeViewImageIndex.ActionException);
                     break;
                     }
                 case ActorActionEventArgs action:
@@ -170,26 +230,26 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                         case ActorActionEventType.Debug:
                             {
                             str = str + "Отладка: " + action.MessageText;
-                            break;
-                            }
-                        case ActorActionEventType.Error:
-                            {
-                            str = str + "Ошибка: " + action.MessageText;
-                            break;
-                            }
-                        case ActorActionEventType.Exception:
-                            {
-                            str = str + "Исключение: " + action.MessageText;
+                            AddActionToTree(str, TreeViewImageIndex.ActionDebug);
+
                             break;
                             }
                         case ActorActionEventType.Neutral:
                             {
                             str = str + " " + action.MessageText;
+                            AddActionToTree(str, TreeViewImageIndex.ActionNeutral);
                             break;
                             }
                         case ActorActionEventType.Warning:
                             {
                             str = str + "Предупреждение: " + action.MessageText;
+                            AddActionToTree(str, TreeViewImageIndex.ActionWarning);
+                            break;
+                            }
+                        case ActorActionEventType.Error:
+                            {
+                            str = str + "Ошибка: " + action.MessageText;
+                            AddActionToTree(str, TreeViewImageIndex.ActionError);
                             break;
                             }
                         }
@@ -203,8 +263,6 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                     throw new Exception($"Непонятный тип объекта {actorEventArgs}");
                     }
                 }
-
-            AddAction(str);
             }
 
         #endregion Работа с узлом 'События'

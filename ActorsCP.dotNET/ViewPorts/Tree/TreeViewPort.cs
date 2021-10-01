@@ -45,6 +45,8 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <param name="rectangle">Элемент - образец</param>
         protected override Control InternalCreateChildControl(Rectangle rectangle)
             {
+            var treeImageList = TreeViewImageList.GetInstance();
+
             _control = new FastTreeView()
                 {
                 Location = new Point(rectangle.X, rectangle.Y),
@@ -54,6 +56,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                 Scrollable = true,
                 ImageIndex = 0,
+                ImageList = treeImageList.ImageList,
                 SelectedImageIndex = 0,
                 ShowNodeToolTips = true,
                 HideSelection = false,

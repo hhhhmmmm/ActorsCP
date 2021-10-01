@@ -16,11 +16,11 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         {
         private readonly ToolTip _toolTip = new ToolTip();
 
-        /// <summary>
-        /// Обработчик движения мыши, показывает ToolTip
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        // <summary>
+        // Обработчик движения мыши, показывает ToolTip
+        // </summary>
+        // <param name="sender"></param>
+        // <param name="e"></param>
         //private void ActorsTreeView_MouseMove(object sender, MouseEventArgs e)
         //    {
         //    // Get the node at the current mouse pointer location.
@@ -49,10 +49,16 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         //        }
         //    }
 
+        /// <summary>
+        /// Добавить узел типа TreeViewActorNode в дерево
+        /// </summary>
+        /// <param name="parentNode"></param>
+        /// <param name="actorNode"></param>
+        /// <param name="parentActor"></param>
         private static void ADD(TreeNodeCollection parentNode, TreeViewActorNode actorNode, ActorBase parentActor)
             {
             parentNode.Add(actorNode);
-            actorNode.AddActionsNode();
+            actorNode.Propagate();
             if (parentActor == null)
                 {
                 actorNode.Expand();
