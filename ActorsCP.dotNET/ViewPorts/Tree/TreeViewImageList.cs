@@ -54,20 +54,21 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
 
             var images = new[]
                 {
-                    new { Index = TreeViewImageIndex.ActionNode, FileName ="ActionNode.png" },
-                    new { Index = TreeViewImageIndex.ActionDebug, FileName ="ActionDebug.png" },
-                    new { Index = TreeViewImageIndex.ActionSystemNeutral, FileName ="ActionNeutral.png" },
-                    new { Index = TreeViewImageIndex.ActionNeutral, FileName ="ActionOrdinal.png" },
-                    new { Index = TreeViewImageIndex.ActionWarning, FileName ="ActionWarning.png" },
-                    new { Index = TreeViewImageIndex.ActionError, FileName ="ActionError.png" },
-                    new { Index = TreeViewImageIndex.ActionException, FileName ="ActionException.png" },
+                    new { Index = TreeViewImageIndex.ActionNode, FileName ="Action.ActionNode.png" },
+                    new { Index = TreeViewImageIndex.ActionDebug, FileName ="Action.ActionDebug.png" },
+                    new { Index = TreeViewImageIndex.ActionSystemNeutral, FileName ="Action.ActionNeutral.png" },
+                    new { Index = TreeViewImageIndex.ActionNeutral, FileName ="Action.ActionOrdinal.png" },
+                    new { Index = TreeViewImageIndex.ActionWarning, FileName ="Action.ActionWarning.png" },
+                    new { Index = TreeViewImageIndex.ActionError, FileName ="Action.ActionError.png" },
+                    new { Index = TreeViewImageIndex.ActionException, FileName ="Action.ActionException.png" },
 
-                    new { Index = TreeViewImageIndex.Actor_Pending, FileName ="Actor_Pending.png" },
-                    new { Index = TreeViewImageIndex.Actor_Started, FileName ="Actor_Started.png" },
-                    new { Index = TreeViewImageIndex.Actor_Running, FileName ="Actor_Running.png" },
-                    new { Index = TreeViewImageIndex.Actor_Stopped, FileName ="Actor_Stopped.png" },
-                    new { Index = TreeViewImageIndex.Actor_Terminated_OK, FileName ="Actor_Terminated_OK.png" },
-                    new { Index = TreeViewImageIndex.Actor_Terminated_Failure, FileName ="Actor_Terminated_Failure.png" }
+                    new { Index = TreeViewImageIndex.Actor_Pending, FileName ="Actor.Actor_Pending.png" },
+                    new { Index = TreeViewImageIndex.Actor_Started, FileName ="Actor.Actor_Started.png" },
+                    new { Index = TreeViewImageIndex.Actor_Running, FileName ="Actor.Actor_Running.png" },
+                    new { Index = TreeViewImageIndex.Actor_Stopped, FileName ="Actor.Actor_Stopped.png" },
+                    new { Index = TreeViewImageIndex.Actor_Terminated_OK, FileName ="Actor.Actor_Terminated_OK.png" },
+                    new { Index = TreeViewImageIndex.Actor_Terminated_Failure, FileName ="Actor.Actor_Terminated_Failure.png" },
+                    new { Index = TreeViewImageIndex.Actor_Cancel, FileName ="Actor.Actor_Cancel.png" }
                 };
 
             var sortedList = images.OrderBy(x => x.Index);

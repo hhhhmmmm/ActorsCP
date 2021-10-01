@@ -110,29 +110,22 @@
     <Folder Include="Images\tmp\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Images\ActionError.png" />
-    <EmbeddedResource Include="Images\ActionException.png" />
-    <EmbeddedResource Include="Images\ActionNeutral.png" />
-    <EmbeddedResource Include="Images\ActionNode.png" />
-    <EmbeddedResource Include="Images\ActionOrdinal.png" />
-    <EmbeddedResource Include="Images\ActionWarning.png" />
+    <EmbeddedResource Include="Images\Action\ActionDebug.png" />
+    <EmbeddedResource Include="Images\Action\ActionError.png" />
+    <EmbeddedResource Include="Images\Action\ActionException.png" />
+    <EmbeddedResource Include="Images\Action\ActionNeutral.png" />
+    <EmbeddedResource Include="Images\Action\ActionNode.png" />
+    <EmbeddedResource Include="Images\Action\ActionOrdinal.png" />
+    <EmbeddedResource Include="Images\Action\ActionWarning.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Images\Actor_Pending.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\Actor_Running.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\Actor_Started.png" />
-    <EmbeddedResource Include="Images\Actor_Stopped.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\Actor_Terminated_Failure.png" />
-    <EmbeddedResource Include="Images\Actor_Terminated_OK.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\ActionDebug.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Cancel.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Pending.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Running.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Started.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Stopped.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Terminated_Failure.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Terminated_OK.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

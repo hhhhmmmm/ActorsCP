@@ -56,7 +56,7 @@ namespace ActorsCP.Tests.TestActors
             OnActorActionWarning("о чем-то предупредить");
             OnActorActionError("сообщить об ошибке");
             var exception = new Exception("Исключение");
-            // OnActorThrownAnException(exception);
+            OnActorThrownAnException(exception);
             await Task.Delay(Interval);
             return await base.InternalRunAsync();
             }

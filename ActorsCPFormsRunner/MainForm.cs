@@ -17,6 +17,7 @@ namespace ActorsCPFormsRunner
         public MainForm()
             {
             InitializeComponent();
+            this.Load += OnLoad;
 
             OneItem[] items = new OneItem[] {
                 new OneItem("Дерево", "TreeViewPort"),
@@ -82,6 +83,17 @@ namespace ActorsCPFormsRunner
             }
 
         #endregion Вспомогательные методы
+
+        /// <summary>
+        /// Вызывается при загрузке формы
+        /// </summary>
+        /// <param name="sender">Отправитель</param>
+        /// <param name="e"></param>
+        private void OnLoad(object sender, EventArgs e)
+            {
+            OnQueueTestActor_Click(this, EventArgs.Empty);
+            RunActorButtonClick(this, EventArgs.Empty);
+            }
 
         /// <summary>
         /// TestActor_Single

@@ -80,6 +80,11 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// <summary>
         /// Объект находится в состоянии ошибки
         /// </summary>
-        Actor_Terminated_Failure
+        Actor_Terminated_Failure,
+
+        /// <summary>
+        /// Выполнение отменено
+        /// </summary>
+        Actor_Cancel
         }
     }
