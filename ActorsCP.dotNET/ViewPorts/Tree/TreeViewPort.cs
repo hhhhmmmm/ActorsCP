@@ -60,7 +60,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 SelectedImageIndex = 0,
                 ShowNodeToolTips = true,
                 HideSelection = false,
-                BorderStyle = BorderStyle.Fixed3D
+                BorderStyle = BorderStyle.Fixed3D,
                 };
 
             return _control;

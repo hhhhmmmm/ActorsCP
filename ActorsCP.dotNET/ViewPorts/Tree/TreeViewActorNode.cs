@@ -171,7 +171,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         /// <param name="text">Текст</param>
         /// <param name="image">Иконка</param>
-        private void AddActionToTree(string text, TreeViewImageIndex image)
+        private async void AddActionToTree(string text, TreeViewImageIndex image)
             {
             if (_actionsTreeNode.TreeView.IsDisposed)
                 {
@@ -179,19 +179,21 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 }
 
             var ac = new TreeNode(text, (int)image, (int)image);
+            AddNode(_actionsTreeNode, ac);
+
             // SetImage(ac, image);
 
-            if (_actionsTreeNode.TreeView.InvokeRequired)
-                {
-                _actionsTreeNode.TreeView.Invoke(new MethodInvoker(delegate
-                    {
-                        AddNode(_actionsTreeNode, ac);
-                        }));
-                }
-            else
-                {
-                AddNode(_actionsTreeNode, ac);
-                }
+            /*         if (_actionsTreeNode.TreeView.InvokeRequired)
+                         {
+                         _actionsTreeNode.TreeView.Invoke(new MethodInvoker(delegate
+                             {
+                                 AddNode(_actionsTreeNode, ac);
+                                 }));
+                         }
+                     else
+                         {
+                         AddNode(_actionsTreeNode, ac);
+                         }*/
             }
 
         private static void AddNode(TreeNode actionsTreeNode, TreeNode newTreeNode)

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Text;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
+using Timer = System.Windows.Forms.Timer;
 
 namespace ActorsCP.dotNET.ViewPorts
     {
@@ -23,14 +24,54 @@ namespace ActorsCP.dotNET.ViewPorts
         #region Создание/удаление вьюпорта
 
         /// <summary>
+        /// Таймер отображения на экран
+        /// </summary>
+        private readonly Timer _queueTimer = new Timer();
+
+        /// <summary>
+        /// Очередь сообщений для обработки на экране
+        /// </summary>
+        private readonly ConcurrentQueue<ViewPortItem> _queue = new ConcurrentQueue<ViewPortItem>();
+
+        /// <summary>
         /// Создать вьюпорт
         /// </summary>
         private void CreateViewPort()
             {
+            #region Создание таймера отображения на экран
+
+            _queueTimer.Enabled = true;
+            _queueTimer.Interval = 40;
+            _queueTimer.Tick += OnQueueTimer;
+            _queueTimer.Start();
+
+            #endregion Создание таймера отображения на экран
+
             _viewPort = new QueueBufferedActorViewPortBase();
             _viewPort.SetIViewPortItemProcessor(this);
+            _viewPort.DisposeViewPortItemAfterProcessing = false;
             _viewPort.Init();
             Actor.BindViewPort(_viewPort);
+            }
+
+        /// <summary>
+        /// Событие таймера отображения на экран
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnQueueTimer(object sender, EventArgs e)
+            {
+            for (int i = 0; i < 100; i++)
+                {
+                var bres = _queue.TryDequeue(out ViewPortItem viewPortItem);
+                if (!bres)
+                    {
+                    break;
+                    }
+
+                InternalProcessViewPortItem(viewPortItem);
+                viewPortItem.Dispose();
+                }
             }
 
         /// <summary>
@@ -50,6 +91,21 @@ namespace ActorsCP.dotNET.ViewPorts
         /// </summary>
         /// <param name="viewPortItem">элемент типа ViewPortItem</param>
         public void ProcessViewPortItem(ViewPortItem viewPortItem)
+            {
+            //lock (Locker)
+            //   {
+            _queue.Enqueue(viewPortItem);
+            //    }
+            // InternalProcessViewPortItem(viewPortItem);
+            }
+
+        #endregion Реализация интерфейса IViewPortItemProcessor
+
+        /// <summary>
+        /// Обработать элемент типа ViewPortItem
+        /// </summary>
+        /// <param name="viewPortItem">элемент типа ViewPortItem</param>
+        private void InternalProcessViewPortItem(ViewPortItem viewPortItem)
             {
             //#if DEBUG
             //            Logger.LogInfo($"FormsViewPortBase:ProcessViewPortItem(): {viewPortItem.ActorEventArgs}");
@@ -74,8 +130,6 @@ namespace ActorsCP.dotNET.ViewPorts
                 throw new Exception($"Непонятно как обрабатывать viewPortItem.ActorEventArgs = {viewPortItem.ActorEventArgs}");
                 }
             }
-
-        #endregion Реализация интерфейса IViewPortItemProcessor
 
         /// <summary>
         /// Обработать как ActorViewPortBoundEventArgs
