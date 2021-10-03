@@ -140,13 +140,13 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         private void AddActionsNode()
             {
-            TreeView.SuspendLayout();
-            //TreeView.BeginUpdate();
+            //   TreeView.SuspendLayout();
+
             _actionsTreeNode = new TreeNode("События", (int)TreeViewImageIndex.ActionNode, (int)TreeViewImageIndex.ActionNode);
             // SetImage(_actionsTreeNode, TreeViewImageIndex.ActionNode);
             Nodes.Add(_actionsTreeNode);
-            //TreeView.EndUpdate();
-            TreeView.ResumeLayout();
+
+            //     TreeView.ResumeLayout();
             }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// </summary>
         /// <param name="text">Текст</param>
         /// <param name="image">Иконка</param>
-        private async void AddActionToTree(string text, TreeViewImageIndex image)
+        private void AddActionToTree(string text, TreeViewImageIndex image)
             {
             if (_actionsTreeNode.TreeView.IsDisposed)
                 {

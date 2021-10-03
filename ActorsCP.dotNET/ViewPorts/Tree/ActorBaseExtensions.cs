@@ -37,9 +37,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 parentTreeNode = actor.Parent.TreeViewGetNode();
                 }
 
-            treeView.SuspendLayout();
+            // treeView.SuspendLayout();
             treeView.AddActorNodeToTree(actorNode, parentTreeNode);
-            treeView.ResumeLayout();
+            // treeView.ResumeLayout();
             }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 return;
                 }
             var treeView = treeNode.TreeView;
-            treeView.SuspendLayout();
+            //  treeView.SuspendLayout();
             treeNode.AddAction(actor, actorEventArgs);
-            treeView.ResumeLayout();
+            //   treeView.ResumeLayout();
             }
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 return;
                 }
             var treeView = treeNode.TreeView;
-            treeView.SuspendLayout();
+            //      treeView.SuspendLayout();
             treeNode.UpdateTitleByActorState();
-            treeView.ResumeLayout();
+            //      treeView.ResumeLayout();
             }
         } // end class ActorExtensions
     } // end namespace ActorsCP.dotNET.ViewPorts.Tree

@@ -52,7 +52,7 @@ namespace ActorsCPFormsRunner
             this.CrowdLengthTextBox.Name = "CrowdLengthTextBox";
             this.CrowdLengthTextBox.Size = new System.Drawing.Size(77, 20);
             this.CrowdLengthTextBox.TabIndex = 42;
-            this.CrowdLengthTextBox.Text = "10";
+            this.CrowdLengthTextBox.Text = "1000";
             // 
             // label24
             // 
@@ -86,7 +86,7 @@ namespace ActorsCPFormsRunner
             this.SleepTimeTextBox.Name = "SleepTimeTextBox";
             this.SleepTimeTextBox.Size = new System.Drawing.Size(77, 20);
             this.SleepTimeTextBox.TabIndex = 38;
-            this.SleepTimeTextBox.Text = "100";
+            this.SleepTimeTextBox.Text = "25";
             // 
             // label22
             // 
