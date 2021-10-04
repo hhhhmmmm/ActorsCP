@@ -9,6 +9,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
     /// <summary>
     /// Класс для описания одного узла дерева содержащего объект GuActor
     /// </summary>
+    [Serializable]
     public sealed class TreeViewActorNode : TreeNode
         {
         #region Приватные мемберы
@@ -66,40 +67,45 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         public void UpdateTitleByActorState()
             {
             ActorBase actor = null;
+
             if (_actorWeakReference.IsAlive)
                 {
                 actor = _actorWeakReference.Target as ActorBase;
                 }
+
             if (actor == null)
                 {
                 return;
                 }
 
-            string newText = string.Empty;
-            TreeViewImageIndex newIndex = TreeViewImageIndex.NoImage;
+            string newText;
+            TreeViewImageIndex newIndex;
+
+            #region Обычная обработка
+
             switch (actor.State)
                 {
                 case ActorState.Pending:
                     {
-                    newText = actor.Name + " - ожидание";
+                    newText = actor.Name; // + " - ожидание";
                     newIndex = TreeViewImageIndex.Actor_Pending;
                     break;
                     }
                 case ActorState.Started:
                     {
-                    newText = actor.Name + " - запущен";
+                    newText = actor.Name; //  + " - запущен";
                     newIndex = TreeViewImageIndex.Actor_Started;
                     break;
                     }
                 case ActorState.Running:
                     {
-                    newText = actor.Name + " - работает";
+                    newText = actor.Name; //  + " - работает";
                     newIndex = TreeViewImageIndex.Actor_Running;
                     break;
                     }
                 case ActorState.Stopped:
                     {
-                    newText = actor.Name + " - остановлен";
+                    newText = actor.Name; //  + " - остановлен";
                     newIndex = TreeViewImageIndex.Actor_Stopped;
                     break;
                     }
@@ -107,17 +113,32 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                     {
                     if (actor.AnErrorOccurred)
                         {
-                        newText = actor.Name + " - завершен с ошибкой";
+                        newText = actor.Name; //  + " - завершен с ошибкой";
                         newIndex = TreeViewImageIndex.Actor_Terminated_Failure;
                         }
                     else
                         {
-                        newText = actor.Name + " - завершен успешно";
+                        newText = actor.Name; //  + " - завершен успешно";
                         newIndex = TreeViewImageIndex.Actor_Terminated_OK;
                         }
                     break;
                     }
+                default:
+                    {
+                    throw new Exception($"Непонятно как обрабатывать - {actor.State}");
+                    }
                 }
+
+            #endregion Обычная обработка
+
+            #region Дополнительная обработка
+
+            if (actor is ActorsSet s)
+                {
+                newText = actor.Name + $" - ({s.WaitingCount},{s.RunningCount},{s.CompletedCount})";
+                }
+
+            #endregion Дополнительная обработка
 
             if (!newText.Equals(Text))
                 {

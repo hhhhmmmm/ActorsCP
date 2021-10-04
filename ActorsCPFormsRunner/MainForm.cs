@@ -2,7 +2,6 @@
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.dotNET.ViewPorts.Rtf;
@@ -14,10 +13,18 @@ namespace ActorsCPFormsRunner
     {
     public partial class MainForm : Form
         {
+        /// <summary>
+        /// Вспомогательный класс для изменения/сохранения/восстановления размера окон
+        /// </summary>
+        private readonly Resizer _resizer;
+
         public MainForm()
             {
+            _resizer = new Resizer(this, "MainForm");
+
             InitializeComponent();
             this.Load += OnLoad;
+            this.FormClosing += OnFormClosing;
 
             OneItem[] items = new OneItem[] {
                 new OneItem("Дерево", "TreeViewPort"),
@@ -44,10 +51,12 @@ namespace ActorsCPFormsRunner
         /// <returns></returns>
         private RunOptions GetRunOptions()
             {
-            var options = new RunOptions();
-            options.sleepTime = int.Parse(SleepTimeTextBox.Text);
-            options.QueueLegth = int.Parse(QueueLegthTextBox.Text);
-            options.CrowdLength = int.Parse(CrowdLengthTextBox.Text);
+            var options = new RunOptions
+                {
+                sleepTime = int.Parse(SleepTimeTextBox.Text),
+                QueueLegth = int.Parse(QueueLegthTextBox.Text),
+                CrowdLength = int.Parse(CrowdLengthTextBox.Text)
+                };
             return options;
             }
 
@@ -91,9 +100,20 @@ namespace ActorsCPFormsRunner
         /// <param name="e"></param>
         private void OnLoad(object sender, EventArgs e)
             {
+            _resizer.ApplyAndSaveSizeAndPositionFromRegistry();
             OnQueueTestActor_Click(this, EventArgs.Empty);
             RunActorButtonClick(this, EventArgs.Empty);
             // Application.Exit();
+            }
+
+        /// <summary>
+        /// Вызывается при попытке закрыть форму
+        /// </summary>
+        /// <param name="sender">Отправитель</param>
+        /// <param name="e"></param>
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+            {
+            _resizer.SaveSizeAndPositionInRegistry();
             }
 
         /// <summary>
@@ -151,8 +171,10 @@ namespace ActorsCPFormsRunner
             var crowd = new ActorsCrowd("Толпа акторов");
             for (int i = 0; i < runOptions.CrowdLength; i++)
                 {
-                var actor = new WaitActor();
-                actor.Interval = runOptions.sleepTime;
+                var actor = new WaitActor
+                    {
+                    Interval = runOptions.sleepTime
+                    };
                 crowd.Add(actor);
                 }
             CreatedActor = crowd;

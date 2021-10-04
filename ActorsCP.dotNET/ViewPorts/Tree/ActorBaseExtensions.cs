@@ -64,8 +64,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
         /// Отвязать актора от дерева
         /// </summary>
         /// <param name="actor">Объект</param>
-        /// <param name="treeView">Дерево</param>
-        internal static void TreeViewUnbind(this ActorBase actor, FastTreeView treeView)
+        internal static void TreeViewUnbind(this ActorBase actor)
             {
             WeakReference wr = null;
             actor.ExternalObjects?.TryRemove(TREEVIEW_POINTER_TO_ACTOR_NODE, out wr);
@@ -87,7 +86,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 {
                 return;
                 }
-            var treeView = treeNode.TreeView;
+            // var treeView = treeNode.TreeView;
             //  treeView.SuspendLayout();
             treeNode.AddAction(actor, actorEventArgs);
             //   treeView.ResumeLayout();
@@ -105,7 +104,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 {
                 return;
                 }
-            var treeView = treeNode.TreeView;
+            // var treeView = treeNode.TreeView;
             //      treeView.SuspendLayout();
             treeNode.UpdateTitleByActorState();
             //      treeView.ResumeLayout();

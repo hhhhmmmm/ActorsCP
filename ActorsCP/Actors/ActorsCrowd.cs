@@ -30,7 +30,7 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Генератор имени
         /// </summary>
-        private string _NameGenerator
+        private string InternalNameGenerator
             {
             get
                 {
@@ -43,7 +43,7 @@ namespace ActorsCP.Actors
         /// </summary>
         public ActorsCrowd()
             {
-            SetName(_NameGenerator);
+            SetName(InternalNameGenerator);
             SetMaxDegreeOfParallelism(Environment.ProcessorCount);
             }
 
@@ -53,7 +53,7 @@ namespace ActorsCP.Actors
         /// <param name="parentActor">Родительский объект</param>
         public ActorsCrowd(ActorBase parentActor) : this(null, parentActor)
             {
-            SetName(_NameGenerator);
+            SetName(InternalNameGenerator);
             }
 
         /// <summary>

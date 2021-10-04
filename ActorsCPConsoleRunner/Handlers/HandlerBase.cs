@@ -253,7 +253,7 @@ namespace ActorsCPConsoleRunner.Handlers
         /// </summary>
         protected virtual Task<int> InternalRun()
             {
-            Console.WriteLine($"InternalRun() - {this.ToString()}");
+            Console.WriteLine($"InternalRun() - {this}");
             return Task.FromResult(0);
             }
 

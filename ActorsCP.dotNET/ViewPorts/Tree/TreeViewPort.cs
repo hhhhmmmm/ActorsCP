@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
@@ -91,7 +90,7 @@ namespace ActorsCP.dotNET.ViewPorts.Tree
                 }
             else
                 {
-                actor.TreeViewUnbind(_control);
+                actor.TreeViewUnbind();
                 }
             }
 

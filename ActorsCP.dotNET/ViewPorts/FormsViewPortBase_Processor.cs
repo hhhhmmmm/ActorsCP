@@ -55,9 +55,11 @@ namespace ActorsCP.dotNET.ViewPorts
 
             if (ProcessOnTheQueue)
                 {
-                _queueTimer = new Timer();
-                _queueTimer.Enabled = true;
-                _queueTimer.Interval = 40;
+                _queueTimer = new Timer
+                    {
+                    Enabled = true,
+                    Interval = 40
+                    };
                 _queueTimer.Tick += OnQueueTimer;
                 _queueTimer.Start();
 
@@ -163,6 +165,8 @@ namespace ActorsCP.dotNET.ViewPorts
                 {
                 throw new Exception($"Непонятно как обрабатывать viewPortItem.ActorEventArgs = {viewPortItem.ActorEventArgs}");
                 }
+
+            _viewPort.Increment_СurrentExecutionStatistics_ViewPortDisplayed();
             }
 
         /// <summary>
