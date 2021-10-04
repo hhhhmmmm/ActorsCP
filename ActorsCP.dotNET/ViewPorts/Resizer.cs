@@ -232,14 +232,14 @@ namespace ActorsCP.dotNET.ViewPorts
                 }
             catch (Exception)
                 {
-                return false;
+                throw;
                 }
 
             return true;
             }
 
         /// <summary>
-        /// Применить сохраненные в реестре размер и положение к окну Если онине найдены в реестре -
+        /// Применить сохраненные в реестре размер и положение к окну Если они не найдены в реестре -
         /// сохранить их
         /// </summary>
         /// <returns>true если все хорошо</returns>

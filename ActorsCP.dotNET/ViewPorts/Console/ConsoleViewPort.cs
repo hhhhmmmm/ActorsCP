@@ -9,12 +9,12 @@ using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
 using ActorsCP.ViewPorts.ConsoleViewPort;
 
-namespace ActorsCP.dotNET.ViewPorts.ConsoleViewPort
+namespace ActorsCP.dotNET.ViewPorts.Console
     {
     /// <summary>
     /// Буферизованный консольный вьюпорт для актора
     /// </summary>
-    public class BufferedConsoleActorViewPort : TplBufferedActorViewPortBase
+    public sealed class ConsoleViewPort : TplBufferedActorViewPortBase
         {
         /// <summary>
         /// Инициализация для .Net framework
@@ -187,7 +187,7 @@ namespace ActorsCP.dotNET.ViewPorts.ConsoleViewPort
                 str = str + " " + additionalText;
                 }
 
-            Console.Title = str;
+            System.Console.Title = str;
             }
 
         /// <summary>

@@ -2,7 +2,6 @@
 // #define DEBUG_PROCESSMESSAGEFROMQUEUELOOP
 
 using System;
-using System.Diagnostics;
 
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
@@ -55,6 +54,15 @@ namespace ActorsCP.ViewPorts
                 return _queue.Statistics;
                 }
             }
+
+        /// <summary>
+        /// Вызвать Dispose экземпляра ViewPortItem после вызова обработчика
+        /// </summary>
+        public bool DisposeViewPortItemAfterProcessing
+            {
+            get;
+            set;
+            } = true;
 
         #endregion Свойства
 
@@ -230,7 +238,10 @@ namespace ActorsCP.ViewPorts
                 throw new Exception($"Непонятно как обрабатывать viewPortItem.ActorEventArgs = {viewPortItem.ActorEventArgs}");
                 }
 
-            viewPortItem.Dispose();
+            if (DisposeViewPortItemAfterProcessing)
+                {
+                viewPortItem.Dispose();
+                }
             }
 
         /// <summary>

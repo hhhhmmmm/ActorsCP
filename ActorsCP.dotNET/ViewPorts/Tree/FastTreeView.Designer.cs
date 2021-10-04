@@ -1,4 +1,4 @@
-﻿namespace ActorsCP.dotNET.ViewPorts.TreeViewViewPort
+﻿namespace ActorsCP.dotNET.ViewPorts.Tree
 	{
 	partial class FastTreeView
 		{

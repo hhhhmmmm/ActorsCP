@@ -8,19 +8,19 @@ using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.ViewPorts;
 
-namespace ActorsCP.dotNET.ViewPorts
+namespace ActorsCP.dotNET.ViewPorts.Rtf
     {
     /// <summary>
     /// Текстовый вьюпорт
     /// </summary>
-    public sealed class TextViewPort : FormsViewPortBase
+    public sealed class RtfTextViewPort : FormsViewPortBase
         {
         #region Приватные мемберы
 
         /// <summary>
         ///
         /// </summary>
-        private RichTextBox _control = new RichTextBox();
+        private RichTextBox _control;
 
         /// <summary>
         /// Нормальный шрифт
@@ -42,7 +42,7 @@ namespace ActorsCP.dotNET.ViewPorts
         /// <param name="actor">Объект</param>
         /// <param name="caption">Заголовок</param>
         /// <param name="icon">Иконка окна</param>
-        public TextViewPort(ActorBase actor, string caption, Icon icon = null) : base(actor, caption, icon)
+        public RtfTextViewPort(ActorBase actor, string caption, Icon icon = null) : base(actor, caption, icon)
             {
             }
 

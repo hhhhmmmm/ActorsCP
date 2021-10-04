@@ -66,14 +66,19 @@ namespace ActorsCP.ViewPorts
 
         #endregion Обычный вьюпорт
 
-        #region Буферизованный вьюпорт
+        #region Буфер
 
         /// <summary>
         /// Статистика буфера
         /// </summary>
         public QueueBufferStatistics BufferStatistics;
 
-        #endregion Буферизованный вьюпорт
+        #endregion Буфер
+
+        /// <summary>
+        /// Количество объектов показанных на экране
+        /// </summary>
+        public volatile int ViewPortDisplayed;
 
         #endregion Счетчики
 
@@ -98,7 +103,8 @@ namespace ActorsCP.ViewPorts
                     Errors == c.Errors &&
                     StateChanged == c.StateChanged &&
                     BufferStatistics.AddedMessages == c.BufferStatistics.AddedMessages &&
-                    BufferStatistics.ProcessedMessages == c.BufferStatistics.ProcessedMessages
+                    BufferStatistics.ProcessedMessages == c.BufferStatistics.ProcessedMessages &&
+                    ViewPortDisplayed == c.ViewPortDisplayed
                     ;
                 }
 
@@ -170,8 +176,9 @@ namespace ActorsCP.ViewPorts
             AddStatistics(sb, ",", "ошибок", Errors);
 
             AddStatistics(sb, ",", "изменений состояния", StateChanged);
-            AddStatistics(sb, ",", "БС: добавлено", BufferStatistics.AddedMessages);
-            AddStatistics(sb, ",", "БС: обработано", BufferStatistics.ProcessedMessages);
+            AddStatistics(sb, ",", "Б: добавлено", BufferStatistics.AddedMessages);
+            AddStatistics(sb, ",", "Б: обработано", BufferStatistics.ProcessedMessages);
+            AddStatistics(sb, ",", "В: отображено", ViewPortDisplayed);
 
             return sb.ToString();
             }

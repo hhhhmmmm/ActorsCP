@@ -295,6 +295,7 @@ namespace ActorsCP.Actors
         /// <param name="action">Текст сообщения</param>
         protected void OnActorActionError(string action)
             {
+            SetAnErrorOccurred();
             OnActorAction(action, ActorActionEventType.Error);
             }
 

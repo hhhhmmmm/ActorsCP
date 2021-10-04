@@ -2,9 +2,10 @@
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
 using ActorsCP.Actors;
 using ActorsCP.dotNET.ViewPorts;
+using ActorsCP.dotNET.ViewPorts.Rtf;
+using ActorsCP.dotNET.ViewPorts.Tree;
 using ActorsCP.Helpers;
 using ActorsCP.Tests.TestActors;
 
@@ -12,13 +13,22 @@ namespace ActorsCPFormsRunner
     {
     public partial class MainForm : Form
         {
+        /// <summary>
+        /// Вспомогательный класс для изменения/сохранения/восстановления размера окон
+        /// </summary>
+        private readonly Resizer _resizer;
+
         public MainForm()
             {
+            _resizer = new Resizer(this, "MainForm");
+
             InitializeComponent();
+            this.Load += OnLoad;
+            this.FormClosing += OnFormClosing;
 
             OneItem[] items = new OneItem[] {
-                new OneItem("Текст","TextViewPort"),
-               new OneItem("Дерево", "TreeViewViewPort")
+                new OneItem("Дерево", "TreeViewPort"),
+                new OneItem("RTF текст","RtfTextViewPort")
             };
 
             ViewportTypeComboBox.DataSource = items;
@@ -41,10 +51,12 @@ namespace ActorsCPFormsRunner
         /// <returns></returns>
         private RunOptions GetRunOptions()
             {
-            var options = new RunOptions();
-            options.sleepTime = int.Parse(SleepTimeTextBox.Text);
-            options.QueueLegth = int.Parse(QueueLegthTextBox.Text);
-            options.CrowdLength = int.Parse(CrowdLengthTextBox.Text);
+            var options = new RunOptions
+                {
+                sleepTime = int.Parse(SleepTimeTextBox.Text),
+                QueueLegth = int.Parse(QueueLegthTextBox.Text),
+                CrowdLength = int.Parse(CrowdLengthTextBox.Text)
+                };
             return options;
             }
 
@@ -60,15 +72,15 @@ namespace ActorsCPFormsRunner
 
             switch (item.Value)
                 {
-                case "TextViewPort":
+                case "RtfTextViewPort":
                     {
-                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    var form = new RtfTextViewPort(actor, name, MainProgram.MainIcon);
                     form.Show();
                     break;
                     }
-                case "TreeViewViewPort":
+                case "TreeViewPort":
                     {
-                    var form = new TextViewPort(actor, name, MainProgram.MainIcon);
+                    var form = new TreeViewPort(actor, name, MainProgram.MainIcon);
                     form.Show();
                     break;
                     }
@@ -80,6 +92,29 @@ namespace ActorsCPFormsRunner
             }
 
         #endregion Вспомогательные методы
+
+        /// <summary>
+        /// Вызывается при загрузке формы
+        /// </summary>
+        /// <param name="sender">Отправитель</param>
+        /// <param name="e"></param>
+        private void OnLoad(object sender, EventArgs e)
+            {
+            _resizer.ApplyAndSaveSizeAndPositionFromRegistry();
+            OnQueueTestActor_Click(this, EventArgs.Empty);
+            RunActorButtonClick(this, EventArgs.Empty);
+            // Application.Exit();
+            }
+
+        /// <summary>
+        /// Вызывается при попытке закрыть форму
+        /// </summary>
+        /// <param name="sender">Отправитель</param>
+        /// <param name="e"></param>
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+            {
+            _resizer.SaveSizeAndPositionInRegistry();
+            }
 
         /// <summary>
         /// TestActor_Single
@@ -106,8 +141,8 @@ namespace ActorsCPFormsRunner
             var queue = new ActorsQueue("Очередь акторов");
             for (int i = 0; i < runOptions.QueueLegth; i++)
                 {
-                var actor = new WaitActor();
-                actor.Interval = runOptions.sleepTime;
+                var actor = new SimpleActor();
+                //actor.Interval = runOptions.sleepTime;
                 queue.Add(actor);
                 }
             CreatedActor = queue;
@@ -136,8 +171,10 @@ namespace ActorsCPFormsRunner
             var crowd = new ActorsCrowd("Толпа акторов");
             for (int i = 0; i < runOptions.CrowdLength; i++)
                 {
-                var actor = new WaitActor();
-                actor.Interval = runOptions.sleepTime;
+                var actor = new WaitActor
+                    {
+                    Interval = runOptions.sleepTime
+                    };
                 crowd.Add(actor);
                 }
             CreatedActor = crowd;

@@ -228,6 +228,14 @@ namespace ActorsCP.ViewPorts
         #region Публичные методы
 
         /// <summary>
+        /// Увеличить число показанных элементов на экране
+        /// </summary>
+        public void Increment_СurrentExecutionStatistics_ViewPortDisplayed()
+            {
+            Interlocked.Increment(ref _сurrentExecutionStatistics.ViewPortDisplayed);
+            }
+
+        /// <summary>
         /// Проверить корректность собранных значений счетчиков
         /// </summary>
         public void ValidateStatistics()

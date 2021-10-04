@@ -63,28 +63,32 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\Resizer.cs" />
-    <Compile Include="ViewPorts\TextViewPort.cs">
+    <Compile Include="ViewPorts\Rtf\TextViewPort.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\TplBufferedActorViewPortBase.cs" />
-    <Compile Include="ViewPorts\ConsoleViewPort\BufferedConsoleActorViewPort.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\ActorsTreeView.cs">
+    <Compile Include="ViewPorts\Console\ConsoleViewPort.cs" />
+    <Compile Include="ViewPorts\Tree\ActorBaseExtensions.cs" />
+    <Compile Include="ViewPorts\Tree\FastTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\BufferedTreeViewViewPort.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\FastTreeView.Designer.cs">
+    <Compile Include="ViewPorts\Tree\FastTreeView.Designer.cs">
       <DependentUpon>FastTreeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewActorNode.cs" />
-    <Compile Include="ViewPorts\TreeViewViewPort\TreeViewImage.cs" />
+    <Compile Include="ViewPorts\Tree\FastTreeView_ActorsPart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ViewPorts\Tree\TreeViewActorNode.cs" />
+    <Compile Include="ViewPorts\Tree\TreeViewImageIndex.cs" />
     <Compile Include="ViewPorts\FormsViewPortBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ViewPorts\FormsViewPortBase.Designer.cs">
       <DependentUpon>FormsViewPortBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewPorts\Tree\TreeViewImageList.cs" />
+    <Compile Include="ViewPorts\Tree\TreeViewPort.cs">
+      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +105,27 @@
     <EmbeddedResource Include="ViewPorts\FormsViewPortBase.resx">
       <DependentUpon>FormsViewPortBase.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\tmp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Action\ActionDebug.png" />
+    <EmbeddedResource Include="Images\Action\ActionError.png" />
+    <EmbeddedResource Include="Images\Action\ActionException.png" />
+    <EmbeddedResource Include="Images\Action\ActionNeutral.png" />
+    <EmbeddedResource Include="Images\Action\ActionNode.png" />
+    <EmbeddedResource Include="Images\Action\ActionOrdinal.png" />
+    <EmbeddedResource Include="Images\Action\ActionWarning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Actor\Actor_Cancel.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Pending.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Running.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Started.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Stopped.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Terminated_Failure.png" />
+    <EmbeddedResource Include="Images\Actor\Actor_Terminated_OK.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
