@@ -60,12 +60,12 @@ namespace ActorsCP.Actors
             {
             if (counterName == null)
                 {
-                throw new ArgumentNullException($"{nameof(counterName)} не может быть null");
+                throw new ArgumentNullException(nameof(counterName), $"{nameof(counterName)} не может быть null");
                 }
 
             if (_delegate == null)
                 {
-                throw new ArgumentNullException($"{nameof(_delegate)} не может быть null");
+                throw new ArgumentNullException(nameof(_delegate), $"{nameof(_delegate)} не может быть null");
                 }
 
             SuppressOutput = suppressOutput;

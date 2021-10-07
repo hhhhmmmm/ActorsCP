@@ -1,15 +1,13 @@
-﻿using System.Text;
-using System.Linq;
-
-// #if DEBUG
+﻿// #if DEBUG
 // #define DEBUG_TRACK_MOVES
 // #endif // DEBUG
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -124,6 +122,15 @@ namespace ActorsCP.Actors
                 }
             }
 
+        #region CleanupAfterTermination
+
+        /// <summary>
+        /// Очистить объект от хранимых в нем временных данных,
+        /// чтобы программа потребляла меньше памяти
+        /// Фактически - не добавлять объект в список завершенных
+        /// </summary>
+        private bool _cleanupAfterTermination = true;
+
         /// <summary>
         /// Очистить объект от хранимых в нем временных данных,
         /// чтобы программа потребляла меньше памяти
@@ -131,9 +138,17 @@ namespace ActorsCP.Actors
         /// </summary>
         public bool CleanupAfterTermination
             {
-            get;
-            protected set;
-            } = true;
+            get
+                {
+                return _cleanupAfterTermination;
+                }
+            set
+                {
+                SetCleanupAfterTermination(value);
+                }
+            }
+
+        #endregion CleanupAfterTermination
 
         /// <summary>
         /// Список ожидающих выполнения объектов
@@ -532,8 +547,7 @@ namespace ActorsCP.Actors
                 return;
                 }
 
-            var actor = sender as ActorBase;
-            if (actor == null)
+            if (!(sender is ActorBase actor))
                 {
                 return;
                 }
@@ -591,7 +605,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
+                    throw new ArgumentNullException(nameof(actor), $"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -638,7 +652,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
+                    throw new ArgumentNullException(nameof(actor), $"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -687,7 +701,7 @@ namespace ActorsCP.Actors
                 {
                 if (actor == null)
                     {
-                    throw new ArgumentNullException($"{nameof(actor)} не может быть null");
+                    throw new ArgumentNullException(nameof(actor), $"{nameof(actor)} не может быть null");
                     }
 
                 if (actor.State == ActorState.Terminated)
@@ -734,7 +748,7 @@ namespace ActorsCP.Actors
             {
             if (actor == null)
                 {
-                throw new ArgumentNullException($"{nameof(actor)} не может быть null");
+                throw new ArgumentNullException(nameof(actor), $"{nameof(actor)} не может быть null");
                 }
 
             actor.SetParent(this);
@@ -806,7 +820,7 @@ namespace ActorsCP.Actors
         /// объекта он не будет помещаться в очередь и для него будет вызван Dispose()</param>
         public void SetCleanupAfterTermination(bool cleanupAfterTermination)
             {
-            CleanupAfterTermination = cleanupAfterTermination;
+            _cleanupAfterTermination = cleanupAfterTermination;
             }
 
         /// <summary>

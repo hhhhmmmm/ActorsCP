@@ -144,7 +144,7 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
+                throw new ArgumentNullException(nameof(viewPortItem), $"{nameof(viewPortItem)} не может быть null");
                 }
 
             if (_queue == null)
@@ -212,12 +212,12 @@ namespace ActorsCP.ViewPorts
             {
             if (viewPortItem == null)
                 {
-                throw new ArgumentNullException($"{nameof(viewPortItem)} не может быть null");
+                throw new ArgumentNullException(nameof(viewPortItem), $"{nameof(viewPortItem)} не может быть null");
                 }
 
             if (viewPortItem.ActorEventArgs == null)
                 {
-                throw new ArgumentNullException($"{nameof(viewPortItem.ActorEventArgs)} не может быть null");
+                throw new ArgumentNullException(nameof(viewPortItem.ActorEventArgs), $"{nameof(viewPortItem.ActorEventArgs)} не может быть null");
                 }
 
             _iViewPortItemProcessor?.ProcessViewPortItem(viewPortItem);

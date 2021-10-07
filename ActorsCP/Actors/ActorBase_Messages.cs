@@ -1,11 +1,8 @@
 ﻿// #define DEBUG_RAISE_EVENT
 
+using System;
 using System.Globalization;
 using System.Text;
-
-using System;
-using System.Diagnostics;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 
@@ -124,6 +121,10 @@ namespace ActorsCP.Actors
                 {
                 return _iMessageChannel;
                 }
+            set
+                {
+                SetIMessageChannel(value);
+                }
             }
 
         /// <summary>
@@ -156,7 +157,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseDebug(debugText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
             RaiseActorEvent(a);
-            if (LoggerOptions != null && LoggerOptions.IsDebugEnabled)
+            if (LoggerOptions?.IsDebugEnabled == true)
                 {
                 Logger.LogDebug(debugText);
                 }
@@ -171,7 +172,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseMessage(messageText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
             RaiseActorEvent(a);
-            if (LoggerOptions != null && LoggerOptions.IsInfoEnabled)
+            if (LoggerOptions?.IsInfoEnabled == true)
                 {
                 Logger.LogInfo(messageText);
                 }
@@ -186,7 +187,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseWarning(warningText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
             RaiseActorEvent(a);
-            if (LoggerOptions != null && LoggerOptions.IsWarnEnabled)
+            if (LoggerOptions?.IsWarnEnabled == true)
                 {
                 Logger.LogWarn(warningText);
                 }
@@ -201,7 +202,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseError(errorText); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
             RaiseActorEvent(a);
-            if (LoggerOptions != null && LoggerOptions.IsErrorEnabled)
+            if (LoggerOptions?.IsErrorEnabled == true)
                 {
                 Logger.LogError(errorText);
                 }
@@ -216,7 +217,7 @@ namespace ActorsCP.Actors
             _iMessageChannel?.RaiseException(exception); // сначала канал а не событие, иначе по завершению вьюпорт отпишется и не будет получать сообщений
             var a = new ActorExceptionEventArgs(exception);
             RaiseActorEvent(a);
-            if (LoggerOptions != null && LoggerOptions.IsErrorEnabled)
+            if (LoggerOptions?.IsErrorEnabled == true)
                 {
                 Logger.LogException(exception);
                 }

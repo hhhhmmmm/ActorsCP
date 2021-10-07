@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
@@ -50,7 +49,7 @@ namespace ActorsCP.ViewPorts
             {
             if (parentActor == null)
                 {
-                throw new ArgumentNullException($"{nameof(parentActor)} не может быть null");
+                throw new ArgumentNullException(nameof(parentActor), $"{nameof(parentActor)} не может быть null");
                 }
             _parentActor = parentActor;
             }
@@ -185,7 +184,7 @@ namespace ActorsCP.ViewPorts
             {
             if (childActor == null)
                 {
-                throw new ArgumentNullException($"{nameof(childActor)} не может быть null");
+                throw new ArgumentNullException(nameof(childActor), $"{nameof(childActor)} не может быть null");
                 }
 
             if (childActor.Parent != _parentActor)
@@ -197,8 +196,7 @@ namespace ActorsCP.ViewPorts
                 {
                 if (wr.IsAlive)
                     {
-                    var eh = wr.Target as IActorViewPort;
-                    if (eh != null)
+                    if (wr.Target is IActorViewPort eh)
                         {
                         childActor.BindViewPort(eh);
                         }
@@ -228,8 +226,7 @@ namespace ActorsCP.ViewPorts
                 {
                 if (wr.IsAlive)
                     {
-                    var eh = wr.Target as IActorViewPort;
-                    if (eh != null)
+                    if (wr.Target is IActorViewPort eh)
                         {
                         _parentActor.UnbindViewPort(eh);
                         }
