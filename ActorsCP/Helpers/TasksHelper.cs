@@ -45,7 +45,7 @@ namespace ActorsCP.Helpers
             {
             if (action == null)
                 {
-                throw new ArgumentNullException($"{nameof(action)} не может быть null");
+                throw new ArgumentNullException(nameof(action), $"{nameof(action)} не может быть null");
                 }
 
             var task = new Task(action, DefaultTaskCreationOptions);
@@ -80,7 +80,7 @@ namespace ActorsCP.Helpers
             {
             if (action == null)
                 {
-                throw new ArgumentNullException($"{nameof(action)} не может быть null");
+                throw new ArgumentNullException(nameof(action), $"{nameof(action)} не может быть null");
                 }
 
             if (maxDegreeOfParallelism.HasValue)

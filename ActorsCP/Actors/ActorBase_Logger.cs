@@ -9,14 +9,14 @@ namespace ActorsCP.Actors
     /// </summary>
     public partial class ActorBase
         {
-        /// <summary>
-        /// Экземпляр логгера
-        /// </summary>
-        private IActorLogger _actorLogger;
-
-        private ActorLoggerOptions _actorLoggerOptions;
-
         #region Свойства
+
+        #region LoggerOptions
+
+        /// <summary>
+        /// Уровень подробности логгера
+        /// </summary>
+        private ActorLoggerOptions _actorLoggerOptions;
 
         /// <summary>
         /// Уровень подробности логгера
@@ -42,7 +42,20 @@ namespace ActorsCP.Actors
                 var globalActorLogger = GlobalActorLogger.GetInstance();
                 return globalActorLogger.LoggerOptions;
                 }
+            set
+                {
+                SetLoggerOptions(value);
+                }
             }
+
+        #endregion LoggerOptions
+
+        #region Logger
+
+        /// <summary>
+        /// Экземпляр логгера
+        /// </summary>
+        private IActorLogger _actorLogger;
 
         /// <summary>
         /// Экземпляр логгера
@@ -59,7 +72,13 @@ namespace ActorsCP.Actors
                 var globalActorLogger = GlobalActorLogger.GetInstance();
                 return globalActorLogger;
                 }
+            set
+                {
+                SetLogger(value);
+                }
             }
+
+        #endregion Logger
 
         #endregion Свойства
 

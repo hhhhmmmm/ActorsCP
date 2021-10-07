@@ -101,21 +101,29 @@ namespace ActorsCP.Actors
         /// <param name="maxDegreeOfParallelism"></param>
         public void SetMaxDegreeOfParallelism(int? maxDegreeOfParallelism)
             {
-            MaxDegreeOfParallelism = maxDegreeOfParallelism;
+            _maxDegreeOfParallelism = maxDegreeOfParallelism;
             }
 
-        #region Свойства
+        #region MaxDegreeOfParallelism
+
+        private int? _maxDegreeOfParallelism;
 
         /// <summary>
         /// Параллелизм (количество одновременно выполняющихся объектов)
         /// </summary>
         public int? MaxDegreeOfParallelism
             {
-            get;
-            private set;
+            get
+                {
+                return _maxDegreeOfParallelism;
+                }
+            set
+                {
+                SetMaxDegreeOfParallelism(value);
+                }
             }
 
-        #endregion Свойства
+        #endregion MaxDegreeOfParallelism
 
         #region Приватные методы
 

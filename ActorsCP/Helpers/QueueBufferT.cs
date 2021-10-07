@@ -183,7 +183,7 @@ namespace ActorsCP.Helpers
             {
             if (externalMessageHandler == null)
                 {
-                throw new ArgumentNullException($"{nameof(externalMessageHandler)} не может быть null");
+                throw new ArgumentNullException(nameof(externalMessageHandler), $"{nameof(externalMessageHandler)} не может быть null");
                 }
 
             #region Отладка
@@ -369,7 +369,7 @@ namespace ActorsCP.Helpers
 
             if (item == null)
                 {
-                throw new ArgumentNullException($"{nameof(item)} не может быть null");
+                throw new ArgumentNullException(nameof(item), $"{nameof(item)} не может быть null");
                 }
 
             if (_queue == null)

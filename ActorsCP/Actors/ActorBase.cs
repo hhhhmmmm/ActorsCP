@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 using ActorsCP.Actors.Events;
 using ActorsCP.Helpers;
 using ActorsCP.Options;
@@ -160,6 +159,8 @@ namespace ActorsCP.Actors
                 }
             }
 
+        #region Parent
+
         /// <summary>
         /// Родительский объект
         /// </summary>
@@ -169,25 +170,61 @@ namespace ActorsCP.Actors
                 {
                 return _parentActor;
                 }
+            set
+                {
+                SetParent(value);
+                }
             }
+
+        #endregion Parent
+
+        #region ActorUid
+
+        /// <summary>
+        /// Уникальный идентификатор объекта
+        /// </summary>
+        private Guid _actorUid = Guid.NewGuid();
 
         /// <summary>
         /// Уникальный идентификатор объекта
         /// </summary>
         public Guid ActorUid
             {
-            get;
-            protected set;
-            } = Guid.NewGuid();
+            get
+                {
+                return _actorUid;
+                }
+            set
+                {
+                SetActorUid(value);
+                }
+            }
+
+        #endregion ActorUid
+
+        #region Название объекта
+
+        /// <summary>
+        /// Название объекта
+        /// </summary>
+        private string _name;
 
         /// <summary>
         /// Название объекта
         /// </summary>
         public string Name
             {
-            get;
-            private set;
+            get
+                {
+                return _name;
+                }
+            set
+                {
+                SetName(value);
+                }
             }
+
+        #endregion Название объекта
 
         /// <summary>
         /// Состояние объекта
@@ -209,14 +246,29 @@ namespace ActorsCP.Actors
                 }
             }
 
+        #region RunOnlyOnce
+
+        /// <summary>
+        /// Разрешен запуск RunAsync() только один раз
+        /// </summary>
+        private bool _runOnlyOnce;
+
         /// <summary>
         /// Разрешен запуск RunAsync() только один раз
         /// </summary>
         public bool RunOnlyOnce
             {
-            get;
-            private set;
+            get
+                {
+                return _runOnlyOnce;
+                }
+            set
+                {
+                SetRunOnlyOnce(value);
+                }
             }
+
+        #endregion RunOnlyOnce
 
         /// <summary>
         /// RunAsync() уже выполнялась
@@ -236,14 +288,29 @@ namespace ActorsCP.Actors
             private set;
             }
 
+        #region Verbosity
+
+        /// <summary>
+        /// Многословность объекта - о каких событиях он будет сообщать
+        /// </summary>
+        private ActorVerbosity _verbosity = ActorVerbosity.Starting | ActorVerbosity.Running | ActorVerbosity.Stopped;
+
         /// <summary>
         /// Многословность объекта - о каких событиях он будет сообщать
         /// </summary>
         public ActorVerbosity Verbosity
             {
-            get;
-            private set;
-            } = ActorVerbosity.Starting | ActorVerbosity.Running | ActorVerbosity.Stopped;
+            get
+                {
+                return _verbosity;
+                }
+            set
+                {
+                SetVerbosity(value);
+                }
+            }
+
+        #endregion Verbosity
 
         // ActorVerbosity.Running | ActorVerbosity.Starting | ActorVerbosity.Started | ActorVerbosity.Stopping | ActorVerbosity.Stopped;
 
@@ -398,19 +465,19 @@ namespace ActorsCP.Actors
             {
             if (string.IsNullOrEmpty(name))
                 {
-                throw new ArgumentNullException($"{nameof(name)} не может быть null");
+                throw new ArgumentNullException(nameof(name), $"{nameof(name)} не может быть null");
                 }
 
             if (this.Name != null)
                 {
                 if (!this.Name.Equals(name))
                     {
-                    this.Name = name;
+                    _name = name;
                     }
                 }
             else
                 {
-                this.Name = name;
+                _name = name;
                 }
             }
 
@@ -424,7 +491,7 @@ namespace ActorsCP.Actors
         /// <param name="actorUid">Уникальный идентификатор объекта</param>
         public void SetActorUid(Guid actorUid)
             {
-            ActorUid = actorUid;
+            _actorUid = actorUid;
             }
 
         /// <summary>
@@ -433,7 +500,7 @@ namespace ActorsCP.Actors
         /// <param name="verbosity">Многословность объекта</param>
         public void SetVerbosity(ActorVerbosity verbosity)
             {
-            Verbosity = verbosity;
+            _verbosity = verbosity;
             }
 
         /// <summary>
@@ -442,7 +509,7 @@ namespace ActorsCP.Actors
         /// <param name="runOnlyOnce"></param>
         public void SetRunOnlyOnce(bool runOnlyOnce = true)
             {
-            RunOnlyOnce = runOnlyOnce;
+            _runOnlyOnce = runOnlyOnce;
             }
 
         /// <summary>

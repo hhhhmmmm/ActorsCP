@@ -290,7 +290,7 @@ namespace ActorsCP.Actors
                     }
 
                 Task<bool> runtask;
-                var suppressOutput = (Verbosity & ActorVerbosity.Running) == 0 ? true : false;
+                var suppressOutput = (Verbosity & ActorVerbosity.Running) == 0;
                 using (var gt = new ActorDisposableTime($"выполнения '{Name}'", OnActorAction, suppressOutput))
                     {
                     _executionTime.SetStartDate();

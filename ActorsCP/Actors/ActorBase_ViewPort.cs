@@ -73,7 +73,7 @@ namespace ActorsCP.Actors
             {
             if (iViewPort == null)
                 {
-                throw new ArgumentNullException($"{nameof(iViewPort)} не может быть null");
+                throw new ArgumentNullException(nameof(iViewPort), $"{nameof(iViewPort)} не может быть null");
                 }
 
             #region Привязываем события объекта к их получателю
@@ -105,7 +105,7 @@ namespace ActorsCP.Actors
             {
             if (iViewPort == null)
                 {
-                throw new ArgumentNullException($"{nameof(iViewPort)} не может быть null");
+                throw new ArgumentNullException(nameof(iViewPort), $"{nameof(iViewPort)} не может быть null");
                 }
 
             #region Отвязываем события объекта от их получателя

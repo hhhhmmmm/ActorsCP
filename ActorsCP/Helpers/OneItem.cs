@@ -22,11 +22,11 @@ namespace ActorsCP.Helpers
             {
             if (name == null)
                 {
-                throw new ArgumentNullException($"{nameof(name)} не может быть null");
+                throw new ArgumentNullException(nameof(name), $"{nameof(name)} не может быть null");
                 }
             if (value == null)
                 {
-                throw new ArgumentNullException($"{nameof(value)} не может быть null");
+                throw new ArgumentNullException(nameof(value), $"{nameof(value)} не может быть null");
                 }
 
             Name = name;

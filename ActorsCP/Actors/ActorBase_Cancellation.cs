@@ -40,6 +40,10 @@ namespace ActorsCP.Actors
                 {
                 return _cancellationTokenSource;
                 }
+            set
+                {
+                SetCancellationToken(value.Token);
+                }
             }
 
         /// <summary>
@@ -109,12 +113,12 @@ namespace ActorsCP.Actors
         /// <summary>
         /// Установить новый токен отмены
         /// </summary>
-        /// <param name="Token">Новый токен отмены</param>
+        /// <param name="tokenSource">Новый токен отмены</param>
         public void SetCancellationToken(CancellationTokenSource tokenSource)
             {
             if (tokenSource == null)
                 {
-                throw new ArgumentNullException($"{nameof(tokenSource)} не может быть null");
+                throw new ArgumentNullException(nameof(tokenSource), $"{nameof(tokenSource)} не может быть null");
                 }
 
             SetCancellationToken(tokenSource.Token);
