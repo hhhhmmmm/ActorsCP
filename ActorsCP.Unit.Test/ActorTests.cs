@@ -290,5 +290,44 @@ namespace ActorsCP.Unit.Test
                 Assert.AreEqual(list[3], ActorStates.ActorStateChangedTerminated);
                 }
             }
+
+        [Test]
+        [TestCase(TestName = "80. 1 - родители")]
+        public void ParentsQueue()
+            {
+            //var superRootActor = CreateNewPendingActor("СуперКорень");
+            //rootActor.SetParent(superRootActor);
+            var rootActor = CreateNewPendingActor("Корень");
+            var queue = new ActorsQueue();
+            var childActor1 = NewPendingActor;
+            var childActor2 = NewPendingActor;
+
+            Assert.IsNull(rootActor.Parent);
+            Assert.IsNull(queue.Parent);
+            Assert.IsNull(childActor1.Parent);
+            Assert.IsNull(childActor2.Parent);
+
+            queue.Add(childActor1);
+            queue.Add(childActor2);
+            Assert.IsNotNull(childActor1.Parent);
+            Assert.IsNotNull(childActor2.Parent);
+
+            Assert.AreEqual(queue, childActor1.Parent);
+            Assert.AreEqual(queue, childActor2.Parent);
+
+            queue.SetParent(rootActor);
+            Assert.AreEqual(rootActor, queue.Parent);
+            Assert.AreEqual(queue, childActor1.Parent);
+            Assert.AreEqual(queue, childActor2.Parent);
+
+            Assert.AreEqual(1, queue.Depth);
+            Assert.AreEqual(2, childActor1.Depth);
+            Assert.AreEqual(2, childActor2.Depth);
+
+            Assert.IsNotNull(queue.Parent);
+            Assert.AreEqual(rootActor, queue.Parent);
+            Assert.AreEqual(queue, childActor1.Parent);
+            Assert.AreEqual(queue, childActor2.Parent);
+            }
         }
     }

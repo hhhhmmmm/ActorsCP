@@ -12,7 +12,7 @@ namespace ActorsCP.Actors
     /// <summary>
     /// Базовый класс
     /// </summary>
-    [DebuggerDisplay("ABN_{ABN}, Name = {Name}, State = {State}")]
+    [DebuggerDisplay("ABN_{ABN}, Name = {Name}, State = {State}, Parent = {Parent?.Name}, Depth = {Depth}")]
     public abstract partial class ActorBase : DisposableImplementation<ActorBase>, IMessageChannel
         {
         #region Константы для задач
@@ -226,6 +226,26 @@ namespace ActorsCP.Actors
 
         #endregion Название объекта
 
+        #region Глубина объекта
+
+        /// <summary>
+        /// Глубина объекта
+        /// </summary>
+        private int _depth;
+
+        /// <summary>
+        /// Глубина объекта
+        /// </summary>
+        public int Depth
+            {
+            get
+                {
+                return _depth;
+                }
+            }
+
+        #endregion Глубина объекта
+
         /// <summary>
         /// Состояние объекта
         /// </summary>
@@ -392,6 +412,21 @@ namespace ActorsCP.Actors
         #region Защищенные методы
 
         /// <summary>
+        /// Высчитать текущую глубину объекта
+        /// </summary>
+        private void ComputeDepth()
+            {
+            var parent = Parent;
+
+            _depth = 0;
+            while (parent != null)
+                {
+                _depth++;
+                parent = parent.Parent;
+                }
+            }
+
+        /// <summary>
         /// Установить флаг AnErrorOccurred
         /// </summary>
         protected void SetAnErrorOccurred()
@@ -516,23 +551,58 @@ namespace ActorsCP.Actors
         /// Установить родительский объект
         /// </summary>
         /// <param name="parentActor">Родительский объект</param>
-        public virtual void SetParent(ActorBase parentActor)
+        public void SetParent(ActorBase parentActor)
             {
             if (_parentActor == parentActor)
                 {
+                ComputeDepth(); // глубина могла измениться
+                InternalSetParent();
                 return;
                 }
 
-            _parentActor = parentActor;
-            if (_parentActor != null)
+            // защита от повторной смены родительского объекта у одиночек
+            if (
+                (parentActor != null) &&
+                (_parentActor != null) && // уже установлен
+                (parentActor != _parentActor)
+                )
                 {
-                SetIMessageChannel(_parentActor.MessageChannel);
-                // UnsubscribeFromCancelationEvents(_parentActor);
+                if (!(this is ActorsSet a))
+                    {
+                    throw new InvalidOperationException("Повторная смена родительского объекта не допускается, ведет к разъезду глубин");
+                    }
                 }
 
-            //CreateCancellationTokenSource(parentActor);
-            //SubscribeToCancelationEvents(parentActor);
+            lock (Locker)
+                {
+                _parentActor = parentActor;
+
+                if (_parentActor != null)
+                    {
+                    SetIMessageChannel(_parentActor.MessageChannel);
+                    // UnsubscribeFromCancelationEvents(_parentActor);
+                    }
+
+                ComputeDepth();
+
+                //CreateCancellationTokenSource(parentActor);
+                //SubscribeToCancelationEvents(parentActor);
+
+                InternalSetParent();
+                }
             }
+
+        #region Набор методов для переопределения
+
+        /// <summary>
+        /// Перегружаемый метод вызываемый из SetParent()
+        /// после установки родительского объекта
+        /// </summary>
+        protected virtual void InternalSetParent()
+            {
+            }
+
+        #endregion Набор методов для переопределения
 
         /// <summary>
         ///

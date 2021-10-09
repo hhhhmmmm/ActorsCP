@@ -436,27 +436,26 @@ namespace ActorsCP.Actors
             return bres;
             }
 
+        #region Набор методов для переопределения
+
         /// <summary>
-        /// Установить родительский объект
+        /// Перегружаемый метод вызываемый из SetParent()
+        /// после установки родительского объекта
         /// </summary>
-        /// <param name="parentActor">Родительский объект</param>
-        public override void SetParent(ActorBase parentActor)
+        protected override void InternalSetParent()
             {
-            lock (Locker)
+            foreach (var actor in _waiting)
                 {
-                base.SetParent(parentActor);
+                actor.SetParent(this); // для пересчета глубины
+                }
 
-                foreach (var actor in _waiting)
-                    {
-                    actor.SetParent(parentActor);
-                    }
-
-                foreach (var actor in _running.Items)
-                    {
-                    actor.SetParent(parentActor);
-                    }
+            foreach (var actor in _running.Items)
+                {
+                actor.SetParent(this); // для пересчета глубины
                 }
             }
+
+        #endregion Набор методов для переопределения
 
         /// <summary>
         /// Установить указатель на канал сообщений

@@ -107,6 +107,13 @@ namespace ActorsCP.Unit.Test
                 }
             }
 
+        public ActorBase CreateNewPendingActor(string name)
+            {
+            var actor = NewPendingActor;
+            actor.Name = name;
+            return actor;
+            }
+
         /// <summary>
         /// Новый объект ExceptionActor
         /// </summary>
