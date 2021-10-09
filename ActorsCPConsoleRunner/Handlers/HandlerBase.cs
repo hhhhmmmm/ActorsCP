@@ -203,7 +203,6 @@ namespace ActorsCPConsoleRunner.Handlers
             actorTime.SetEndDate();
 
             DefaultViewPort.Terminate();
-            DefaultViewPort.ValidateStatistics();
 
             #region Статистика
 
@@ -211,6 +210,8 @@ namespace ActorsCPConsoleRunner.Handlers
             WriteWarningMessage(stat);
 
             #endregion Статистика
+
+            DefaultViewPort.ValidateStatistics();
 
             DefaultViewPort.Dispose();
             DefaultViewPort = null;
@@ -232,9 +233,9 @@ namespace ActorsCPConsoleRunner.Handlers
         /// Сообщение
         /// </summary>
         /// <param name="text"></param>
-        protected static void WriteWarningMessage(string text)
+        protected static void WriteWarningMessage(string text, ActorBase actor = null)
             {
-            var mstat = ConsoleViewPortStatics.CreateWarningMessage(text);
+            var mstat = ConsoleViewPortStatics.CreateWarningMessage(actor, text);
             ConsoleViewPortStatics.WriteLineToConsole(mstat);
             }
 
@@ -242,9 +243,9 @@ namespace ActorsCPConsoleRunner.Handlers
         /// Сообщение
         /// </summary>
         /// <param name="text"></param>
-        protected static void WriteErrorMessage(string text)
+        protected static void WriteErrorMessage(string text, ActorBase actor = null)
             {
-            var mstat = ConsoleViewPortStatics.CreateErrorMessage(text);
+            var mstat = ConsoleViewPortStatics.CreateErrorMessage(actor, text);
             ConsoleViewPortStatics.WriteLineToConsole(mstat);
             }
 

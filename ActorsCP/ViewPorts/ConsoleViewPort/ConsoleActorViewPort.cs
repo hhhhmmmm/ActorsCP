@@ -1,5 +1,5 @@
 ﻿using System;
-
+using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 
 namespace ActorsCP.ViewPorts.ConsoleViewPort
@@ -48,7 +48,8 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
             {
             if (e is ActorActionEventArgs action)
                 {
-                var message = ConsoleViewPortStatics.CreateMessageFromEventArgs(action);
+                var actor = sender as ActorBase;
+                var message = ConsoleViewPortStatics.CreateMessageFromEventArgs(actor, action);
                 ConsoleViewPortStatics.WriteLineToConsole(message);
                 }
             }

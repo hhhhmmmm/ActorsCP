@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
-
+using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 
 namespace ActorsCP.ViewPorts.ConsoleViewPort
@@ -144,30 +145,70 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
                 } // end Locker
             }
 
+        #region Хранилище пробелов для отступов
+
+        /// <summary>
+        /// Хранилище пробелов
+        /// </summary>
+        private static ConcurrentDictionary<int, string> _spaces = new ConcurrentDictionary<int, string>();
+
+        /// <summary>
+        /// Вернуть кэшированную строку пробелов для отступов
+        /// </summary>
+        /// <param name="depth">Глубина отступа</param>
+        /// <returns></returns>
+        private static string GetDepthString(int depth)
+            {
+            string str = null;
+            if (_spaces.TryGetValue(depth, out str))
+                {
+                return str;
+                }
+
+            str = new string(' ', depth * 4);
+            _spaces.TryAdd(depth, str);
+            return str;
+            }
+
+        #endregion Хранилище пробелов для отступов
+
         /// <summary>
         /// Отформатировать текст сообщения
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static string FormatMessageText(ActorActionEventArgs action)
+        public static string FormatMessageText(ActorBase sender, ActorActionEventArgs action)
             {
+            var depthOffset = string.Empty;
+            if (sender != null)
+                {
+                var depth = sender.Depth;
+                if (depth != 0)
+                    {
+                    depthOffset = GetDepthString(depth);
+                    }
+                }
+
 #if DEBUG
-            var str = action.AEA.ToString("D8") + " " + action.EventDateAsString + " " + action.MessageText;
+            var str = action.AEA.ToString("D8") + " " + depthOffset + action.EventDateAsString + " " + action.MessageText;
 #else
-            var str = action.EventDateAsString + " " + action.MessageText;
+            var str = action.EventDateAsString + " " + depthOffset + action.MessageText;
 #endif // DEBUG
+
             return str;
             }
 
         /// <summary>
         /// Создать сообщение для вывода
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static ConsoleMessage CreateMessageFromEventArgs(ActorActionEventArgs action)
+        public static ConsoleMessage CreateMessageFromEventArgs(ActorBase sender, ActorActionEventArgs action)
             {
             ConsoleMessage message = null;
-            var messageText = FormatMessageText(action);
+            var messageText = FormatMessageText(sender, action);
             switch (action.ActionEventType)
                 {
                 case ActorActionEventType.Debug:
@@ -202,60 +243,65 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// <summary>
         /// Создать отладочное сообщение
         /// </summary>
+        /// <param name="actor">Объект</param>
         /// <param name="debugText">Текст отладочного сообщения</param>
         /// <returns></returns>
-        public static ConsoleMessage CreateDebugMessage(string debugText)
+        public static ConsoleMessage CreateDebugMessage(ActorBase actor, string debugText)
             {
             var actorActionEventArgs = new ActorActionEventArgs(debugText, ActorActionEventType.Debug);
-            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            var message = CreateMessageFromEventArgs(actor, actorActionEventArgs);
             return message;
             }
 
         /// <summary>
         /// Создать сообщение
         /// </summary>
+        /// <param name="actor">Объект</param>
         /// <param name="messageText">Текст сообщения</param>
         /// <returns></returns>
-        public static ConsoleMessage CreateMessage(string messageText)
+        public static ConsoleMessage CreateMessage(ActorBase actor, string messageText)
             {
             var actorActionEventArgs = new ActorActionEventArgs(messageText, ActorActionEventType.Neutral);
-            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            var message = CreateMessageFromEventArgs(actor, actorActionEventArgs);
             return message;
             }
 
         /// <summary>
         /// Создать предупреждение
         /// </summary>
+        /// <param name="actor">Объект</param>
         /// <param name="warningText">Текст сообщения</param>
         /// <returns></returns>
-        public static ConsoleMessage CreateWarningMessage(string warningText)
+        public static ConsoleMessage CreateWarningMessage(ActorBase actor, string warningText)
             {
             var actorActionEventArgs = new ActorActionEventArgs(warningText, ActorActionEventType.Warning);
-            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            var message = CreateMessageFromEventArgs(actor, actorActionEventArgs);
             return message;
             }
 
         /// <summary>
         /// Создать предупреждение
         /// </summary>
+        /// <param name="actor">Объект</param>
         /// <param name="errorText">Текст ошибки</param>
         /// <returns></returns>
-        public static ConsoleMessage CreateErrorMessage(string errorText)
+        public static ConsoleMessage CreateErrorMessage(ActorBase actor, string errorText)
             {
             var actorActionEventArgs = new ActorActionEventArgs(errorText, ActorActionEventType.Error);
-            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            var message = CreateMessageFromEventArgs(actor, actorActionEventArgs);
             return message;
             }
 
         /// <summary>
         /// Создать сообщение об исключении
         /// </summary>
+        /// <param name="actor">Объект</param>
         /// <param name="exception">Исключение</param>
         /// <returns></returns>
-        public static ConsoleMessage CreateExceptionMessage(Exception exception)
+        public static ConsoleMessage CreateExceptionMessage(ActorBase actor, Exception exception)
             {
             var actorActionEventArgs = new ActorExceptionEventArgs(exception);
-            var message = CreateMessageFromEventArgs(actorActionEventArgs);
+            var message = CreateMessageFromEventArgs(actor, actorActionEventArgs);
             return message;
             }
 

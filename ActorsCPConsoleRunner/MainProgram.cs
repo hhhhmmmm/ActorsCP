@@ -93,7 +93,7 @@ namespace ActorsCPConsoleRunner
 
             foreach (var error in errors)
                 {
-                var message = ConsoleViewPortStatics.CreateErrorMessage(error.ToString());
+                var message = ConsoleViewPortStatics.CreateErrorMessage(null, error.ToString());
                 ConsoleViewPortStatics.WriteLineToConsole(message);
                 }
             }

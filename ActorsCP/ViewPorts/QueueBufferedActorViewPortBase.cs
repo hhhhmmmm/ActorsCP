@@ -127,7 +127,7 @@ namespace ActorsCP.ViewPorts
             await _queue.WaitAsync();
             await _queue.TerminateAsync();
             _iViewPortItemProcessor = null;
-
+            _сurrentExecutionStatistics.BufferStatistics = BufferStatistics;
             base.InternalTerminate();
             }
 

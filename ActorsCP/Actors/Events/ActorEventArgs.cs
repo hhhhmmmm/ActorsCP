@@ -92,8 +92,8 @@ namespace ActorsCP.Actors.Events
         /// <param name="eventDate"></param>
         public static string FormatEventDate(DateTime eventDate)
             {
-            var _stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
-            return _stringEventDate;
+            var stringEventDate = string.Intern(eventDate.ToString("HH\\:mm\\:ss\\.ff"));
+            return stringEventDate;
             }
 
         /// <summary>
