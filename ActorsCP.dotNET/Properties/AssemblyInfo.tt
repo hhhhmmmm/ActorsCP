@@ -1,0 +1,34 @@
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
+
+<#@ assembly name="System" #>
+<#@ assembly name="System.Core" #>
+
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+
+// This is generated code. Any changes will be lost the next time this code is being generated.
+// Creation date: <#= System.DateTime.Now.ToString() #>
+
+
+
+using System.Reflection;
+
+[assembly: AssemblyVersion("<#=this.BuildYear#>.<#=this.BuildMonth#>.<#=this.BuildDay#>.<#= this.BuildHHMM #>")]
+[assembly: AssemblyFileVersion("<#=this.BuildYear#>.<#=this.BuildMonth#>.<#=this.BuildDay#>.<#= this.BuildHHMM #>")]
+
+
+<#+
+
+// https://habr.com/ru/post/64895/
+      
+int BuildYear   = DateTime.Now.Year%100;
+int BuildMonth  = DateTime.Now.Month;
+int BuildDay    = DateTime.Now.Day;
+int BuildHHMM   = DateTime.Now.Hour * 100 + DateTime.Now.Minute * 1;// + DateTime.Now.Second;
+int BuildHHMMSS = DateTime.Now.Hour * 10000 + DateTime.Now.Minute * 100 + DateTime.Now.Second;
+
+#>
