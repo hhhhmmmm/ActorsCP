@@ -1,4 +1,5 @@
 ﻿using System;
+
 using ActorsCP.Actors;
 using ActorsCP.Actors.Events;
 
@@ -61,6 +62,19 @@ namespace ActorsCP.ViewPorts.ConsoleViewPort
         /// <param name="e">Событие</param>
         protected override void InternalActor_StateChangedEvent(object sender, ActorStateChangedEventArgs e)
             {
+            }
+
+        /// <summary>
+        /// Обработать как ActorEventArgs
+        /// </summary>
+        /// <param name="viewPortItem">Данные</param>
+        protected override void InternalProcessAsActorEventArgs(ViewPortItem viewPortItem)
+            {
+            if (viewPortItem.ActorEventArgs is ActorActionEventArgs action)
+                {
+                var message = ConsoleViewPortStatics.CreateMessageFromEventArgs(viewPortItem.Sender, action);
+                ConsoleViewPortStatics.WriteLineToConsole(message);
+                }
             }
 
         #endregion Перегружаемые методы IActorEventsHandler

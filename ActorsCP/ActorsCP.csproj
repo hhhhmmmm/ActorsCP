@@ -83,6 +83,7 @@
       <None Remove="Documentation\**" />
     </ItemGroup>
     <ItemGroup>
+<<<<<<< HEAD
       <None Include="Properties\AssemblyInfo.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -90,6 +91,8 @@
       </None>
     </ItemGroup>
     <ItemGroup>
+=======
+>>>>>>> github/develop
       <None Update="Properties\AssemblyInfo.tt">
         <Generator>TextTemplatingFileGenerator</Generator>
         <LastGenOutput>AssemblyInfo.cs</LastGenOutput>

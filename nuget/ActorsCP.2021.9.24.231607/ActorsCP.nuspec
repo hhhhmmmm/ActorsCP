@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>ActorsCP</id>
+    <version>2021.9.24.231607</version>
+    <authors>Андрей Хренов</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/hhhhmmmm/ActorsCP</projectUrl>
+    <iconUrl>https://github.com/hhhhmmmm/ActorsCP/tree/master/ActorsCP/Images/logo_nuget.png?raw=true</iconUrl>
+    <description>Библиотека объектов-акторов</description>
+    <copyright>© 2021 Андрей Хренов. All rights reserved.</copyright>
+    <repository type="git" url="https://github.com/hhhhmmmm/ActorsCP/✏️.git" commit="1b222e34bf7ed1a722bf7e33a0c710f0394c1824" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.1" />
+      <group targetFramework=".NETFramework4.7" />
+      <group targetFramework=".NETCoreApp3.1">
+        <dependency id="System.Configuration.ConfigurationManager" version="4.4.0" exclude="Build,Analyzers" />
+        <dependency id="System.Data.DataSetExtensions" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="System.Configuration.ConfigurationManager" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Data.DataSetExtensions" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6.1, .NETFramework4.7" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1, .NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Net" targetFramework=".NETFramework4.6.1, .NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Threading.Tasks" targetFramework=".NETFramework4.6.1, .NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework=".NETFramework4.6.1, .NETFramework4.7" />
+    </frameworkAssemblies>
+  </metadata>
+</package>
