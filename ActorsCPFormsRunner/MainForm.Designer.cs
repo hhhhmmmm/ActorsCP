@@ -44,6 +44,7 @@ namespace ActorsCPFormsRunner
             this.RunActorButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewportTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.DebugTextFormButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CrowdLengthTextBox
@@ -174,11 +175,22 @@ namespace ActorsCPFormsRunner
             this.ViewportTypeComboBox.Size = new System.Drawing.Size(331, 21);
             this.ViewportTypeComboBox.TabIndex = 50;
             // 
+            // DebugTextFormButton
+            // 
+            this.DebugTextFormButton.Location = new System.Drawing.Point(17, 250);
+            this.DebugTextFormButton.Name = "DebugTextFormButton";
+            this.DebugTextFormButton.Size = new System.Drawing.Size(174, 23);
+            this.DebugTextFormButton.TabIndex = 51;
+            this.DebugTextFormButton.Text = "DebugTextForm";
+            this.DebugTextFormButton.UseVisualStyleBackColor = true;
+            this.DebugTextFormButton.Click += new System.EventHandler(this.OnDebugTextFormButtonClick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(607, 450);
+            this.Controls.Add(this.DebugTextFormButton);
             this.Controls.Add(this.ViewportTypeComboBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.RunActorButton);
@@ -216,6 +228,7 @@ namespace ActorsCPFormsRunner
         private System.Windows.Forms.Button RunActorButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ViewportTypeComboBox;
+        private System.Windows.Forms.Button DebugTextFormButton;
         }
     }
 

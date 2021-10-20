@@ -3,6 +3,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ActorsCP.Actors;
+using ActorsCP.dotNET.Forms;
 using ActorsCP.dotNET.ViewPorts;
 using ActorsCP.dotNET.ViewPorts.Rtf;
 using ActorsCP.dotNET.ViewPorts.Tree;
@@ -198,6 +199,11 @@ namespace ActorsCPFormsRunner
         private async void RunActorButtonClick(object sender, EventArgs e)
             {
             await CreatedActor?.RunAsync();
+            }
+
+        private void OnDebugTextFormButtonClick(object sender, EventArgs e)
+            {
+            DebugTextForm.Show("Заголовок", "текст");
             }
         }
     }

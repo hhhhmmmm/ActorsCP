@@ -54,6 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\DebugTextForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DebugTextForm.Designer.cs">
+      <DependentUpon>DebugTextForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Globals.cs" />
+    <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="NativeInterop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <AutoGen>True</AutoGen>
@@ -107,6 +115,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\DebugTextForm.resx">
+      <DependentUpon>DebugTextForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ViewPorts\FormsViewPortBase.resx">
       <DependentUpon>FormsViewPortBase.cs</DependentUpon>
     </EmbeddedResource>

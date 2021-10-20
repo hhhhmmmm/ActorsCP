@@ -43,6 +43,7 @@ namespace ActorsCPFormsRunner
             Application.SetCompatibleTextRenderingDefault(false);
 
             MainIcon = LoadIcon("MainIcon.ico");
+            ActorsCP.dotNET.Globals.ApplicationIcon = MainIcon;
 
             MainForm mf = new MainForm();
             mf.Icon = MainIcon;

@@ -95,6 +95,11 @@ namespace ActorsCP.dotNET.ViewPorts
             _baseCaption = caption;
             NormalIcon = icon;
 
+            if (NormalIcon == null)
+                {
+                NormalIcon = Globals.ApplicationIcon;
+                }
+
             InitializeComponent();
 
             var rectangle = ComputeChildControlSize();
