@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 namespace ActorsCP.Helpers.Data
@@ -68,6 +70,24 @@ namespace ActorsCP.Helpers.Data
             {
             m_Tables = Tables;
             m_DataString = FormatTablesAsString(m_Tables, m_FormatLeft);
+            }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="rows">Набор строк из таблицы</param>
+        public TableFormatter(IEnumerable<DataRow> rows)
+            {
+            var _rows = rows.ToArray();
+            var oldTable = _rows[0].Table;
+            var newTable = oldTable.Clone();
+            foreach (var oldRow in _rows)
+                {
+                newTable.ImportRow(oldRow);
+                }
+
+            m_Table = newTable;
+            m_DataString = FormatTableAsString(m_Table, m_FormatLeft);
             }
 
         #endregion Конструкторы

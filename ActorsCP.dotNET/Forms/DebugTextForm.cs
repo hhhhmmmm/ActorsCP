@@ -153,7 +153,7 @@ namespace ActorsCP.dotNET.Forms
         /// Показать отладочное окно с моноширинным текстом - содержимое таблицы
         /// </summary>
         /// <param name="caption">Заголовок окна</param>
-        /// <param name="Table">Таблица с данными</param>
+        /// <param name="table">Таблица с данными</param>
         public static void Show(string caption, DataTable table)
             {
             InternalShowTable(caption, table, false);
